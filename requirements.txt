@@ -1,0 +1,6 @@
+fastapi==0.71.0
+pydantic==1.9.0
+pymongo==4.0.1
+uvicorn==0.16.0
+redis==4.1.0
+kavenegar==1.1.2

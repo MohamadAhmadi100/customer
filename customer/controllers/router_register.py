@@ -26,23 +26,23 @@ async def root(value: validation_register.CustomerSchemas, response: Response):
             otp.save_otp()
             otp.send_otp_code()
             response.status_code = status.HTTP_200_OK
-            massage = {
+            message = {
                 "massage": "sent otp",
                 "label": "کد ثبت نام ارسال شد"
             }
         else:
             response.status_code = status.HTTP_423_LOCKED
-            massage = {
+            message = {
                 "massage": f" Try after {expire_time} seconds",
                 "label": f"  لطفا بعد از {expire_time} ثانیه تلاش کنید ",  # TODO check label
             }
     else:
         response.status_code = status.HTTP_409_CONFLICT
-        massage = {
+        message = {
             "massage": "You are already registered",
             "label": "شما قبلا ثبت نام کرده اید."
         }
-    return massage
+    return message
 
 
 @router_register.post("/verify-otp/")
@@ -52,23 +52,35 @@ def root(value: validation_register.CustomerVerify, response: Response):
     otp = OTP(value.phone_number)
     if otp.get_otp() and otp.get_otp(value.phone_number).get("code") == value.otp_code:
         response.status_code = status.HTTP_201_CREATED
-        message = {"massage": "otp code is valid"}
+        message = {
+            "massage": "otp code is valid",
+            "label": "کد وارد شده صحیح است"
+
+        }
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        message = {"massage": "otp code is wrong"}
+        message = {
+            "massage": "otp code is wrong",
+            "label": "کد وارد شده صحیح نمی‌باشد"
+
+        }
     return message
 
 
 @router_register.post("/set-password/")
 def root(value: validation_register.CustomerSetPassword, response: Response):
     customer = CustomerB2C(phone_number=value.phone_number)
-    result = customer.save()
-
-    if result:
+    if customer.save():
         response.status_code = status.HTTP_201_CREATED
-        message = {"massage": "you have successfully registered"}
+        message = {
+            "massage": "you have successfully registered",
+            "label": "ثبت نام شما با موفقیت انجام شد"
+        }
     else:
         response.status_code = status.HTTP_417_EXPECTATION_FAILED
-        message = {"massage": "You did not register"}
+        message = {
+            "massage": "You did not register",
+            "label": "ثبت نام شما با مشکل مواجه شد لطفا دوباره سعی کنید"
+        }
 
     return message

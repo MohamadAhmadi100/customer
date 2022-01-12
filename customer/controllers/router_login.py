@@ -11,6 +11,6 @@ router_login = APIRouter(
 async def root():
     # TODO fixed status code
     massage = {
-        "massage": "You are already registered",
+        "massage": "test massage",
     }
     return massage

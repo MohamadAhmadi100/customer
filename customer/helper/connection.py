@@ -2,13 +2,13 @@ import pymongo
 
 
 class MongoConnection:
-    __slots__ = ["__client", "__db_name", "collection"]
+    __slots__ = ["__client", "__db_name", "collection", "_instance"]
 
     @classmethod
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(MongoConnection, cls).__new__(cls)
-        return cls.instance
+            cls._instance = super(MongoConnection, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self):
         self.__client = pymongo.MongoClient()

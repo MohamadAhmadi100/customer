@@ -4,23 +4,18 @@ from fastapi import responses
 from starlette.exceptions import HTTPException as starletteHTTPException
 
 from controllers.router_register import router_register
-from controllers.router_login import router_login
-
-TAGS_META = [
-    {
-        "name": "customer",
-    },
-]
+from controllers.router_auth import router_auth
+from controllers.router_profile import router_profile
 
 app = FastAPI(
     debug=True,
     title="Customer",
     version="0.1.0",
-    openapi_tags=TAGS_META,
     docs_url="/api/v1/docs/"
 )
 app.include_router(router_register)
-app.include_router(router_login)
+app.include_router(router_auth)
+app.include_router(router_profile)
 
 
 @app.exception_handler(starletteHTTPException)

@@ -11,7 +11,11 @@ class MongoConnection:
         return cls._instance
 
     def __init__(self):
-        self.__client = pymongo.MongoClient()
+        self.__client = pymongo.MongoClient(
+            "200.100.100.223:27017",
+            username="root",
+            password="qweasdQWEASD"
+        )
         self.__db_name = self.__client['db-customer']
         self.collection = self.__db_name['customer']
 

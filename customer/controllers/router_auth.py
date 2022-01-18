@@ -24,7 +24,7 @@ def check_is_registered(value: validation_auth.CustomerAuth, response: Response)
     customer = Customer(phone_number=value.customer_phone_number)
 
     if customer.is_exists_phone_number():
-        redirect = "/auth/login/" if customer.is_customer_confirm() else "/auth/verify-otp/"
+        redirect = "/auth/login/" if customer.is_mobile_confirm() else "/auth/verify-otp/"
         response.status_code = status.HTTP_202_ACCEPTED
         message = {
             "costumerIsMobileConfirm": customer.is_mobile_confirm(),
@@ -46,8 +46,7 @@ def check_is_registered(value: validation_auth.CustomerAuth, response: Response)
 
 
 @router_auth.post("/send-otp/")
-def send_otp(value: validation_auth.CustomerSendOTP, response: Response):
-
+def send_otp(value: validation_auth.CustomerAuth, response: Response):
     otp = OTP(value.customer_phone_number)
 
     is_expire, expire_time = otp.is_expire_otp_time()
@@ -76,11 +75,18 @@ def register(value: validation_auth.CustomerVerifyOTP, response: Response):
             response.status_code = status.HTTP_201_CREATED
             message = {"massage": "otp code is valid", "label": "کد وارد شده صحیح است"}
         else:
+            response.status_code = status.HTTP_417_EXPECTATION_FAILED
             message = {"massage": "sorry try again later", "label": "مشکلی رخ داده است لطفا بعدا امتحان کنید"}
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         message = {"massage": "otp code is wrong", "label": "کد وارد شده صحیح نمی‌باشد"}
     return message
+
+
+@router_auth.get("/login/otp/")
+def login_otp():
+    form = validation_auth.CustomerVerifyOTP.schema().get("properties").copy()
+    return form
 
 
 @router_auth.post("/login/otp/")
@@ -110,13 +116,19 @@ def login_otp(value: validation_auth.CustomerVerifyOTP, response: Response):
     return message
 
 
+@router_auth.get("/login/password/")
+def login_otp():
+    form = validation_auth.CustomerVerifyPassword.schema().get("properties").copy()
+    return form
+
+
 @router_auth.post("/login/password/")
 def login_password(value: validation_auth.CustomerVerifyPassword, response: Response):
     # TODO fixed status code
     customer = Customer(phone_number=value.customer_phone_number)
 
     if customer.is_exists_phone_number():
-        if customer.is_login(value.customer_code):
+        if customer.is_login(value.customer_password):
             if customer.mobile_confirm():
                 response.status_code = status.HTTP_200_OK
                 response.headers["refreshToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
@@ -124,14 +136,13 @@ def login_password(value: validation_auth.CustomerVerifyPassword, response: Resp
                 # TODO create token
                 message = {"massage": "you are successfully login", "label": "شما به درستی وارد شدید"}
             else:
-                response.status_code = status.HTTP_409_CONFLICT
+                response.status_code = status.HTTP_202_ACCEPTED
                 message = {
                     "costumerIsMobileConfirm": customer.is_mobile_confirm(),
                     "costumerIsConfirm": customer.is_customer_confirm(),
                     "hasRegistered": True,
                     "massage": "your account has not been verified",
                     "label": "شماره موبایل شما تایید نشده است",
-
                 }
         else:
             response.status_code = status.HTTP_401_UNAUTHORIZED

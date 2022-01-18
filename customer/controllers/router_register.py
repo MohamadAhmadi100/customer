@@ -10,6 +10,12 @@ router_register = APIRouter(
 )
 
 
+@router_register.get("/login/password/")
+def login_otp():
+    form = validation_register.CustomerRegister.schema().get("properties").copy()
+    return form
+
+
 @router_register.post("/")
 def register(value: validation_register.CustomerRegister, response: Response):
     # TODO fixed status code

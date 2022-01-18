@@ -13,7 +13,7 @@ router_register = APIRouter(
 @router_register.get("/login/password/")
 def login_otp():
     form = validation_register.CustomerRegister.schema().get("properties").copy()
-    return form
+    return {"fields": form, "actions": {}}
 
 
 @router_register.post("/")

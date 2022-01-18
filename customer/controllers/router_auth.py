@@ -15,7 +15,7 @@ router_auth = APIRouter(
 @router_auth.get("/")
 def check_is_registered():
     form = validation_auth.CustomerAuth.schema().get("properties").copy()
-    return form
+    return {"fields": form, "actions": {}}
 
 
 @router_auth.post("/")
@@ -86,7 +86,7 @@ def register(value: validation_auth.CustomerVerifyOTP, response: Response):
 @router_auth.get("/login/otp/")
 def login_otp():
     form = validation_auth.CustomerVerifyOTP.schema().get("properties").copy()
-    return form
+    return {"fields": form, "actions": {}}
 
 
 @router_auth.post("/login/otp/")
@@ -119,7 +119,7 @@ def login_otp(value: validation_auth.CustomerVerifyOTP, response: Response):
 @router_auth.get("/login/password/")
 def login_otp():
     form = validation_auth.CustomerVerifyPassword.schema().get("properties").copy()
-    return form
+    return {"fields": form, "actions": {}}
 
 
 @router_auth.post("/login/password/")

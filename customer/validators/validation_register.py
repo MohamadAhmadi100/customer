@@ -1,6 +1,9 @@
+import re
 from typing import Optional
 
+from fastapi import HTTPException
 from pydantic import BaseModel, Field
+from pydantic import validator
 
 
 class CustomerRegister(BaseModel):
@@ -101,3 +104,11 @@ class CustomerRegister(BaseModel):
         type="text",
         isRquired=False,
     )
+
+    @validator("customer_phone_number")
+    def validate_phone_num(cls, phone_number):
+        pattern = r"^09[0-9]{9}$"
+        match = re.fullmatch(pattern, phone_number)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid phone number"})
+        return phone_number

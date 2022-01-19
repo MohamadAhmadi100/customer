@@ -30,6 +30,7 @@ class CustomerRegister(BaseModel):
         maxLength=16,
         dataType="string",
         type="text",
+        regexPattern="^[\u0600-\u06FF]{4,16}$",
         isRquired=True,
     )
     customer_last_name: str = Field(
@@ -42,6 +43,7 @@ class CustomerRegister(BaseModel):
         maxLength=16,
         dataType="string",
         type="text",
+        regexPattern="^[\u0600-\u06FF]{4,16}$",
         isRquired=True,
     )
     customer_national_id: str = Field(
@@ -54,8 +56,10 @@ class CustomerRegister(BaseModel):
         dataType="string",
         type="text",
         isRquired=True,
+        regexPattern="^[0-9]{10}$",
+
     )
-    customer_city: Optional[str] = Field(
+    customer_city: str = Field(
         alias="customerCity",
         description="",
         title="نام شهر",
@@ -65,9 +69,10 @@ class CustomerRegister(BaseModel):
         maxLength=16,
         dataType="string",
         type="text",
+        regexPattern="^[\u0600-\u06FF]{2,16}$",
         isRquired=True,
     )
-    customer_province: Optional[str] = Field(
+    customer_province: str = Field(
         alias="customerProvince",
         description="",
         title="استان",
@@ -77,6 +82,7 @@ class CustomerRegister(BaseModel):
         maxLength=16,
         dataType="string",
         type="text",
+        regexPattern="^[\u0600-\u06FF]{2,16}$",
         isRquired=True,
     )
     customer_address: Optional[str] = Field(
@@ -89,6 +95,7 @@ class CustomerRegister(BaseModel):
         maxLength=64,
         dataType="string",
         type="text",
+        regexPattern="^[\u0600-\u06FF]{8,64}$",
         isRquired=False,
     )
 
@@ -102,13 +109,70 @@ class CustomerRegister(BaseModel):
         maxLength=10,
         dataType="string",
         type="text",
+        regexPattern="^[0-9]{10}$",
         isRquired=False,
     )
 
     @validator("customer_phone_number")
-    def validate_phone_num(cls, phone_number):
+    def validate_phone_num(cls, customer_phone_number):
         pattern = r"^09[0-9]{9}$"
-        match = re.fullmatch(pattern, phone_number)
+        match = re.fullmatch(pattern, customer_phone_number)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid phone number"})
-        return phone_number
+        return customer_phone_number
+
+    @validator("customer_first_name")
+    def validate_customer_first_name(cls, customer_first_name):
+        pattern = r"^[\u0600-\u06FF]{4,16}$"
+        match = re.fullmatch(pattern, customer_first_name)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid first name"})
+        return customer_first_name
+
+    @validator("customer_last_name")
+    def validate_customer_last_name(cls, customer_last_name):
+        pattern = r"^[\u0600-\u06FF]{4,16}$"
+        match = re.fullmatch(pattern, customer_last_name)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid last name"})
+        return customer_last_name
+
+    @validator("customer_national_id")
+    def validate_customer_national_id(cls, customer_national_id):
+        pattern = r"^[0-9]{10}$"
+        match = re.fullmatch(pattern, customer_national_id)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid national id"})
+        return customer_national_id
+
+    @validator("customer_city")
+    def validate_customer_city(cls, customer_city):
+        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        match = re.fullmatch(pattern, customer_city)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid city"})
+        return customer_city
+
+    @validator("customer_province")
+    def validate_customer_province(cls, customer_province):
+        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        match = re.fullmatch(pattern, customer_province)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid province"})
+        return customer_province
+
+    @validator("customer_address")
+    def validate_customer_address(cls, customer_address):
+        pattern = r"^[\u0600-\u06FF]{4,64}$"
+        match = re.fullmatch(pattern, customer_address)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid address"})
+        return customer_address
+
+    @validator("customer_province_code")
+    def validate_customer_province_code(cls, customer_province_code):
+        pattern = r"^[0-9]{10}$"
+        match = re.fullmatch(pattern, customer_province_code)
+        if not match:
+            raise HTTPException(status_code=422, detail={"error": "Please enter a valid province code"})
+        return customer_province_code

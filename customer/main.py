@@ -3,9 +3,9 @@ from fastapi import FastAPI
 from fastapi import responses
 from starlette.exceptions import HTTPException as starletteHTTPException
 
-from controllers.router_register import router_register
-from controllers.router_auth import router_auth
-from controllers.router_profile import router_profile
+from customer.controllers.router_register import router_register
+from customer.controllers.router_auth import router_auth
+from customer.controllers.router_profile import router_profile
 
 app = FastAPI(
     debug=True,

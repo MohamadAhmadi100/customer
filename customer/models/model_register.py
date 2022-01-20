@@ -3,9 +3,18 @@ from customer.helper.connection import MongoConnection
 
 class Customer:
     __slots__ = [
-        "customer_phone_number", "customer_password", "customer_first_name", "customer_last_name",
-        "customer_addresses", "customer_last_name", "costumer_address", "customer_city", "customer_province",
-        "customer_province_code", "customer_address", "customer_national_id"
+        "customer_phone_number",
+        "customer_password",
+        "customer_first_name",
+        "customer_last_name",
+        "customer_addresses",
+        "customer_last_name",
+        "costumer_address",
+        "customer_city",
+        "customer_province",
+        "customer_province_code",
+        "customer_address",
+        "customer_national_id"
     ]
 
     CUSTOMER_TYPE: tuple = ('B2C', 'B2B')
@@ -37,7 +46,7 @@ class Customer:
             pipeline_find = {"costumerPhoneNumber": self.customer_phone_number, "costumerPassword": password}
             return True if mongo.collection.find_one(pipeline_find) else False
 
-    def set_password(self, password) -> None:
+    def set_password(self, password: str) -> None:
         self.customer_password = password
 
     def is_mobile_confirm(self):

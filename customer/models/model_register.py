@@ -46,9 +46,6 @@ class Customer:
             pipeline_find = {"costumerPhoneNumber": self.customer_phone_number, "costumerPassword": password}
             return True if mongo.collection.find_one(pipeline_find) else False
 
-    def set_password(self, password: str) -> None:
-        self.customer_password = password
-
     def is_mobile_confirm(self):
         with MongoConnection() as mongo:
             pipeline_find = {"costumerPhoneNumber": self.customer_phone_number}
@@ -75,7 +72,10 @@ class Customer:
             result = mongo.collection.update_one(pipeline_find, pipeline_set)
             return True if result.acknowledged else False
 
-    def save(self, ):
+    def set_password(self, password: str) -> None:
+        self.customer_password = password
+
+    def save(self):
         with MongoConnection() as mongo:
             result = mongo.collection.insert_one(self.__dict__)
         return True if result.acknowledged else False

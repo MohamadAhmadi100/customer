@@ -1,7 +1,11 @@
+from urllib.request import Request
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi import responses
+from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette.exceptions import HTTPException as starletteHTTPException
+from starlette.responses import JSONResponse
 
 from customer.controllers.router_register import router_register
 from customer.controllers.router_auth import router_auth

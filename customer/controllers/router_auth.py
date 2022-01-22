@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import Response
+from fastapi import status, APIRouter
+from fastapi.security import OAuth2PasswordBearer
 
 from customer.models.model_register import Customer
+from customer.mudoles.auth import AuthHandler
 from customer.mudoles.otp import OTP
-from fastapi import Response, status
-
 from customer.validators import validation_auth
 
 router_auth = APIRouter(
@@ -11,24 +12,32 @@ router_auth = APIRouter(
     tags=["auth"]
 )
 
+auth_handler = AuthHandler()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/password/")
+
+
+# ------------------------------------------------------------------------------------
+
 
 @router_auth.get("/")
 def check_is_registered():
     form = validation_auth.CustomerAuth.schema().get("properties").copy()
-    return {"fields": form, "actions": {}}
+    return form
 
 
 @router_auth.post("/")
-def check_is_registered(value: validation_auth.CustomerAuth, response: Response):
+def check_is_registered(
+        response: Response,
+        value: validation_auth.CustomerAuth
+):
     # TODO fixed status code
     customer = Customer(phone_number=value.customer_phone_number)
-
     if customer.is_exists_phone_number():
         redirect = "/auth/login/" if customer.is_mobile_confirm() else "/auth/verify-otp/"
         response.status_code = status.HTTP_202_ACCEPTED
         message = {
-            "costumerIsMobileConfirm": customer.is_mobile_confirm(),
-            "costumerIsConfirm": customer.is_customer_confirm(),
+            "customerIsMobileConfirm": customer.is_mobile_confirm(),
+            "customerIsConfirm": customer.is_customer_confirm(),
             "hasRegistered": True,
             "massage": "You are already registered",
             "label": "شما قبلا ثبت نام کرده اید.",
@@ -89,18 +98,19 @@ def login_otp():
     return {"fields": form, "actions": {}}
 
 
-@router_auth.post("/login/otp/")
-def login_otp(value: validation_auth.CustomerVerifyOTP, response: Response):
-    # TODO fixed status code
-
+@router_auth.post("/login/")
+def login_otp(
+        value: validation_auth.CustomerVerifyOTP,
+        response: Response,
+):
     customer = Customer(phone_number=value.customer_phone_number)
     otp = OTP(value.customer_phone_number)
     if customer.is_exists_phone_number():
         if otp.get_otp() and otp.get_otp(value.customer_phone_number) == value.customer_code:
             response.status_code = status.HTTP_200_OK
-            response.headers["refreshToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
-            response.headers["accessToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
-            # TODO create token
+            response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
+            response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
+
             message = {"massage": "you are successfully login", "label": "شما به درستی وارد شدید"}
         else:
             response.status_code = status.HTTP_401_UNAUTHORIZED
@@ -116,30 +126,30 @@ def login_otp(value: validation_auth.CustomerVerifyOTP, response: Response):
     return message
 
 
-@router_auth.get("/login/password/")
-def login_otp():
-    form = validation_auth.CustomerVerifyPassword.schema().get("properties").copy()
-    return {"fields": form, "actions": {}}
-
-
 @router_auth.post("/login/password/")
-def login_password(value: validation_auth.CustomerVerifyPassword, response: Response):
+def login_password(
+        value: validation_auth.CustomerVerifyPassword,
+        response: Response,
+):
     # TODO fixed status code
     customer = Customer(phone_number=value.customer_phone_number)
-
     if customer.is_exists_phone_number():
         if customer.is_login(value.customer_password):
             if customer.mobile_confirm():
+
                 response.status_code = status.HTTP_200_OK
-                response.headers["refreshToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
-                response.headers["accessToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
-                # TODO create token
+                response.headers["refreshToken"] = auth_handler.encode_refresh_token(
+                    user_name=value.customer_phone_number
+                )
+                response.headers["accessToken"] = auth_handler.encode_access_token(
+                    user_name=value.customer_phone_number
+                )
                 message = {"massage": "you are successfully login", "label": "شما به درستی وارد شدید"}
             else:
                 response.status_code = status.HTTP_202_ACCEPTED
                 message = {
-                    "costumerIsMobileConfirm": customer.is_mobile_confirm(),
-                    "costumerIsConfirm": customer.is_customer_confirm(),
+                    "customerIsMobileConfirm": customer.is_mobile_confirm(),
+                    "customerIsConfirm": customer.is_customer_confirm(),
                     "hasRegistered": True,
                     "massage": "your account has not been verified",
                     "label": "شماره موبایل شما تایید نشده است",

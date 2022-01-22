@@ -2,12 +2,15 @@ from fastapi import APIRouter
 from fastapi import Response, status
 
 from customer.models.model_register import Customer
+from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_register
 
 router_register = APIRouter(
     prefix="/register",
     tags=["register"]
 )
+
+auth_handler = AuthHandler()
 
 
 @router_register.get("/")
@@ -17,8 +20,10 @@ def login_otp():
 
 
 @router_register.post("/")
-def register(value: validation_register.CustomerRegister, response: Response):
-    # TODO fixed status code
+def register(
+        response: Response,
+        value: validation_register.CustomerRegister,
+):
     customer = Customer(phone_number=value.customer_phone_number)
     customer.set_data(
         customer_phone_number=value.customer_phone_number,
@@ -41,9 +46,10 @@ def register(value: validation_register.CustomerRegister, response: Response):
     else:
         if customer.save():
             response.status_code = status.HTTP_201_CREATED
-            # TODO crate token
-            # response.headers["refreshToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
-            # response.headers["accessToken"] = "OLFGM&#$DSWFVI(%#@WEDSDFJKLKIULfrdg$$"
+
+            response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
+            response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
+
             message = {"massage": "You have registered correctly ", "label": "شما به درستی ثبت نام شدید"}
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED

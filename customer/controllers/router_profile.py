@@ -1,5 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi import Response, status
+
+from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_profile
 
 from customer.models.model_register import Customer
@@ -9,9 +11,15 @@ router_profile = APIRouter(
     tags=["profile"]
 )
 
+auth_handler = AuthHandler()
+
 
 @router_profile.post("/set-password/")
-def set_password(value: validation_profile.CustomerSetPassword, response: Response):
+def set_password(
+        value: validation_profile.CustomerSetPassword,
+        response: Response,
+        token=Depends(auth_handler.check_current_user_tokens)
+):
     customer = Customer(phone_number=value.customer_phone_number)
     if customer.save():
         response.status_code = status.HTTP_200_OK

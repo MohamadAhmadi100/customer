@@ -1,6 +1,6 @@
 import re
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Query
 from pydantic import BaseModel, validator, Field
 
 
@@ -57,8 +57,6 @@ class CustomerVerifyOTP(BaseModel):
         regexPattern="^[0-9]{4}$",
     )
 
-    # TODO validate code type
-
     @validator("customer_phone_number")
     def validate_phone_num(cls, phone_number):
         pattern = r"^09[0-9]{9}$"
@@ -103,8 +101,15 @@ class CustomerVerifyPassword(BaseModel):
         isRquired=True,
         regexPattern="^^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$",
     )
-
-    # TODO validate code type
+    # customer_login_type: str = Field(
+    #     title="شیوه ورود کاربر",
+    #     alias="customerLoginType",
+    #     name="customerLoginType",
+    #     description="customerLoginType must be `otp` or `password`",
+    #     dataType="string",
+    #     type="hidden",
+    #     isRquired=True,
+    # )
 
     @validator("customer_phone_number")
     def validate_phone_num(cls, phone_number):
@@ -121,3 +126,9 @@ class CustomerVerifyPassword(BaseModel):
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid password"})
         return code
+    #
+    # @validator("customer_login_type")
+    # def validate_password(cls, code_type):
+    #     if code_type == "otp" and code_type == "password":
+    #         raise HTTPException(status_code=422, detail={"error": "Please enter a valid login type"})
+    #     return code_type

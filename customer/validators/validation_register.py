@@ -26,11 +26,11 @@ class CustomerRegister(BaseModel):
         alias="customerFirstName",
         name="customerFirstName",
         placeholder="مهدی",
-        minLength=4,
-        maxLength=16,
+        minLength=2,
+        maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{4,16}$",
+        regexPattern="^[\u0600-\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_last_name: str = Field(
@@ -40,10 +40,10 @@ class CustomerRegister(BaseModel):
         name="customerLastName",
         placeholder="مهدوی",
         minLength=2,
-        maxLength=16,
+        maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{4,16}$",
+        regexPattern="^[\u0600-\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_national_id: str = Field(
@@ -66,10 +66,10 @@ class CustomerRegister(BaseModel):
         name="customerCity",
         placeholder="تهران",
         minLength=2,
-        maxLength=16,
+        maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,16}$",
+        regexPattern="^[\u0600-\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_province: str = Field(
@@ -79,10 +79,10 @@ class CustomerRegister(BaseModel):
         name="customerProvince",
         placeholder="تهران",
         minLength=2,
-        maxLength=16,
+        maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,16}$",
+        regexPattern="^[\u0600-\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_address: Optional[str] = Field(
@@ -92,10 +92,10 @@ class CustomerRegister(BaseModel):
         name="customerAddress",
         placeholder="تهران پلاک ۳",
         minLength=8,
-        maxLength=64,
+        maxLength=128,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{8,64}$",
+        regexPattern="^[\u0600-\u06FF]{8,128}$",
         isRquired=False,
     )
 
@@ -123,7 +123,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_first_name")
     def validate_customer_first_name(cls, customer_first_name):
-        pattern = r"^[\u0600-\u06FF]{4,16}$"
+        pattern = r"^[\u0600-\u06FF]{2,16}$"
         match = re.fullmatch(pattern, customer_first_name)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid first name"})
@@ -131,7 +131,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_last_name")
     def validate_customer_last_name(cls, customer_last_name):
-        pattern = r"^[\u0600-\u06FF]{4,16}$"
+        pattern = r"^[\u0600-\u06FF]{2,16}$"
         match = re.fullmatch(pattern, customer_last_name)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid last name"})
@@ -147,7 +147,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_city")
     def validate_customer_city(cls, customer_city):
-        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        pattern = r"^[\u0600-\u06FF]{2,32}$"
         match = re.fullmatch(pattern, customer_city)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid city"})
@@ -155,7 +155,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_province")
     def validate_customer_province(cls, customer_province):
-        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        pattern = r"^[\u0600-\u06FF]{2,32}$"
         match = re.fullmatch(pattern, customer_province)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid province"})
@@ -163,7 +163,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_address")
     def validate_customer_address(cls, customer_address):
-        pattern = r"^[\u0600-\u06FF]{4,64}$"
+        pattern = r"^[\u0600-\u06FF]{4,128}$"
         match = re.fullmatch(pattern, customer_address)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid address"})

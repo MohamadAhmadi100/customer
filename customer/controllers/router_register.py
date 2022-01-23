@@ -35,7 +35,7 @@ def register(
         customer_province_code=value.customer_province_code,
         customer_national_id=value.customer_province_code
     )
-    if customer.is_exists_phone_number() and customer.is_exists_national_id():
+    if customer.is_exists_phone_number() or customer.is_exists_national_id():
         response.status_code = status.HTTP_409_CONFLICT
         message = {
             "hasRegistered": True,

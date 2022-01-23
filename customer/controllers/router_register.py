@@ -46,10 +46,6 @@ def register(
     else:
         if customer.save():
             response.status_code = status.HTTP_201_CREATED
-
-            response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
-            response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
-
             message = {"massage": "You have registered correctly ", "label": "شما به درستی ثبت نام شدید"}
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED

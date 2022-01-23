@@ -10,14 +10,22 @@ router_auth = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
+"""
+generate register form validations for frontend validations
+"""
 
 auth_handler = AuthHandler()
 
 
 @router_auth.get("/")
-def check_is_registered():
+def check_is_register_form_generator():
     form = validation_auth.CustomerAuth.schema().get("properties").copy()
     return form
+
+
+"""
+register data validations on backend side
+"""
 
 
 @router_auth.post("/")
@@ -50,7 +58,7 @@ def check_is_registered(
 
 
 @router_auth.post("/send-otp/")
-def send_otp(value: validation_auth.CustomerAuth, response: Response):
+def send_otp_code(value: validation_auth.CustomerAuth, response: Response):
     otp = OTP(value.customer_phone_number)
 
     is_expire, expire_time = otp.is_expire_otp_time()
@@ -70,7 +78,7 @@ def send_otp(value: validation_auth.CustomerAuth, response: Response):
 
 
 @router_auth.post("/verify-otp/")
-def register(value: validation_auth.CustomerVerifyOTP, response: Response):
+def verify_otp_cod(value: validation_auth.CustomerVerifyOTP, response: Response):
     # TODO fixed status code
     otp = OTP(value.customer_phone_number)
     if otp.get_otp() and otp.get_otp() == value.customer_code:
@@ -88,13 +96,13 @@ def register(value: validation_auth.CustomerVerifyOTP, response: Response):
 
 
 @router_auth.get("/login/otp/")
-def login_otp():
+def otp_form_generator():
     form = validation_auth.CustomerVerifyOTP.schema().get("properties").copy()
     return {"fields": form, "actions": {}}
 
 
 @router_auth.post("/login/otp/")
-def login_otp(
+def checking_login_otp_code(
         value: validation_auth.CustomerVerifyOTP,
         response: Response,
 ):
@@ -122,7 +130,7 @@ def login_otp(
 
 
 @router_auth.post("/login/password/")
-def login_password(
+def checking_login_password(
         value: validation_auth.CustomerVerifyPassword,
         response: Response,
 ):

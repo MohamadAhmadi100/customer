@@ -1,6 +1,5 @@
 from fastapi import Response
 from fastapi import status, APIRouter
-from fastapi.security import OAuth2PasswordBearer
 
 from customer.models.model_register import Customer
 from customer.mudoles.auth import AuthHandler
@@ -13,10 +12,6 @@ router_auth = APIRouter(
 )
 
 auth_handler = AuthHandler()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/password/")
-
-
-# ------------------------------------------------------------------------------------
 
 
 @router_auth.get("/")
@@ -98,7 +93,7 @@ def login_otp():
     return {"fields": form, "actions": {}}
 
 
-@router_auth.post("/login/")
+@router_auth.post("/login/otp/")
 def login_otp(
         value: validation_auth.CustomerVerifyOTP,
         response: Response,

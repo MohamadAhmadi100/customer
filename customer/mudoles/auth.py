@@ -46,7 +46,7 @@ class AuthHandler:
         except InvalidTokenError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
 
-    def decode_refresh_token(self, token: bytes):
+    def decode_refresh_token(self, token: str):
         """
         decode refresh token and if the token wasn't expired call
         encode_access to generate new access token and if there was

@@ -51,7 +51,6 @@ def register(
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED
             message = {
-                "massage": "an error occurred during the registration process. Please try again ",
-                "label": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"
+                "error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"
             }
     return message

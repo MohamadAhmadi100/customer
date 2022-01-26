@@ -2,7 +2,6 @@ from datetime import timedelta, datetime
 
 import jwt
 from fastapi import HTTPException, Header
-from jwt import InvalidTokenError, ExpiredSignatureError
 from passlib.context import CryptContext
 from starlette import status
 
@@ -37,35 +36,49 @@ class AuthHandler:
         }
         return jwt.encode(pay_load, self.SECRET_KEY, algorithm='HS256').decode("utf-8")
 
-    def decode_access_token(self, token: str):
+    def decode_access_token(self, token: str) -> bool:
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            return False
+        except jwt.InvalidTokenError:
+            return False
+        else:
             return payload
-        except ExpiredSignatureError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='access token has expired')
-        except InvalidTokenError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
 
     def decode_refresh_token(self, token: str):
-        """
-        decode refresh token and if the token wasn't expired call
-        encode_access to generate new access token and if there was
-         problem it will return 401
-        :param token: refresh token
-        :return:
-        """
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=["HS256"])
-            user_name = payload["sub"]
-            new_access_token = self.encode_access_token(user_name)
-            return new_access_token
         except ExpiredSignatureError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='refresh token has expired')
+            return False
         except InvalidTokenError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid token')
+            return False
+        else:
+            return payload
 
     def check_current_user_tokens(self, access: str = Header('access'), refresh: str = Header('refresh')):
-        try:
-            self.decode_access_token(access)
-        except:
-            self.decode_refresh_token(refresh)
+
+        access_tok_payload = self.decode_access_token(access)
+        refresh_tok_payload = self.decode_refresh_token(refresh)
+
+        if access_tok_result:
+            header = {
+                "accessToken" : access_tok_payload,
+                "refreshToken" : refresh_tok_payload,
+
+            }
+            return header
+        elif refresh_tok_payload:
+            user_name = refresh_tok_payload.get("sub")
+            new_access_token = self.encode_access_token(user_name)
+
+            header = {
+                "accessToken": new_access_token,
+                "refreshToken": refresh_tok_payload,
+            }
+            return header
+
+
+        else:
+            raise HTTPException(status_code=401, detail={"error": "مجددا وارد شوید","redirect": "login"})
+

@@ -10,51 +10,48 @@ router_auth = APIRouter(
     prefix="/auth",
     tags=["auth"]
 )
-"""
-generate register form validations for frontend validations
-"""
+
 
 auth_handler = AuthHandler()
 
 
+# generate and send mobile number validations to front side
+
 @router_auth.get("/")
-def check_is_register_form_generator():
+def mobile_number_validation_generator():
     form = validation_auth.CustomerAuth.schema().get("properties").copy()
     return form
 
 
-"""
-register data validations on backend side
-"""
 
 
+# mobile number generator and validation
 @router_auth.post("/")
 def check_is_registered(
         response: Response,
         value: validation_auth.CustomerAuth
 ):
     # TODO fixed status code
+    # checking is exist mobile number in db
     customer = Customer(phone_number=value.customer_phone_number)
     if customer.is_exists_phone_number():
-        redirect = "/auth/login/" if customer.is_mobile_confirm() else "/auth/verify-otp/"
+        redirect = "login" if customer.is_mobile_confirm() else "loginOtp"
         response.status_code = status.HTTP_202_ACCEPTED
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
-            "customerIsConfirm": customer.is_customer_confirm(),
             "hasRegistered": True,
-            "massage": "You are already registered",
-            "label": "شما قبلا ثبت نام کرده اید.",
+            "massage": "شما قبلا ثبت نام کرده اید.",
             "redirect": redirect
         }
     else:
-        response.status_code = status.HTTP_200_OK
+        response.status_code = status.HTTP_202_ACCEPTED
         message = {
             "hasRegistered": False,
-            "massage": "You are not registered yet",
-            "label": "شما قبلا ثبت نام نکرده اید",
-            "redirect": "/register/"
+            "massage": "شما قبلا ثبت نام نکرده اید",
+            "redirect": "register"
         }
     return message
+
 
 
 @router_auth.post("/send-otp/")
@@ -66,13 +63,12 @@ def send_otp_code(value: validation_auth.CustomerAuth, response: Response):
         otp.generate_code(otp_code_length=4)
         otp.save()
         otp.send()
-        response.status_code = status.HTTP_200_OK
-        message = {"massage": "send OTP code", "label": "کد OTP ارسال شد"}
+        response.status_code = status.HTTP_202_ACCEPTED
+        message = {"massage": "کد OTP ارسال شد"}
     else:
         response.status_code = status.HTTP_423_LOCKED
         message = {
-            "massage": f" try after {expire_time} seconds",
-            "label": f"  لطفا بعد از {expire_time} ثانیه تلاش کنید ",
+            "message": f"  لطفا بعد از {expire_time} ثانیه تلاش کنید ",
         }
     return message
 
@@ -85,20 +81,20 @@ def verify_otp_cod(value: validation_auth.CustomerVerifyOTP, response: Response)
         customer = Customer(phone_number=value.customer_phone_number)
         if customer.mobile_confirm():
             response.status_code = status.HTTP_201_CREATED
-            message = {"massage": "otp code is valid", "label": "کد وارد شده صحیح است"}
+            message = {"massage": "کد وارد شده صحیح است"}
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED
-            message = {"massage": "sorry try again later", "label": "مشکلی رخ داده است لطفا بعدا امتحان کنید"}
+            message = {"error": "مشکلی رخ داده است لطفا بعدا امتحان کنید"}
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        message = {"massage": "otp code is wrong", "label": "کد وارد شده صحیح نمی‌باشد"}
+        message = { "error": "کد وارد شده صحیح نمی‌باشد"}
     return message
 
 
 @router_auth.get("/login/otp/")
 def otp_form_generator():
     form = validation_auth.CustomerVerifyOTP.schema().get("properties").copy()
-    return {"fields": form, "actions": {}}
+    return {"fields": form}
 
 
 @router_auth.post("/login/otp/")
@@ -114,17 +110,16 @@ def checking_login_otp_code(
             response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
             response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
 
-            message = {"massage": "you are successfully login", "label": "شما به درستی وارد شدید"}
+            message = {"massage": "شما به درستی وارد شدید"}
         else:
             response.status_code = status.HTTP_401_UNAUTHORIZED
-            message = {"massage": "the otp code is incorrect", "label": "کد وارد شده صحیح نمی‌باشد"}
+            message = {"error": "کد وارد شده صحیح نمی‌باشد"}
     else:
         response.status_code = status.HTTP_200_OK
         message = {
             "hasRegistered": False,
-            "massage": "you have not registered before",
-            "label": "شما قبلا ثبت نام نکرده اید",
-            "redirect": "/register/"
+            "massage": "شما قبلا ثبت نام نکرده اید",
+            "redirect": "register"
         }
     return message
 
@@ -147,25 +142,23 @@ def checking_login_password(
                 response.headers["accessToken"] = auth_handler.encode_access_token(
                     user_name=value.customer_phone_number
                 )
-                message = {"massage": "you are successfully login", "label": "شما به درستی وارد شدید"}
+                message = {"massage": "شما به درستی وارد شدید"}
             else:
                 response.status_code = status.HTTP_202_ACCEPTED
                 message = {
                     "customerIsMobileConfirm": customer.is_mobile_confirm(),
                     "customerIsConfirm": customer.is_customer_confirm(),
                     "hasRegistered": True,
-                    "massage": "your account has not been verified",
-                    "label": "شماره موبایل شما تایید نشده است",
+                    "massage": "شماره موبایل شما تایید نشده است",
                 }
         else:
             response.status_code = status.HTTP_401_UNAUTHORIZED
-            message = {"massage": "password is incorrect", "label": "پسورد اشتباه است"}
+            message = {"error": "پسورد اشتباه است"}
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         message = {
             "hasRegistered": False,
-            "massage": "you are not registered yet",
-            "label": "شما قبلا ثبت نام نکرده اید",
+            "error": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
     return message

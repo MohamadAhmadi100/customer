@@ -18,13 +18,15 @@ auth_handler = AuthHandler()
 def set_password(
         value: validation_profile.CustomerSetPassword,
         response: Response,
-        token=Depends(auth_handler.check_current_user_tokens)
+        outh_header=Depends(auth_handler.check_current_user_tokens)
 ):
     customer = Customer(phone_number=value.customer_phone_number)
     if customer.save():
         response.status_code = status.HTTP_200_OK
-        message = {"massage": "you have successfully registered", "label": "ثبت نام شما با موفقیت انجام شد"}
+        response.headers["accessToken"] = outh_header["accessToken"]
+        response.headers["refreshToken"] = outh_header["refreshToken"]
+        message = {"message": "ثبت نام شما با موفقیت انجام شد"}
     else:
         response.status_code = status.HTTP_417_EXPECTATION_FAILED
-        message = {"massage": "your registration failed ", "label": "ثبت نام شما با مشکل مواجه شد لطفا دوباره سعی کنید"}
+        message = {"massage": "ثبت نام شما با مشکل مواجه شد لطفا دوباره سعی کنید"}
     return message

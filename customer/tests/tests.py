@@ -8,7 +8,7 @@ client = TestClient(app)
 
 
 def test_send_otp():
-    time.sleep(120)
+    # time.sleep(120)
     header = {"content-Type": "application/json"}
     url = "/send-otp/"
 

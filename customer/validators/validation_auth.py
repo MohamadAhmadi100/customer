@@ -32,7 +32,7 @@ class CustomerAuth(BaseModel):
         pattern = r"^09[0-9]{9}$"
         match = re.fullmatch(pattern, phone_number)
         if not match:
-            raise HTTPException(status_code=422, detail={"error": "Please enter a valid phone number"})
+            raise HTTPException(status_code=422, detail={"error": "شماره موبایل به درستی وارد نشده است"})
         return phone_number
 
 
@@ -56,7 +56,7 @@ class CustomerVerifyOTP(CustomerAuth):
         pattern = r"^[0-9]{4}$"
         match = re.fullmatch(pattern, code)
         if not match:
-            raise HTTPException(status_code=422, detail={"error": "Please enter a valid otp"})
+            raise HTTPException(status_code=422, detail={"error": "کد وارد نشده صحیح نمی باشد"})
         return code
 
 
@@ -80,5 +80,5 @@ class CustomerVerifyPassword(CustomerAuth):
         pattern = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,32}$"
         match = re.fullmatch(pattern, code)
         if not match:
-            raise HTTPException(status_code=422, detail={"error": "Please enter a valid password"})
+            raise HTTPException(status_code=422, detail={"error": "رمز وارد شده صحیح نمی باشد"})
         return code

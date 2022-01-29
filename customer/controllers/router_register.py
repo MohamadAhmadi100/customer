@@ -14,9 +14,9 @@ auth_handler = AuthHandler()
 
 
 @router_register.get("/")
-def login_otp():
+def register_validation_generator():
     form = validation_register.CustomerRegister.schema().get("properties").copy()
-    return {"fields": form, "actions": {}}
+    return {"fields": form}
 
 
 @router_register.post("/")
@@ -40,17 +40,14 @@ def register(
         response.status_code = status.HTTP_409_CONFLICT
         message = {
             "hasRegistered": True,
-            "massage": "You are already registered",
-            "label": "شما قبلا ثبت نام کرده اید.",
+            "massage": "شما قبلا ثبت نام کرده اید.",
             "redirect": "login"
         }
     else:
         if customer.save():
             response.status_code = status.HTTP_201_CREATED
-            message = {"massage": "You have registered correctly ", "label": "شما به درستی ثبت نام شدید"}
+            message = {"massage": "ثبت نام شما با موفقیت انجام شد"}
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED
-            message = {
-                "error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"
-            }
+            message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
     return message

@@ -11,7 +11,6 @@ router_auth = APIRouter(
     tags=["auth"]
 )
 
-
 auth_handler = AuthHandler()
 
 
@@ -21,8 +20,6 @@ auth_handler = AuthHandler()
 def mobile_number_validation_generator():
     form = validation_auth.CustomerAuth.schema().get("properties").copy()
     return form
-
-
 
 
 # mobile number generator and validation
@@ -51,7 +48,6 @@ def check_is_registered(
             "redirect": "register"
         }
     return message
-
 
 
 @router_auth.post("/send-otp/")
@@ -87,7 +83,7 @@ def verify_otp_cod(value: validation_auth.CustomerVerifyOTP, response: Response)
             message = {"error": "مشکلی رخ داده است لطفا بعدا امتحان کنید"}
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        message = { "error": "کد وارد شده صحیح نمی‌باشد"}
+        message = {"error": "کد وارد شده صحیح نمی‌باشد"}
     return message
 
 

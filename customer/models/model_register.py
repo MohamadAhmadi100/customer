@@ -133,12 +133,6 @@ class Customer:
                     "customerAddress": self.customer_address
                 }
             ],
-            "customerAddress:": {
-                "customerCity": self.customer_city,
-                "customerProvince": self.customer_province,
-                "customerProvinceCode": self.customer_province_code,
-                "customerAddress": self.customer_address
-            },
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": "",
         }

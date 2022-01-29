@@ -30,7 +30,7 @@ class CustomerRegister(BaseModel):
         maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,32}$",
+        regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_last_name: str = Field(
@@ -43,12 +43,13 @@ class CustomerRegister(BaseModel):
         maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,32}$",
+        regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_national_id: str = Field(
         description="",
         title="کد ملی",
+        alias="customerNationalID",
         name="customerNationalID",
         placeholder="6150077698",
         minLength=10,
@@ -59,7 +60,7 @@ class CustomerRegister(BaseModel):
         regexPattern="^[0-9]{10}$",
 
     )
-    customer_city: str = Field(
+    customer_city:  Optional[str] = Field(
         alias="customerCity",
         description="",
         title="نام شهر",
@@ -69,10 +70,10 @@ class CustomerRegister(BaseModel):
         maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,32}$",
+        regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
-    customer_province: str = Field(
+    customer_province:  Optional[str] = Field(
         alias="customerProvince",
         description="",
         title="استان",
@@ -82,7 +83,7 @@ class CustomerRegister(BaseModel):
         maxLength=32,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{2,32}$",
+        regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_address: Optional[str] = Field(
@@ -95,7 +96,7 @@ class CustomerRegister(BaseModel):
         maxLength=128,
         dataType="string",
         type="text",
-        regexPattern="^[\u0600-\u06FF]{8,128}$",
+        regexPattern="^[\\u0600-\\u06FF]{8,128}$",
         isRquired=False,
     )
 

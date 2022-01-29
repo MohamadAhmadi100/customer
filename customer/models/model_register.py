@@ -1,3 +1,5 @@
+import time
+
 from customer.helper.connection import MongoConnection
 
 
@@ -75,9 +77,22 @@ class Customer:
     def set_password(self, password: str) -> None:
         self.customer_password = password
 
-    def save(self):
+    @staticmethod
+    def get_next_sequence_customer_id() -> int:
         with MongoConnection() as mongo:
-            result = mongo.collection.insert_one(self.__dict__)
+            if not mongo.collection.find_one():
+                return 0
+            else:
+                result = mongo.collection.find({}, {'_id': 0}).limit(1).sort("customerCrateTime", -1)
+                return result[0].get("customerID") + 1
+
+    def save(self) -> bool:
+        customer_data = self.__dict__
+        customer_data["customerID"] = self.get_next_sequence_customer_id()
+        customer_data["customerCrateTime"] = time.time()
+
+        with MongoConnection() as mongo:
+            result = mongo.collection.insert_one(customer_data)
         return True if result.acknowledged else False
 
     def set_data(

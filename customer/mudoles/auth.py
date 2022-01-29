@@ -3,7 +3,6 @@ from datetime import timedelta, datetime
 import jwt
 from fastapi import HTTPException, Header
 from passlib.context import CryptContext
-from starlette import status
 
 
 class AuthHandler:
@@ -49,9 +48,9 @@ class AuthHandler:
     def decode_refresh_token(self, token: str):
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=["HS256"])
-        except ExpiredSignatureError:
+        except jwt.ExpiredSignatureError:
             return False
-        except InvalidTokenError:
+        except jwt.InvalidTokenError:
             return False
         else:
             return payload
@@ -61,24 +60,23 @@ class AuthHandler:
         access_tok_payload = self.decode_access_token(access)
         refresh_tok_payload = self.decode_refresh_token(refresh)
 
-        if access_tok_result:
-            header = {
-                "accessToken" : access_tok_payload,
-                "refreshToken" : refresh_tok_payload,
+        if access_tok_payload:
+            user_name = refresh_tok_payload.get("sub")
 
+            tokens = {
+                "accessToken": access_tok_payload,
+                "refreshToken": refresh_tok_payload,
             }
-            return header
+            return user_name, tokens
+
         elif refresh_tok_payload:
             user_name = refresh_tok_payload.get("sub")
             new_access_token = self.encode_access_token(user_name)
-
-            header = {
+            tokens = {
                 "accessToken": new_access_token,
                 "refreshToken": refresh_tok_payload,
             }
-            return header
-
+            return user_name, tokens
 
         else:
-            raise HTTPException(status_code=401, detail={"error": "مجددا وارد شوید","redirect": "login"})
-
+            raise HTTPException(status_code=401, detail={"error": "مجددا وارد شوید", "redirect": "login"})

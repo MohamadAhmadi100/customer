@@ -1,4 +1,4 @@
-from fastapi import Response
+from fastapi import Response, Depends
 from fastapi import status, APIRouter
 
 from customer.models.model_register import Customer
@@ -76,7 +76,7 @@ def verify_otp_cod(value: validation_auth.CustomerVerifyOTP, response: Response)
     if otp.get_otp() and otp.get_otp() == value.customer_code:
         customer = Customer(phone_number=value.customer_phone_number)
         if customer.mobile_confirm():
-            response.status_code = status.HTTP_201_CREATED
+            response.status_code = status.HTTP_202_ACCEPTED
             message = {"massage": "کد وارد شده صحیح است"}
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED
@@ -158,3 +158,13 @@ def checking_login_password(
             "redirect": "register"
         }
     return message
+
+
+@router_auth.post("/check-token/")
+def check_token(
+        response: Response,
+        auth_header=Depends(auth_handler.check_current_user_tokens)
+):
+    response.status_code = status.HTTP_202_ACCEPTED
+    response.headers["accessToken"] = auth_header["access_token"]
+    response.headers["refreshToken"] = auth_header["refresh_token"]

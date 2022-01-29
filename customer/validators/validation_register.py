@@ -49,6 +49,7 @@ class CustomerRegister(BaseModel):
     customer_national_id: str = Field(
         description="",
         title="کد ملی",
+        alias="customerNationalID",
         name="customerNationalID",
         placeholder="6150077698",
         minLength=10,

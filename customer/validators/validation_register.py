@@ -60,7 +60,7 @@ class CustomerRegister(BaseModel):
         regexPattern="^[0-9]{10}$",
 
     )
-    customer_city: str = Field(
+    customer_city:  Optional[str] = Field(
         alias="customerCity",
         description="",
         title="نام شهر",
@@ -73,7 +73,7 @@ class CustomerRegister(BaseModel):
         regexPattern="^[\u0600-\u06FF]{2,32}$",
         isRquired=True,
     )
-    customer_province: str = Field(
+    customer_province:  Optional[str] = Field(
         alias="customerProvince",
         description="",
         title="استان",

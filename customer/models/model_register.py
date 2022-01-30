@@ -33,6 +33,12 @@ class Customer:
         self.customer_address: str = ""
         self.customer_national_id: str = ""
 
+    def set_activity(self):
+        with MongoConnection() as mongo:
+            pyload = {"customerPhoneNumber": self.customer_phone_number}
+            pipe_line = {"$set": {"customerIsActive": False}}
+            mongo.customer.find_one_and_update(pyload, pipe_line)
+
     def is_exists_phone_number(self) -> bool:
         with MongoConnection() as mongo:
             pyload = {"customerPhoneNumber": self.customer_phone_number}
@@ -125,6 +131,7 @@ class Customer:
             "customerNationalID": self.customer_national_id,
             "customerIsMobileConfirm": False,
             "customerIsConfirm": False,
+            "customerIsActive": True,
             "customerAddresses": [
                 {
                     "customerCity": self.customer_city,

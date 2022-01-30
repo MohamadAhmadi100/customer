@@ -4,6 +4,7 @@ from fastapi import Response, status
 from customer.models.model_register import Customer
 from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_register
+from customer.validators import validation_auth
 
 router_register = APIRouter(
     prefix="/register",
@@ -11,6 +12,16 @@ router_register = APIRouter(
 )
 
 auth_handler = AuthHandler()
+
+
+@router_register.post("/deactivate_user")
+def register_validation_generator(
+        response: Response,
+        value: validation_auth.CustomerAuth,
+):
+    customer = Customer(value.customer_phone_number)
+    customer.set_activity()
+    return response.status_code
 
 
 @router_register.get("/")

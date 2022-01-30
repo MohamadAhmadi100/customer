@@ -148,7 +148,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_city")
     def validate_customer_city(cls, customer_city):
-        pattern = r"^[\u0600-\u06FF]{2,32}$"
+        pattern = r"^(?=.*?[\u0600-\u06FF])(\s)?.{2,32}$"
         match = re.fullmatch(pattern, customer_city)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid city"})
@@ -156,7 +156,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_province")
     def validate_customer_province(cls, customer_province):
-        pattern = r"^[\u0600-\u06FF]{2,32}$"
+        pattern = r"^(?=.*?[\u0600-\u06FF])(\s)?.{2,32}$"
         match = re.fullmatch(pattern, customer_province)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid province"})
@@ -164,7 +164,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_address")
     def validate_customer_address(cls, customer_address):
-        pattern = r"^[\u0600-\u06FF]{4,128}$"
+        pattern = r"^(?=.*?[\u0600-\u06FF])([0-9,;-])?(\s)?.{4,128}$"
         match = re.fullmatch(pattern, customer_address)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid address"})

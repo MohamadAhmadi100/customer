@@ -19,7 +19,7 @@ class Customer:
         "customer_national_id"
     ]
 
-    CUSTOMER_TYPE: tuple = ('B2C', 'B2B')
+    CUSTOMER_TYPE: tuple = ('B2B',)
 
     def __init__(self, phone_number: str):
         self.customer_phone_number = phone_number

@@ -166,5 +166,9 @@ def check_token(
         auth_header=Depends(auth_handler.check_current_user_tokens)
 ):
     response.status_code = status.HTTP_202_ACCEPTED
-    response.headers["accessToken"] = auth_header["access_token"]
-    response.headers["refreshToken"] = auth_header["refresh_token"]
+    username, token_dict = auth_header
+
+    response.headers["accessToken"] = token_dict.get("access_token")
+    response.headers["refreshToken"] = token_dict.get("refresh_token")
+
+    return {"customerPhoneNumber": username}

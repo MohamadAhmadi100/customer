@@ -64,8 +64,10 @@ class AuthHandler:
             user_name = refresh_tok_payload.get("sub")
 
             tokens = {
-                "accessToken": access_tok_payload,
-                "refreshToken": refresh_tok_payload,
+                "access_token_payload": access_tok_payload,
+                "refresh_token_payload": refresh_tok_payload,
+                "access_token": access,
+                "refresh_token": refresh,
             }
             return user_name, tokens
 
@@ -73,8 +75,10 @@ class AuthHandler:
             user_name = refresh_tok_payload.get("sub")
             new_access_token = self.encode_access_token(user_name)
             tokens = {
-                "accessToken": new_access_token,
-                "refreshToken": refresh_tok_payload,
+                "access_token_payload": access_tok_payload,
+                "refresh_token_payload": refresh_tok_payload,
+                "access_token": new_access_token,
+                "refresh_token": refresh,
             }
             return user_name, tokens
 

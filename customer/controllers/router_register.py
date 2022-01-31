@@ -14,16 +14,6 @@ router_register = APIRouter(
 auth_handler = AuthHandler()
 
 
-@router_register.post("/deactivate_user")
-def register_validation_generator(
-        response: Response,
-        value: validation_auth.CustomerAuth,
-):
-    customer = Customer(value.customer_phone_number)
-    customer.set_activity()
-    return response.status_code
-
-
 @router_register.get("/")
 def register_validation_generator():
     form = validation_register.CustomerRegister.schema().get("properties").copy()
@@ -43,7 +33,7 @@ def register(
         customer_address=value.customer_address,
         customer_city=value.customer_city,
         customer_province=value.customer_province,
-        customer_province_code=value.customer_province_code,
+        customer_postal_code=value.customer_postal_code,
         customer_national_id=value.customer_national_id
     )
 

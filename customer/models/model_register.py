@@ -14,7 +14,7 @@ class Customer:
         "customer_address",
         "customer_city",
         "customer_province",
-        "customer_province_code",
+        "customer_postal_code",
         "customer_address",
         "customer_national_id"
     ]

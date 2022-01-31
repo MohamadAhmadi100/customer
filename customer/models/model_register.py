@@ -29,7 +29,7 @@ class Customer:
         self.customer_address: str = ""
         self.customer_city: str = ""
         self.customer_province: str = ""
-        self.customer_province_code: str = ""
+        self.customer_postal_code: str = ""
         self.customer_address: str = ""
         self.customer_national_id: str = ""
 
@@ -109,7 +109,7 @@ class Customer:
             customer_address,
             customer_city,
             customer_province,
-            customer_province_code,
+            customer_postal_code,
             customer_national_id,
     ) -> None:
         self.customer_phone_number = customer_phone_number
@@ -118,7 +118,7 @@ class Customer:
         self.customer_address = customer_address
         self.customer_city = customer_city
         self.customer_province = customer_province
-        self.customer_province_code = customer_province_code
+        self.customer_postal_code = customer_postal_code
         self.customer_address = customer_address
         self.customer_national_id = customer_national_id
 
@@ -134,7 +134,7 @@ class Customer:
             "customerIsActive": True,
             "customerCity": self.customer_city,
             "customerProvince": self.customer_province,
-            "customerProvinceCode": self.customer_province_code,
+            "customerPostalCode": self.customer_postal_code,
             "customerAddress": self.customer_address,
             "customerType": self.CUSTOMER_TYPE,
             "customerEmail": "",

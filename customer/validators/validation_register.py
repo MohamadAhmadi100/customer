@@ -100,11 +100,11 @@ class CustomerRegister(BaseModel):
         isRquired=False,
     )
 
-    customer_province_code: Optional[str] = Field(
-        alias="customerProvinceCode",
+    customer_postal_code: Optional[str] = Field(
+        alias="customerPostalCode",
         description="",
         title="کد پستی",
-        name="customerProvinceCode",
+        name="customerPostalCode",
         placeholder="4571915113",
         minLength=10,
         maxLength=10,
@@ -170,10 +170,10 @@ class CustomerRegister(BaseModel):
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid address"})
         return customer_address
 
-    @validator("customer_province_code")
-    def validate_customer_province_code(cls, customer_province_code):
+    @validator("customer_postal_code")
+    def validate_customer_postal_code(cls, customer_postal_code):
         pattern = r"^[0-9]{10}$"
-        match = re.fullmatch(pattern, customer_province_code)
+        match = re.fullmatch(pattern, customer_postal_code)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid province code"})
-        return customer_province_code
+        return customer_postal_code

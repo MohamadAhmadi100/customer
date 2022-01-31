@@ -93,7 +93,7 @@ class Customer:
                 return result[0].get("customerID") + 1
 
     def save(self) -> bool:
-        customer_data = self.__dict__
+        customer_data = {key: value for key, value in __dict__.items() if value}
         customer_data["customerID"] = self.get_next_sequence_customer_id()
         customer_data["customerCrateTime"] = time.time()
 
@@ -132,14 +132,9 @@ class Customer:
             "customerIsMobileConfirm": False,
             "customerIsConfirm": False,
             "customerIsActive": True,
-            "customerAddresses": [
-                {
-                    "customerCity": self.customer_city,
-                    "customerProvince": self.customer_province,
-                    "customerProvinceCode": self.customer_province_code,
-                    "customerAddress": self.customer_address
-                }
-            ],
+            "customerCity": self.customer_city,
+            "customerProvince": self.customer_province,
+            "customerProvinceCode": self.customer_province_code,
+            "customerAddress": self.customer_address,
             "customerType": self.CUSTOMER_TYPE,
-            "customerPassword": "",
         }

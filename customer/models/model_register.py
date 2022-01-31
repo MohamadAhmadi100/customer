@@ -93,12 +93,12 @@ class Customer:
                 return result[0].get("customerID") + 1
 
     def save(self) -> bool:
-        customer_data = {key: value for key, value in __dict__.items() if value}
-        customer_data["customerID"] = self.get_next_sequence_customer_id()
-        customer_data["customerCrateTime"] = time.time()
+        oter_obj = self.__dict__
+        oter_obj["customerID"] = self.get_next_sequence_customer_id()
+        oter_obj["customerCrateTime"] = time.time()
 
         with MongoConnection() as mongo:
-            result = mongo.customer.insert_one(customer_data)
+            result = mongo.customer.insert_one(oter_obj)
         return True if result.acknowledged else False
 
     def set_data(
@@ -137,4 +137,7 @@ class Customer:
             "customerProvinceCode": self.customer_province_code,
             "customerAddress": self.customer_address,
             "customerType": self.CUSTOMER_TYPE,
+            "customerEmail": "",
+            "customerShopeName": "",
+            "customerAccoountNumber":"",
         }

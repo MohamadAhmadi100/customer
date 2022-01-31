@@ -124,7 +124,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_first_name")
     def validate_customer_first_name(cls, customer_first_name):
-        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        pattern = r"^(?=.*?[\u0600-\u06FF])([0-9,;-])?(\s)?.{2,16}$"
         match = re.fullmatch(pattern, customer_first_name)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid first name"})
@@ -132,7 +132,7 @@ class CustomerRegister(BaseModel):
 
     @validator("customer_last_name")
     def validate_customer_last_name(cls, customer_last_name):
-        pattern = r"^[\u0600-\u06FF]{2,16}$"
+        pattern = r"^(?=.*?[\u0600-\u06FF])([0-9,;-])?(\s)?.{2,16}$"
         match = re.fullmatch(pattern, customer_last_name)
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid last name"})

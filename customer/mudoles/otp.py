@@ -4,6 +4,7 @@ import time
 from typing import Optional, Union, Tuple
 
 import redis
+import requests
 from kavenegar import KavenegarAPI
 
 
@@ -29,19 +30,19 @@ class OTP:
 
     # TODO rewrite
     def send(self) -> tuple:
-        params = {
-            "sender": self.SENDER_NUM,  # type: str
-            "receptor": self.phone_number,  # type: str
-            "message": f" کد فعال سازی: {self.otp_code} \n آسود"
-        }
+        token = "535041646375714D57613535695561696E7355724A796B2B5657715833434939"
+        template = "logincode"
+        url = f"https://api.kavenegar.com/v1/{token}/verify/lookup.json?"
+        url += f"receptor={self.phone_number}&"
+        url += f"token={self.otp_code}&"
+        url += f"template={template}"
+
         try:
-            response: list = self.API.sms_send(params)
-            if (response[0].get("status") < 6) or (response[0].get("status") == 10):
-                return {"message": "success"}, True
-            else:
-                return {"message": response}, False
+            result = requests.post(url)
         except Exception as e:
             return {"error": e}, False
+        else:
+            return {"message": result}, True
 
     def save(self, resend_time=120, expire_time=600) -> None:
         value_dict = {

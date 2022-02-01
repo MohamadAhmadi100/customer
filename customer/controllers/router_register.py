@@ -47,7 +47,10 @@ def register(
     else:
         if customer.save():
             response.status_code = status.HTTP_201_CREATED
-            message = {"massage": "ثبت نام شما با موفقیت انجام شد"}
+            message = {
+                "massage": "ثبت نام شما با موفقیت انجام شد",
+                "data": customer.get_customer()
+            }
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}

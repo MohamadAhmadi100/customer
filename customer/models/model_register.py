@@ -1,4 +1,5 @@
 import time
+from typing import Tuple, Union, Any, Dict, Optional
 
 from customer.helper.connection import MongoConnection
 
@@ -92,13 +93,17 @@ class Customer:
                 result = mongo.customer.find({}, {'_id': 0}).limit(1).sort("customerCrateTime", -1)
                 return result[0].get("customerID") + 1
 
+    def get_customer(self):
+        with MongoConnection() as mongo:
+            return mongo.customer.find_one({"customerPhoneNumber": self.customer_phone_number}, {"_id": 0})
+
     def save(self) -> bool:
         oter_obj = self.__dict__
         oter_obj["customerID"] = self.get_next_sequence_customer_id()
         oter_obj["customerCrateTime"] = time.time()
 
         with MongoConnection() as mongo:
-            result = mongo.customer.insert_one(oter_obj)
+            result: object = mongo.customer.insert_one(oter_obj)
         return True if result.acknowledged else False
 
     def set_data(

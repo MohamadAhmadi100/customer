@@ -33,6 +33,7 @@ class CustomerRegister(BaseModel):
         regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
+
     customer_last_name: str = Field(
         description="",
         alias="customerLastName",
@@ -44,6 +45,19 @@ class CustomerRegister(BaseModel):
         dataType="string",
         type="text",
         regexPattern="^[\\u0600-\\u06FF]{2,32}$",
+        isRquired=True,
+    )
+
+    customer_region_code: str = Field(
+        description="",
+        alias="customerRegionCode",
+        # title="نام خانوادگی",
+        name="customerRegionCode",
+        minLength=1,
+        maxLength=8,
+        dataType="string",
+        type="hidden",
+        # regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
     customer_national_id: str = Field(
@@ -73,6 +87,18 @@ class CustomerRegister(BaseModel):
         regexPattern="^[\\u0600-\\u06FF]{2,32}$",
         isRquired=True,
     )
+    customer_city_id: Optional[str] = Field(
+        alias="customerCityID",
+        description="",
+        title="ای دی شهر",
+        name="customerCityID",
+        minLength=1,
+        maxLength=8,
+        dataType="string",
+        type="hidden",
+        regexPattern="^[0-9]{1,8}$",
+        isRquired=True,
+    )
     customer_province: Optional[str] = Field(
         alias="customerProvince",
         description="",
@@ -84,6 +110,18 @@ class CustomerRegister(BaseModel):
         dataType="string",
         type="text",
         regexPattern="^[\\u0600-\\u06FF]{2,32}$",
+        isRquired=True,
+    )
+    customer_province_id: Optional[str] = Field(
+        alias="customerProvinceID",
+        description="",
+        title="ای دی استان",
+        name="customerProvinceID",
+        minLength=1,
+        maxLength=8,
+        dataType="string",
+        type="hidden",
+        # regexPattern="^[0-9]{1,8}$",
         isRquired=True,
     )
     customer_address: Optional[str] = Field(
@@ -177,3 +215,19 @@ class CustomerRegister(BaseModel):
         if not match:
             raise HTTPException(status_code=422, detail={"error": "Please enter a valid province code"})
         return customer_postal_code
+    #
+    # @validator("customer_province_id")
+    # def validate_customer_province_id(cls, customer_province_id):
+    #     pattern = r"^[0-9]{1,8}$"
+    #     match = re.fullmatch(pattern, customer_province_id)
+    #     if not match:
+    #         raise HTTPException(status_code=422, detail={"error": "Please enter a valid address"})
+    #     return customer_province_id
+    #
+    # @validator("customer_city_id")
+    # def validate_customer_city_id(cls, customer_city_id):
+    #     pattern = r"^[0-9]{1,8}$"
+    #     match = re.fullmatch(pattern, customer_city_id)
+    #     if not match:
+    #         raise HTTPException(status_code=422, detail={"error": "Please enter a valid province code"})
+    #     return customer_city_id

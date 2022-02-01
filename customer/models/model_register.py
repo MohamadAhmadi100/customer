@@ -144,5 +144,5 @@ class Customer:
             "customerType": self.CUSTOMER_TYPE,
             "customerEmail": "",
             "customerShopeName": "",
-            "customerAccoountNumber":"",
+            "customerAccoountNumber": "",
         }

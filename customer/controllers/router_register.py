@@ -1,3 +1,6 @@
+import json
+
+import requests
 from fastapi import APIRouter
 from fastapi import Response, status
 
@@ -46,6 +49,25 @@ def register(
         }
     else:
         if customer.save():
+            url = "http://devaddr.aasood.com/address/insert"
+            customer_data = customer.get_customer()
+            customer_address_data = {
+                "customerName": value.customer_first_name + " " + customer.customer_last_name,
+                "customerId": customer_data.get("customerID"),
+                "stateName": value.customer_province,
+                "cityName": value.customer_city,
+                "stateId": value.customer_province_id,
+                "cityId": value.customer_city_id,
+                "postalCode": value.customer_postal_code,
+                "street": value.customer_address,
+                "isDefault": True,
+                "regionCode": value.customer_region_code,
+                "alley": "",
+                "plaque": "",
+                "unit": "",
+                "tel": value.customer_phone_number
+            }
+            requests.post(url, data=json.dumps(customer_address_data))
             response.status_code = status.HTTP_201_CREATED
             message = {
                 "massage": "ثبت نام شما با موفقیت انجام شد",

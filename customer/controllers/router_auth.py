@@ -1,3 +1,5 @@
+import json
+
 from fastapi import Response, Depends
 from fastapi import status, APIRouter
 
@@ -123,6 +125,12 @@ def checking_login_otp_code(
     return message
 
 
+@router_auth.get("/login/otp/")
+def otp_form_generator():
+    form = validation_auth.CustomerVerifyPassword.schema().get("properties").copy()
+    return {"fields": json.dumps(form)}
+
+
 @router_auth.post("/login/password/")
 def checking_login_password(
         value: validation_auth.CustomerVerifyPassword,
@@ -141,7 +149,11 @@ def checking_login_password(
                 response.headers["accessToken"] = auth_handler.encode_access_token(
                     user_name=value.customer_phone_number
                 )
-                message = {"massage": "شما به درستی وارد شدید"}
+                message = {
+                    "massage": "شما به درستی وارد شدید",
+                    "data": customer.get_customer()
+
+                }
             else:
                 response.status_code = status.HTTP_202_ACCEPTED
                 message = {
@@ -173,5 +185,5 @@ def check_token(
 
     response.headers["accessToken"] = token_dict.get("access_token")
     response.headers["refreshToken"] = token_dict.get("refresh_token")
-
-    return {"customerPhoneNumber": username}
+    customer = Customer(username)
+    return {"data": customer.get_customer()}

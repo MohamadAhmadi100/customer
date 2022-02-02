@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi import Response, status
 
 from customer.models.model_register import Customer
-from customer.models.model_register import Customer
+from customer.models.model_profile import Profile
 from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_profile, validation_auth
 
@@ -21,30 +21,25 @@ def get_profile(
 
 ):
     user, header = auth_header
-    return user
+    profile = Profile(user)
+    result = profile.get_profile_datas()
 
+    if result:
+        response.status_code = status.HTTP_200_OK
+        return result
+    else:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        message = {"massage": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
+        return message
 
-@router_profile.put("/edit-data")
+@router_profile.put("/edit-data/")
 def edit_profile_data(
         response: Response,
-        auth_header=Depends(auth_handler.check_current_user_tokens),
-):
-    pass
+        value:validation_profile.EditProfile,
+        # auth_header=Depends(auth_handler.check_current_user_tokens),
 
-
-@router_profile.post("/set-password/")
-def set_password(
-        value: validation_profile.CustomerSetPassword,
-        response: Response,
-        auth_header=Depends(auth_handler.check_current_user_tokens)
 ):
-    customer = Customer(phone_number=value.customer_phone_number)
-    if customer.save():
-        response.status_code = status.HTTP_200_OK
-        response.headers["accessToken"] = auth_header["access_token"]
-        response.headers["refreshToken"] = auth_header["refresh_token"]
-        message = {"message": "رمز عبور با موفقیت تغییر کرد"}
-    else:
-        response.status_code = status.HTTP_417_EXPECTATION_FAILED
-        message = {"massage": "تغییر رمز عبور با مشکل مواجه شد لطفا دوباره سعی کنید"}
-    return message
+    profile = Profile(value)
+    result = profile.update_profile()
+
+    return result

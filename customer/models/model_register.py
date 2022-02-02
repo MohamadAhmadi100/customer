@@ -116,6 +116,7 @@ class Customer:
             customer_province,
             customer_postal_code,
             customer_national_id,
+            customer_password
     ) -> None:
         self.customer_phone_number = customer_phone_number
         self.customer_first_name = customer_first_name
@@ -126,6 +127,7 @@ class Customer:
         self.customer_postal_code = customer_postal_code
         self.customer_address = customer_address
         self.customer_national_id = customer_national_id
+        self.customer_password = customer_password
 
     @property
     def __dict__(self) -> dict:
@@ -142,6 +144,7 @@ class Customer:
             "customerPostalCode": self.customer_postal_code,
             "customerAddress": self.customer_address,
             "customerType": self.CUSTOMER_TYPE,
+            "customerPassword": self.customer_password,
             "customerEmail": "",
             "customerShopeName": "",
             "customerAccoountNumber": "",

@@ -1,7 +1,7 @@
 import json
 
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi import Response, status
 
 from customer.models.model_register import Customer
@@ -37,7 +37,8 @@ def register(
         customer_city=value.customer_city,
         customer_province=value.customer_province,
         customer_postal_code=value.customer_postal_code,
-        customer_national_id=value.customer_national_id
+        customer_national_id=value.customer_national_id,
+        customer_password=value.customer_password
     )
 
     if customer.is_exists_phone_number() or customer.is_exists_national_id():
@@ -48,6 +49,9 @@ def register(
             "redirect": "login"
         }
     else:
+        if value.customer_password != value.customer_verify_password:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            raise HTTPException(status_code=422, detail={"error": "رمز عبور های وارد شده یکسان نیستند"})
         if customer.save():
             url = "http://devaddr.aasood.com/address/insert"
             customer_data = customer.get_customer()
@@ -71,7 +75,6 @@ def register(
             response.status_code = status.HTTP_201_CREATED
             message = {
                 "massage": "ثبت نام شما با موفقیت انجام شد",
-                "data": customer.get_customer()
             }
         else:
             response.status_code = status.HTTP_417_EXPECTATION_FAILED

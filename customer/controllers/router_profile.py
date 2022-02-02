@@ -13,14 +13,14 @@ router_profile = APIRouter(
 
 auth_handler = AuthHandler()
 
+
 @router_profile.get("/")
 def get_profile(
         response: Response,
         auth_header=Depends(auth_handler.check_current_user_tokens),
 
-
 ):
-    user,header = auth_header
+    user, header = auth_header
     return user
 
 
@@ -29,8 +29,8 @@ def edit_profile_data(
         response: Response,
         auth_header=Depends(auth_handler.check_current_user_tokens),
 ):
-
     pass
+
 
 @router_profile.post("/set-password/")
 def set_password(
@@ -48,4 +48,3 @@ def set_password(
         response.status_code = status.HTTP_417_EXPECTATION_FAILED
         message = {"massage": "تغییر رمز عبور با مشکل مواجه شد لطفا دوباره سعی کنید"}
     return message
->>>>>>> Stashed changes

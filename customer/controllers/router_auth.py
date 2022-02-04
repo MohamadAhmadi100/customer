@@ -187,3 +187,17 @@ def check_token(
     response.headers["refreshToken"] = token_dict.get("refresh_token")
     customer = Customer(username)
     return {"data": customer.get_customer()}
+
+
+@router_auth.post("/check-token/")
+def check_token(
+        response: Response,
+        auth_header=Depends(auth_handler.check_current_user_tokens)
+):
+    response.status_code = status.HTTP_202_ACCEPTED
+    username, token_dict = auth_header
+
+    response.headers["accessToken"] = token_dict.get("access_token")
+    response.headers["refreshToken"] = token_dict.get("refresh_token")
+    customer = Customer(username)
+    return {"data": customer.get_customer()}

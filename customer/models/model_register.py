@@ -1,5 +1,8 @@
+import json
 import time
 from typing import Tuple, Union, Any, Dict, Optional
+
+import requests
 
 from customer.helper.connection import MongoConnection
 
@@ -34,6 +37,7 @@ class Customer:
         self.customer_address: str = ""
         self.customer_national_id: str = ""
 
+    # Todo check acknowledged and return bool
     def set_activity(self):
         with MongoConnection() as mongo:
             pyload = {"customerPhoneNumber": self.customer_phone_number}
@@ -95,8 +99,15 @@ class Customer:
 
     def get_customer(self):
         with MongoConnection() as mongo:
-            return mongo.customer.find_one({"customerPhoneNumber": self.customer_phone_number}, {"_id": 0})
+            # delete request
+            result: dict = mongo.customer.find_one({"customerPhoneNumber": self.customer_phone_number}, {"_id": 0})
+            url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
+            customer_addresses = requests.get(url)
+            customer_addresses = json.loads(customer_addresses.content)
+            result["addresses"] = customer_addresses.get("result")
+            return result
 
+    # edit oter_obj
     def save(self) -> bool:
         oter_obj = self.__dict__
         oter_obj["customerID"] = self.get_next_sequence_customer_id()
@@ -139,10 +150,6 @@ class Customer:
             "customerIsMobileConfirm": False,
             "customerIsConfirm": False,
             "customerIsActive": True,
-            "customerCity": self.customer_city,
-            "customerProvince": self.customer_province,
-            "customerPostalCode": self.customer_postal_code,
-            "customerAddress": self.customer_address,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
             "customerEmail": "",

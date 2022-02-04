@@ -125,7 +125,7 @@ def checking_login_otp_code(
     return message
 
 
-@router_auth.get("/login/otp/")
+@router_auth.get("/login/password/")
 def otp_form_generator():
     form = validation_auth.CustomerVerifyPassword.schema().get("properties").copy()
     return {"fields": json.dumps(form)}
@@ -173,20 +173,6 @@ def checking_login_password(
             "redirect": "register"
         }
     return message
-
-
-@router_auth.post("/check-token/")
-def check_token(
-        response: Response,
-        auth_header=Depends(auth_handler.check_current_user_tokens)
-):
-    response.status_code = status.HTTP_202_ACCEPTED
-    username, token_dict = auth_header
-
-    response.headers["accessToken"] = token_dict.get("access_token")
-    response.headers["refreshToken"] = token_dict.get("refresh_token")
-    customer = Customer(username)
-    return {"data": customer.get_customer()}
 
 
 @router_auth.post("/check-token/")

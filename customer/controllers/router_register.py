@@ -7,7 +7,6 @@ from fastapi import Response, status
 from customer.models.model_register import Customer
 from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_register
-from customer.validators import validation_auth
 
 router_register = APIRouter(
     prefix="/register",

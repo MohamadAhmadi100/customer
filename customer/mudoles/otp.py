@@ -36,7 +36,6 @@ class OTP:
         url += f"receptor={self.phone_number}&"
         url += f"token={self.otp_code}&"
         url += f"template={template}"
-
         try:
             result = requests.post(url)
         except Exception as e:

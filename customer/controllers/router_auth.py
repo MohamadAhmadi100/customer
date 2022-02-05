@@ -7,6 +7,8 @@ from customer.models.model_register import Customer
 from customer.mudoles.auth import AuthHandler
 from customer.mudoles.otp import OTP
 from customer.validators import validation_auth
+from customer.mudoles import log
+
 
 router_auth = APIRouter(
     prefix="/auth",
@@ -107,6 +109,7 @@ def checking_login_otp_code(
             response.status_code = status.HTTP_200_OK
             response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
             response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
+            log.save_logout_log(value.customer_phone_number)
 
             message = {
                 "massage": "شما به درستی وارد شدید",
@@ -149,10 +152,10 @@ def checking_login_password(
                 response.headers["accessToken"] = auth_handler.encode_access_token(
                     user_name=value.customer_phone_number
                 )
+                log.save_logout_log(value.customer_phone_number)
                 message = {
                     "massage": "شما به درستی وارد شدید",
                     "data": customer.get_customer()
-
                 }
             else:
                 response.status_code = status.HTTP_202_ACCEPTED
@@ -187,3 +190,16 @@ def check_token(
     response.headers["refreshToken"] = token_dict.get("refresh_token")
     customer = Customer(username)
     return {"data": customer.get_customer()}
+
+
+@router_auth.post("/save-logout/")
+def save_login(
+        response: Response,
+        auth_header=Depends(auth_handler.check_current_user_tokens)
+):
+    username, token_dict = auth_header
+    result = log.save_logout_log(username)
+    if result:
+        response.status_code = status.HTTP_202_ACCEPTED
+    else:
+        response.status_code = status.HTTP_417_EXPECTATION_FAILED

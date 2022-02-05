@@ -3,13 +3,13 @@ from config import config
 
 
 class MongoConnection:
-    __slots__ = ["__client", "__db_name", "collection", "_instance"]
+    __slots__ = ["__client", "__db_name", "collection", "__instance", "__db_name_log"]
 
     @classmethod
     def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, 'instance'):
-            cls._instance = super(MongoConnection, cls).__new__(cls)
-        return cls._instance
+        if not hasattr(cls, '__instance'):
+            cls.__instance = super(MongoConnection, cls).__new__(cls)
+        return cls.__instance
 
     def __init__(self):
         self.__client = pymongo.MongoClient(
@@ -18,6 +18,7 @@ class MongoConnection:
             password=config.MONGO_PASS
         )
         self.__db_name = self.__client[config.MONGO_DB]
+        self.__db_name_log = self.__client[config.MONGO_DB_LOG]
 
     def __enter__(self):
         return self
@@ -32,3 +33,7 @@ class MongoConnection:
     @property
     def profile(self):
         return self.__db_name[config.PROFILE_COLLECTION]
+
+    @property
+    def log(self):
+        return self.__db_name_log[config.LOG_COLLECTION]

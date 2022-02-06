@@ -70,6 +70,8 @@ def register(
                 "tel": value.customer_phone_number
             }
             requests.post(url, data=json.dumps(customer_address_data))
+            response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
+            response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
             response.status_code = status.HTTP_201_CREATED
             message = {
                 "massage": "ثبت نام شما با موفقیت انجام شد",

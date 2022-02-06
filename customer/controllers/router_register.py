@@ -32,7 +32,6 @@ def register(
         customer_phone_number=value.customer_phone_number,
         customer_first_name=value.customer_first_name,
         customer_last_name=value.customer_last_name,
-        customer_address=value.customer_address,
         customer_city=value.customer_city,
         customer_province=value.customer_province,
         customer_postal_code=value.customer_postal_code,

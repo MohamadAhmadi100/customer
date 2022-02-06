@@ -17,6 +17,8 @@ def save_login_log(customer_id: str) -> bool:
 def save_logout_log(customer_id: str) -> bool:
     with MongoConnection() as mongo:
         result: object = mongo.log.find({"customerID": customer_id}, {'_id': 0}).limit(1).sort("customerCrateTime", -1)
+
+        # TODO handel index error
         login_time = result[0].get("customerActionTime")
 
     pipe_line = {

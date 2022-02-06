@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi import Response, status
 
 from customer.models.model_register import Customer
+from customer.mudoles import log
 from customer.mudoles.auth import AuthHandler
 from customer.validators import validation_register
 
@@ -69,6 +70,8 @@ def register(
                 "unit": "",
                 "tel": value.customer_phone_number
             }
+            log.save_login_log(value.customer_phone_number)
+
             requests.post(url, data=json.dumps(customer_address_data))
             response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
             response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)

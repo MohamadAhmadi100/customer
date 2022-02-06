@@ -109,7 +109,7 @@ def checking_login_otp_code(
             response.status_code = status.HTTP_200_OK
             response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
             response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
-            log.save_logout_log(value.customer_phone_number)
+            log.save_login_log(value.customer_phone_number)
 
             message = {
                 "massage": "شما به درستی وارد شدید",
@@ -152,7 +152,7 @@ def checking_login_password(
                 response.headers["accessToken"] = auth_handler.encode_access_token(
                     user_name=value.customer_phone_number
                 )
-                log.save_logout_log(value.customer_phone_number)
+                log.save_login_log(value.customer_phone_number)
                 message = {
                     "massage": "شما به درستی وارد شدید",
                     "data": customer.get_customer()

@@ -61,7 +61,7 @@ class AuthHandler:
         refresh_tok_payload = self.decode_refresh_token(refresh)
 
         if access_tok_payload:
-            user_name = refresh_tok_payload.get("sub")
+            user_name = access_tok_payload.get("sub")
 
             tokens = {
                 "access_token_payload": access_tok_payload,

@@ -131,7 +131,7 @@ class CustomerRegister(BaseModel):
         maxLength=128,
         dataType="string",
         type="text",
-        pattern=r"^[\u0600-\u06FF - , - ، ]{4,128}$",
+        regexPattern=r"^[\u0600-\u06FF - , - ، ]{4,128}$",
         isRquired=False,
     )
 
@@ -164,7 +164,7 @@ class CustomerRegister(BaseModel):
     )
 
     customer_verify_password: Optional[str] = Field(
-        title="رمز عبور",
+        title="تکرار رمز عبور",
         alias="customerVerifyPassword",
         name="customerVerifyPassword",
         placeholder="qwer1234QWER",

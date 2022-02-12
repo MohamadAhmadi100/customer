@@ -1,15 +1,23 @@
-from pydantic import BaseSettings
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-class Config(BaseSettings):
-    MONGO_USER = 'root'
-    MONGO_PASS = 'qweasdQWEASD'
-    MONGO_HOST = '200.100.100.223:27017'
-    MONGO_DB = "db-customer"
-    MONGO_DB_LOG = "db-customer-log"
-    CUSTOMER_COLLECTION = "customer"
-    LOG_COLLECTION = "log"
-    PROFILE_COLLECTION = "profile"
+class Config:
+    APP_NAME: str = os.getenv('APP_NAME')
+
+    MONGO_USER: str = os.getenv('MONGO_USER')
+    MONGO_PASS: str = os.getenv("MONGO_PASS")
+    MONGO_HOST: str = os.getenv("MONGO_HOST")
+    MONGO_DB: str = os.getenv("MONGO_DB")
+    MONGO_DB_LOG: str = os.getenv("MONGO_DB_LOG")
+    CUSTOMER_COLLECTION: str = os.getenv("CUSTOMER_COLLECTION")
+    LOG_COLLECTION: str = os.getenv("LOG_COLLECTION")
+    PROFILE_COLLECTION: str = os.getenv("PROFILE_COLLECTION")
+
+    RABBIT_HOST: str = os.getenv("RABBIT_HOST")
 
 
 config = Config()

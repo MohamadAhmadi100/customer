@@ -10,7 +10,7 @@ from kavenegar import KavenegarAPI
 
 class OTP:
     API = KavenegarAPI("535041646375714D57613535695561696E7355724A796B2B5657715833434939")
-    SENDER_NUM = "10005007009009"
+    SENDER_NUM = "10008663"
 
     def __init__(self, phone_number: Optional[str] = None):
         self.phone_number: str = phone_number

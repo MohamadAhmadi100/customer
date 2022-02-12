@@ -1,33 +1,33 @@
 import json
 
 import requests
-from fastapi import APIRouter, HTTPException
-from fastapi import Response, status
 
 from customer.models.model_register import Customer
-from customer.mudoles import log
-from customer.mudoles.auth import AuthHandler
-from customer.validators import validation_register
-
-router_register = APIRouter(
-    prefix="/register",
-    tags=["register"]
-)
-
-auth_handler = AuthHandler()
+from customer.modules import log
 
 
-@router_register.get("/")
-def register_validation_generator():
-    form = validation_register.CustomerRegister.schema().get("properties").copy()
-    return {"fields": form}
+class Request:
+    def __init__(self, **kwargs):
+        self.customer_region_code = None
+        self.customer_address = None
+        self.customer_city_id = None
+        self.customer_province_id = None
+        self.customer_verify_password = None
+        self.customer_password = None
+        self.customer_national_id = None
+        self.customer_postal_code = None
+        self.customer_province = None
+        self.customer_city = None
+        self.customer_last_name = None
+        self.customer_first_name = None
+        self.customer_phone_number = None
+        self.__dict__.update(kwargs)
 
 
-@router_register.post("/")
 def register(
-        response: Response,
-        value: validation_register.CustomerRegister,
+        values: dict
 ):
+    value = Request(**values)
     customer = Customer(phone_number=value.customer_phone_number)
     customer.set_data(
         customer_phone_number=value.customer_phone_number,
@@ -41,16 +41,15 @@ def register(
     )
 
     if customer.is_exists_phone_number() or customer.is_exists_national_id():
-        response.status_code = status.HTTP_409_CONFLICT
         message = {
             "hasRegistered": True,
             "massage": "شما قبلا ثبت نام کرده اید.",
             "redirect": "login"
         }
+        return {"success": False, "message": message, "status_code": 308}
     else:
         if value.customer_password != value.customer_verify_password:
-            response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-            raise HTTPException(status_code=422, detail={"error": "رمز عبور های وارد شده یکسان نیستند"})
+            return {"success": False, "message": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
         if customer.save():
             url = "http://devaddr.aasood.com/address/insert"
             customer_data = customer.get_customer()
@@ -71,15 +70,11 @@ def register(
                 "tel": value.customer_phone_number
             }
             log.save_login_log(value.customer_phone_number)
-
             requests.post(url, data=json.dumps(customer_address_data))
-            response.headers["refreshToken"] = auth_handler.encode_refresh_token(user_name=value.customer_phone_number)
-            response.headers["accessToken"] = auth_handler.encode_access_token(user_name=value.customer_phone_number)
-            response.status_code = status.HTTP_201_CREATED
             message = {
                 "massage": "ثبت نام شما با موفقیت انجام شد",
             }
+            return {"success": True, "message": message, "status_code": 201}
         else:
-            response.status_code = status.HTTP_417_EXPECTATION_FAILED
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
-    return message
+            return {"success": False, "message": message, "status_code": 417}

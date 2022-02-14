@@ -3,13 +3,15 @@ import json
 from customer.models.model_register import Customer
 from customer.modules.otp import OTP
 from customer.modules import log
+from customer.modules.auth import AuthHandler
+
+auth_handler = AuthHandler()
 
 
 # mobile number generator and validation
 def check_is_registered(
         customer_phone_number: str
 ):
-    # TODO fixed status code
     # checking is exist mobile number in db
     customer = Customer(phone_number=customer_phone_number)
     if customer.is_exists_phone_number():
@@ -41,14 +43,11 @@ def send_otp_code(customer_phone_number: str):
         otp.send()
         return {"success": True, "status_code": 202, "message": {"massage": "کد OTP ارسال شد"}}
     else:
-        message = {
-            "message": f"  لطفا بعد از {expire_time} ثانیه تلاش کنید ",
-        }
-        return {"success": False, "status_code": 406, "message": message}
+        message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
+        return {"success": False, "status_code": 406, "error": message}
 
 
 def verify_otp_cod(customer_phone_number: str, customer_code: str):
-    # TODO fixed status code
     otp = OTP(customer_phone_number)
     if otp.get_otp() and otp.get_otp() == customer_code:
         customer = Customer(phone_number=customer_phone_number)
@@ -56,11 +55,11 @@ def verify_otp_cod(customer_phone_number: str, customer_code: str):
             message = {"massage": "کد وارد شده صحیح است"}
             return {"success": True, "status_code": 202, "message": message}
         else:
-            message = {"error": "مشکلی رخ داده است لطفا بعدا امتحان کنید"}
-            return {"success": False, "status_code": 417, "message": message}
+            message = "مشکلی رخ داده است لطفا بعدا امتحان کنید"
+            return {"success": False, "status_code": 417, "error": message}
     else:
-        message = {"error": "کد وارد شده صحیح نمی‌باشد"}
-        return {"success": False, "status_code": 401, "message": message}
+        message = "کد وارد شده صحیح نمی‌باشد"
+        return {"success": False, "status_code": 401, "error": message}
 
 
 def checking_login_otp_code(
@@ -71,9 +70,11 @@ def checking_login_otp_code(
     if customer.is_exists_phone_number():
         if otp.get_otp() and otp.get_otp(customer_phone_number) == customer_code:
             log.save_login_log(customer_phone_number)
+            user_info = customer.get_customer()
+            user_info.pop('customerPassword')
             message = {
                 "massage": "شما به درستی وارد شدید",
-                "data": customer.get_customer()
+                "data": user_info
             }
             return {"success": True, "status_code": 202, "message": message}
         else:
@@ -84,41 +85,42 @@ def checking_login_otp_code(
             "massage": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
-        return {"success": False, "status_code": 308, "message": message}
+        return {"success": False, "status_code": 308, "error": message}
 
 
 def checking_login_password(
         customer_phone_number: str, customer_password: str
 ):
-    # TODO fixed status code
     customer = Customer(phone_number=customer_phone_number)
-    if customer.is_exists_phone_number():
-        if customer.is_login(customer_password):
-            if customer.mobile_confirm():
+    user = customer.get_customer()
+    if user:
+        if auth_handler.verify_password(customer_password, user.get("customerPassword")):
+            if user.get("customerIsMobileConfirm"):
                 log.save_login_log(customer_phone_number)
+                user_info = customer.get_customer()
+                user_info.pop('customerPassword')
                 message = {
                     "massage": "شما به درستی وارد شدید",
-                    "data": customer.get_customer()
+                    "data": user_info
                 }
                 return {"success": True, "status_code": 202, "message": message}
             else:
                 message = {
-                    "customerIsMobileConfirm": customer.is_mobile_confirm(),
-                    "customerIsConfirm": customer.is_customer_confirm(),
+                    "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
+                    "customerIsConfirm": user.get("customerIsConfirm"),
                     "hasRegistered": True,
                     "massage": "شماره موبایل شما تایید نشده است",
                 }
-                return {"success": False, "status_code": 406, "message": message}
+                return {"success": False, "status_code": 406, "error": message}
         else:
-            message = {"error": "پسورد اشتباه است"}
-            return {"success": False, "status_code": 401, "message": message}
+            return {"success": False, "status_code": 401, "error": "پسورد اشتباه است"}
     else:
         message = {
             "hasRegistered": False,
             "error": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
-        return {"success": False, "status_code": 401, "message": message}
+        return {"success": False, "status_code": 401, "error": message}
 
 
 def save_logout(
@@ -129,5 +131,4 @@ def save_logout(
         # redirect to home page
         return {"success": True, "status_code": 202, "message": {"massage": "خروج انجام شد"}}
     else:
-        return {"success": False, "status_code": 417, "message": {"massage": "خطایی رخ داده است"}}
-
+        return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}

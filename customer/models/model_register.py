@@ -48,7 +48,7 @@ class Customer:
             pipeline_find = {"customerNationalID": self.customer_national_id}
             return True if mongo.customer.find_one(pipeline_find) else False
 
-    def is_login(self, password: str) -> bool:
+    def login(self, password: str) -> bool:
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number, "customerPassword": password}
             return True if mongo.customer.find_one(pipeline_find) else False

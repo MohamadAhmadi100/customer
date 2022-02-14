@@ -4,6 +4,9 @@ import requests
 
 from customer.models.model_register import Customer
 from customer.modules import log
+from customer.modules.auth import AuthHandler
+
+auth_handler = AuthHandler()
 
 
 class Request:
@@ -37,7 +40,7 @@ def register(
         customer_province=value.customer_province,
         customer_postal_code=value.customer_postal_code,
         customer_national_id=value.customer_national_id,
-        customer_password=value.customer_password
+        customer_password=auth_handler.generate_hash_password(value.customer_password)
     )
 
     if customer.is_exists_phone_number() or customer.is_exists_national_id():

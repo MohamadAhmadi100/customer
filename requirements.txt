@@ -6,3 +6,6 @@ redis==4.1.0
 kavenegar==1.1.2
 passlib==1.7.4
 fastapi-jwt-auth==0.5.0
+pika==1.2.0
+python-dotenv==0.19.2 
+

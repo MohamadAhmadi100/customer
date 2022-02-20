@@ -9,13 +9,10 @@ from customer.helper.connection import MongoConnection
 class Customer:
     __slots__ = [
         "customer_phone_number",
+        "customer_id",
         "customer_password",
         "customer_first_name",
         "customer_last_name",
-        "customer_last_name",
-        "customer_city",
-        "customer_province",
-        "customer_postal_code",
         "customer_national_id"
     ]
 
@@ -23,107 +20,115 @@ class Customer:
 
     def __init__(self, phone_number: str):
         self.customer_phone_number: str = phone_number
+        self.customer_id: int = 0
         self.customer_password: str = ""
         self.customer_first_name: str = ""
         self.customer_last_name: str = ""
-        self.customer_city: str = ""
-        self.customer_province: str = ""
-        self.customer_postal_code: str = ""
         self.customer_national_id: str = ""
 
     def set_activity(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            pipeline_set = {"$set": {"customerIsActive": False}}
-            result: object = mongo.customer.update_one(pipeline_find, pipeline_set)
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_operator = {"$set": {"customerIsActive": False}}
+            result: object = mongo.customer.update_one(query_operator, set_operator)
         return True if result.acknowledged else False
 
     def is_exists_phone_number(self) -> bool:
         with MongoConnection() as mongo:
-            pyload = {"customerPhoneNumber": self.customer_phone_number}
-            return True if mongo.customer.find_one(pyload) else False
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            return True if mongo.customer.find_one(query_operator) else False
 
     def is_exists_national_id(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerNationalID": self.customer_national_id}
-            return True if mongo.customer.find_one(pipeline_find) else False
+            query_operator = {"customerNationalID": self.customer_national_id}
+            return True if mongo.customer.find_one(query_operator) else False
 
     def login(self, password: str) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number, "customerPassword": password}
-            return True if mongo.customer.find_one(pipeline_find) else False
+            query_operator = {"customerPhoneNumber": self.customer_phone_number, "customerPassword": password}
+            return True if mongo.customer.find_one(query_operator) else False
 
     def is_mobile_confirm(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            result: dict = mongo.customer.find_one(pipeline_find)
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"customerIsMobileConfirm": 1}
+            result: dict = mongo.customer.find_one(query_operator, projection_operator)
             return True if result.get("customerIsMobileConfirm") else False
 
     def is_customer_confirm(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            result: dict = mongo.customer.find_one(pipeline_find)
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"customerIsConfirm": 1}
+            result: dict = mongo.customer.find_one(query_operator, projection_operator)
             return True if result.get("customerIsConfirm") else False
 
     def mobile_confirm(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            pipeline_set = {"$set": {"customerIsMobileConfirm": True}}
-            result = mongo.customer.update_one(pipeline_find, pipeline_set)
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_operator = {"$set": {"customerIsMobileConfirm": True}}
+            result = mongo.customer.update_one(query_operator, set_operator)
             return True if result.acknowledged else False
 
     def customer_confirm(self) -> bool:
         with MongoConnection() as mongo:
-            pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            pipeline_set = {"$set": {"customerIsConfirm": True}}
-            result = mongo.customer.update_one(pipeline_find, pipeline_set)
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_operator = {"$set": {"customerIsConfirm": True}}
+            result = mongo.customer.update_one(query_operator, set_operator)
             return True if result.acknowledged else False
 
-    @staticmethod
-    def get_next_sequence_customer_id() -> int:
+    def get_next_sequence_customer_id(self) -> int:
         with MongoConnection() as mongo:
             if not mongo.customer.find_one():
-                return 0
+                self.customer_id = 0
+                return True
             else:
-                result = mongo.customer.find({}, {'_id': 0}).limit(1).sort("customerCrateTime", -1)
-                return result[0].get("customerID") + 1
+                result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCrateTime", -1)
+                try:
+                    self.customer_id = result[0].get("customerID") + 1
+                except IndexError:
+                    return False
+                else:
+                    return True
 
     def get_customer(self):
         with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"_id": 0, "customerPassword": 0}
+            result: dict = mongo.customer.find_one(query_operator, projection_operator)
+
             # Todo delete request
-            result: dict = mongo.customer.find_one({"customerPhoneNumber": self.customer_phone_number}, {"_id": 0})
             url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
             customer_addresses = requests.get(url)
             customer_addresses = json.loads(customer_addresses.content)
             result["addresses"] = customer_addresses.get("result")
+
             return result
 
     def save(self) -> bool:
-        customer_data: dict = self.__dict__
-        customer_data["customerID"] = self.get_next_sequence_customer_id()
-        customer_data["customerCrateTime"] = time.time()
-
-        with MongoConnection() as mongo:
-            result: object = mongo.customer.insert_one(customer_data)
-        return True if result.acknowledged else False
+        if self.get_next_sequence_customer_id():
+            customer_data: dict = self.__dict__
+            customer_data["customerID"] = self.customer_id
+            customer_data["customerCrateTime"] = time.time()
+            customer_data["customerEmail"] = ""
+            customer_data["customerShopName"] = ""
+            customer_data["customerAccountNumber"] = ""
+            with MongoConnection() as mongo:
+                result: object = mongo.customer.insert_one(customer_data)
+            return True if result.acknowledged else False
+        else:
+            return False
 
     def set_data(
             self,
             customer_phone_number,
             customer_first_name,
             customer_last_name,
-            customer_city,
-            customer_province,
-            customer_postal_code,
             customer_national_id,
             customer_password
     ) -> None:
         self.customer_phone_number = customer_phone_number
         self.customer_first_name = customer_first_name
         self.customer_last_name = customer_last_name
-        self.customer_city = customer_city
-        self.customer_province = customer_province
-        self.customer_postal_code = customer_postal_code
         self.customer_national_id = customer_national_id
         self.customer_password = customer_password
 
@@ -131,6 +136,7 @@ class Customer:
     def __dict__(self) -> dict:
         return {
             "customerPhoneNumber": self.customer_phone_number,
+            "customerID": self.customer_id,
             "customerFirstName": self.customer_first_name,
             "customerLastName": self.customer_last_name,
             "customerNationalID": self.customer_national_id,
@@ -139,7 +145,4 @@ class Customer:
             "customerIsActive": True,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
-            "customerEmail": "",
-            "customerShopName": "",
-            "customerAccountNumber": "",
         }

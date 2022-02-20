@@ -98,7 +98,6 @@ def checking_login_password(
             if user.get("customerIsMobileConfirm"):
                 log.save_login_log(customer_phone_number)
                 user_info = customer.get_customer()
-                user_info.pop('customerPassword')
                 message = {
                     "massage": "شما به درستی وارد شدید",
                     "data": user_info

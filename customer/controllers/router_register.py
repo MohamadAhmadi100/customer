@@ -32,18 +32,10 @@ def register(
 ):
     value = Request(**values)
     customer = Customer(phone_number=value.customer_phone_number)
-    customer.set_data(
-        customer_phone_number=value.customer_phone_number,
-        customer_first_name=value.customer_first_name,
-        customer_last_name=value.customer_last_name,
-        customer_city=value.customer_city,
-        customer_province=value.customer_province,
-        customer_postal_code=value.customer_postal_code,
-        customer_national_id=value.customer_national_id,
-        customer_password=auth_handler.generate_hash_password(value.customer_password)
-    )
-
-    if customer.is_exists_phone_number() or customer.is_exists_national_id():
+    customer_data = customer.get_customer()
+    is_exists_phone_number = customer_data.get("customerPhoneNumber")
+    is_exists_national_id = customer_data.get("customerNationalID")
+    if is_exists_phone_number or is_exists_national_id:
         message = {
             "hasRegistered": True,
             "massage": "شما قبلا ثبت نام کرده اید.",
@@ -53,9 +45,15 @@ def register(
     else:
         if value.customer_password != value.customer_verify_password:
             return {"success": False, "message": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
-        if customer.save():
+        customer.set_data(
+            customer_phone_number=value.customer_phone_number,
+            customer_first_name=value.customer_first_name,
+            customer_last_name=value.customer_last_name,
+            customer_national_id=value.customer_national_id,
+            customer_password=auth_handler.generate_hash_password(value.customer_password)
+        )
+        if customer.save():  # save customer and return result as bool
             url = "http://devaddr.aasood.com/address/insert"
-            customer_data = customer.get_customer()
             customer_address_data = {
                 "customerName": value.customer_first_name + " " + customer.customer_last_name,
                 "customerId": customer_data.get("customerID"),

@@ -1,17 +1,13 @@
-import json
-
 from customer.models.model_register import Customer
-from customer.modules.otp import OTP
 from customer.modules import log
 from customer.modules.auth import AuthHandler
+from customer.modules.otp import OTP
 
 auth_handler = AuthHandler()
 
 
 # mobile number generator and validation
-def check_is_registered(
-        customer_phone_number: str
-):
+def check_is_registered(customer_phone_number: str):
     # checking is exist mobile number in db
     customer = Customer(phone_number=customer_phone_number)
     if customer.is_exists_phone_number():
@@ -35,7 +31,6 @@ def check_is_registered(
 
 def send_otp_code(customer_phone_number: str):
     otp = OTP(customer_phone_number)
-
     is_expire, expire_time = otp.is_expire_otp_time()
     if is_expire:
         otp.generate_code(otp_code_length=4)
@@ -62,9 +57,7 @@ def verify_otp_cod(customer_phone_number: str, customer_code: str):
         return {"success": False, "status_code": 401, "error": message}
 
 
-def checking_login_otp_code(
-        customer_phone_number: str, customer_code: str
-):
+def checking_login_otp_code(customer_phone_number: str, customer_code: str):
     customer = Customer(phone_number=customer_phone_number)
     otp = OTP(customer_phone_number)
     if customer.is_exists_phone_number():
@@ -72,10 +65,7 @@ def checking_login_otp_code(
             log.save_login_log(customer_phone_number)
             user_info = customer.get_customer()
             user_info.pop('customerPassword')
-            message = {
-                "massage": "شما به درستی وارد شدید",
-                "data": user_info
-            }
+            message = {"massage": "شما به درستی وارد شدید", "data": user_info}
             return {"success": True, "status_code": 202, "message": message}
         else:
             return {"success": False, "status_code": 401, "error": "کد وارد شده صحیح نمی‌باشد"}
@@ -88,9 +78,7 @@ def checking_login_otp_code(
         return {"success": False, "status_code": 308, "error": message}
 
 
-def checking_login_password(
-        customer_phone_number: str, customer_password: str
-):
+def checking_login_password(customer_phone_number: str, customer_password: str):
     customer = Customer(phone_number=customer_phone_number)
     user = customer.get_customer()
     if user:
@@ -122,9 +110,7 @@ def checking_login_password(
         return {"success": False, "status_code": 401, "error": message}
 
 
-def save_logout(
-        username: str
-):
+def save_logout(username: str):
     result = log.save_logout_log(username)
     if result:
         # redirect to home page

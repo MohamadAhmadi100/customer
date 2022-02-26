@@ -79,3 +79,9 @@ class OTP:
         exp_time: float = json.loads(value).get("exp_time") if value else None
         remaining_time: float = exp_time - time.time() if exp_time else 0
         return (True, 0) if remaining_time < 1 else (False, int(remaining_time))
+
+    def delete_otp(self, phone_number: Optional[str] = None) -> bool:
+        phone_number: str = self.phone_number if phone_number is None else phone_number
+        with redis.Redis() as r:
+            value: bytes = r.expire(phone_number)
+            return True if value else False

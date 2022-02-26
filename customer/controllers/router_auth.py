@@ -47,6 +47,7 @@ def verify_otp_cod(customer_phone_number: str, customer_code: str):
     if otp.get_otp() and otp.get_otp() == customer_code:
         customer = Customer(phone_number=customer_phone_number)
         if customer.mobile_confirm():
+            otp.delete_otp()
             message = {"massage": "کد وارد شده صحیح است"}
             return {"success": True, "status_code": 202, "message": message}
         else:
@@ -62,9 +63,9 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
     otp = OTP(customer_phone_number)
     if customer.is_exists_phone_number():
         if otp.get_otp() and otp.get_otp(customer_phone_number) == customer_code:
+            otp.delete_otp()
             log.save_login_log(customer_phone_number)
             user_info = customer.get_customer()
-            user_info.pop('customerPassword')
             message = {"massage": "شما به درستی وارد شدید", "data": user_info}
             return {"success": True, "status_code": 202, "message": message}
         else:

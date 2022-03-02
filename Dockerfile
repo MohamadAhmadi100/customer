@@ -12,7 +12,7 @@ COPY ./config.py /customer/config.py
 
 COPY ./setup.py /customer/setup.py
 
-COPY ./app /customer/app
+COPY ./customer /customer/app
 
 RUN pip install -e /customer/.
 

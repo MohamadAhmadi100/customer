@@ -16,4 +16,4 @@ COPY ./customer /customer/customer
 
 RUN pip install -e /customer/.
 
-CMD ["python", "/customer/app/main.py"]
+CMD ["python", "/customer/customer/main.py"]

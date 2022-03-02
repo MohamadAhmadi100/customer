@@ -14,11 +14,12 @@ class MongoConnection:
     def __init__(self):
         self.__client = pymongo.MongoClient(
             config.MONGO_HOST,
+            config.MONGO_PORT,
             username=config.MONGO_USER,
             password=config.MONGO_PASS
         )
-        self.__db_name = self.__client[config.MONGO_DB]
-        self.__db_name_log = self.__client[config.MONGO_DB_LOG]
+        self.__db_name = self.__client["db-customer"]
+        self.__db_name_log = self.__client["db-log"]
 
     def __enter__(self):
         return self
@@ -28,12 +29,8 @@ class MongoConnection:
 
     @property
     def customer(self):
-        return self.__db_name[config.CUSTOMER_COLLECTION]
-
-    @property
-    def profile(self):
-        return self.__db_name[config.PROFILE_COLLECTION]
+        return self.__db_name["customer"]
 
     @property
     def log(self):
-        return self.__db_name_log[config.LOG_COLLECTION]
+        return self.__db_name_log["log"]

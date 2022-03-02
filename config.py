@@ -14,6 +14,7 @@ class Config:
     MONGO_USER: str = os.getenv('MONGO_USER')
     MONGO_PASS: str = os.getenv("MONGO_PASS")
     MONGO_HOST: str = os.getenv("MONGO_HOST")
+    MONGO_PORT: int = int(os.getenv("MONGO_PORT"))
     MONGO_DB: str = os.getenv("MONGO_DB")
     MONGO_DB_LOG: str = os.getenv("MONGO_DB_LOG")
     CUSTOMER_COLLECTION: str = os.getenv("CUSTOMER_COLLECTION")

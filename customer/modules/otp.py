@@ -5,37 +5,30 @@ from typing import Optional, Union, Tuple
 
 import redis
 import requests
-from kavenegar import KavenegarAPI
+
+from config import config
 
 
 class OTP:
-    API = KavenegarAPI("535041646375714D57613535695561696E7355724A796B2B5657715833434939")
-    SENDER_NUM = "10008663"
+    SMS_SENDER_NUMBER: config.SMS_SENDER_NUMBER
+    SMS_API_TOKEN: str = config.SMS_API_TOKEN
+    SMS_TEMPLATE: str = config.SMS_TEMPLATE
 
     def __init__(self, phone_number: Optional[str] = None):
         self.phone_number: str = phone_number
         self.otp_code: str = ""
         self.otp_code_length: int = 4
 
-    def set_api(self, api: str = None) -> None:
-        self.API = KavenegarAPI(api)
-
-    def set_sender_num(self, num: str) -> None:
-        self.SENDER_NUM = num
-
     def generate_code(self, otp_code_length) -> str:
         for i in range(otp_code_length):
             self.otp_code += str(random.randint(0, 9))  # type: str
         return self.otp_code
 
-    # TODO rewrite
     def send(self) -> tuple:
-        token = "535041646375714D57613535695561696E7355724A796B2B5657715833434939"
-        template = "logincode"
-        url = f"https://api.kavenegar.com/v1/{token}/verify/lookup.json?"
+        url = f"https://api.kavenegar.com/v1/{self.SMS_API_TOKEN}/verify/lookup.json?"
         url += f"receptor={self.phone_number}&"
         url += f"token={self.otp_code}&"
-        url += f"template={template}"
+        url += f"template={self.SMS_TEMPLATE}"
         try:
             result = requests.post(url)
         except Exception as e:
@@ -53,19 +46,19 @@ class OTP:
             r.expire(self.phone_number, expire_time)
 
     def get_otp(self, phone_number: Optional[str] = None) -> Union[dict, bool]:
-        phone_number: str = self.phone_number if phone_number is None else phone_number
+        phone_number: str = phone_number or self.phone_number
         with redis.Redis() as r:
             value: bytes = r.get(phone_number)
         return json.loads(value).get("code") if value else False
 
     def is_verify_otp(self, phone_number: Optional[str] = None):
-        phone_number: str = self.phone_number if phone_number is None else phone_number
+        phone_number: str = phone_number or self.phone_number
         with redis.Redis() as r:
             value: bytes = r.get(phone_number)
         return True if value and json.loads(value).get("verify") else False
 
     def is_expire_otp(self, receive_otp_code: Optional[str] = None, phone_number: Optional[str] = None) -> bool:
-        phone_number: str = self.phone_number if phone_number is None else phone_number
+        phone_number: str = phone_number or self.phone_number
         receive_otp_code: str = self.otp_code if receive_otp_code is None else receive_otp_code
         with redis.Redis() as r:
             value: bytes = r.get(phone_number)
@@ -73,7 +66,7 @@ class OTP:
         return True if otp_code and otp_code == receive_otp_code else False
 
     def is_expire_otp_time(self, phone_number: Optional[str] = None) -> Union[Tuple[bool, int]]:
-        phone_number: str = self.phone_number if phone_number is None else phone_number
+        phone_number: str = phone_number or self.phone_number
         with redis.Redis() as r:
             value: bytes = r.get(phone_number)
         exp_time: float = json.loads(value).get("exp_time") if value else None
@@ -81,7 +74,7 @@ class OTP:
         return (True, 0) if remaining_time < 1 else (False, int(remaining_time))
 
     def delete_otp(self, phone_number: Optional[str] = None) -> bool:
-        phone_number: str = self.phone_number if phone_number is None else phone_number
+        phone_number: str = phone_number or self.phone_number
         with redis.Redis() as r:
             value: bytes = r.expire(phone_number)
             return True if value else False

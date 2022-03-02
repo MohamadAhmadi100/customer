@@ -10,16 +10,30 @@ services:
         volumes:
             - mongodb-data:/data/db-customer
         networks:
-            - mongodb_network-customer
+            - mongodb_network_customer
         ports:
             - 27022:${MONGO_PORT}
         restart: unless-stopped
+    redis:
+        image: redis
+        container_name: redis-db-customer
+        volumes:
+            - redis-data:/data/redis
+        networks:
+            - redis_network_customer
+        ports:
+            - 6380:${REDIS_PORT}
+        restart: always
     api:
         build: .
 
 volumes:
     mongodb-data:
+    redis-data:
 
 networks:
-    mongodb_network-customer:
+    mongodb_network_customer:
         driver: bridge
+    redis_network_customer:
+        driver: bridge
+

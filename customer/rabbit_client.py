@@ -16,9 +16,9 @@ class RabbitRPCClient:
             headers_match_all: bool = False
     ):
         self.host = config.RABBIT_HOST
-        self.port = 5672
-        self.user = "rbtmq"
-        self.password = "DeVrab!t123"
+        self.port = config.RABBIT_PORT
+        self.user = config.RABBIT_USER
+        self.password = config.RABBIT_PASS
         self.connection = self.connect()
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=exchange_name, exchange_type="headers")

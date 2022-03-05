@@ -11,7 +11,6 @@ build:
   tags:
     - ci-jon
   script:
-    - ls
     - echo APP_NAME=$APP_NAME >> .env
     - echo SMS_SENDER_NUMBER=$SMS_SENDER_NUMBER >> .env
     - echo SMS_API_TOKEN=$SMS_API_TOKEN >> .env
@@ -29,6 +28,7 @@ build:
     - echo RABBIT_PORT=$RABBIT_PORT >> .env
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
+    - echo .env
     - docker login 200.100.100.219:80 -u registry -p $REGPASS 
     - docker build -t customer:0.0.1 .
 

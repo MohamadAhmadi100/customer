@@ -20,7 +20,7 @@ class Config:
     REDIS_PORT: int = 6379
     REDIS_USER: str = os.getenv("REDIS_USER")
     REDIS_PASS: str = os.getenv("REDIS_PASS")
-    REDIS_DB: int = int(os.getenv("REDIS_DB"))
+    REDIS_DB: int = 0
 
     RABBIT_HOST: str = os.getenv("RABBIT_HOST")
     RABBIT_PORT: str = int(os.getenv("RABBIT_PORT"))

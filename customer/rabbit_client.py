@@ -15,10 +15,10 @@ class RabbitRPCClient:
             headers: dict,
             headers_match_all: bool = False
     ):
-        self.host = settings.RABBIT_HOST
-        self.port = settings.RABBIT_PORT
-        self.user = settings.RABBIT_USER
-        self.password = settings.RABBIT_PASS
+        self.host = config.RABBIT_HOST
+        self.port = config.RABBIT_PORT
+        self.user = config.RABBIT_USER
+        self.password = config.RABBIT_PASS
         self.exchange_name = exchange_name
         self.credentials = pika.PlainCredentials(self.user, self.password)
         self.connect()

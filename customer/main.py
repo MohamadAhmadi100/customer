@@ -10,5 +10,3 @@ if __name__ == '__main__':
         headers={config.APP_NAME: True},
         headers_match_all=True
     )
-    rpc.connect()
-    rpc.consume()

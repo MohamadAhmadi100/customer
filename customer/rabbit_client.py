@@ -2,7 +2,7 @@ import json
 import sys
 
 import pika
-from app.modules import terminal_log
+from customer.modules import terminal_log
 from config import settings
 
 

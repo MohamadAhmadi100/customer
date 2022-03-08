@@ -3,7 +3,7 @@ import sys
 
 import pika
 from customer.modules import terminal_log
-from config import settings
+from config import config
 
 
 class RabbitRPCClient:

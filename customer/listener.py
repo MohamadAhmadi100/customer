@@ -1,7 +1,7 @@
 from customer.modules import terminal_log
 from config import config
 
-# Important imports dont remove
+# Important imports don't remove
 from customer.controllers.router_auth import *
 from customer.controllers.router_profile import *
 from customer.controllers.router_register import *

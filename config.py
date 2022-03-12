@@ -9,7 +9,7 @@ class Config:
     APP_NAME: str = os.getenv('APP_NAME')
     SMS_SENDER_NUMBER: str = os.getenv('SMS_SENDER_NUMBER')
     SMS_API_TOKEN: str = os.getenv('SMS_API_TOKEN')
-    SMS_TEMPLATE: str = os.getenv('logincode')
+    SMS_TEMPLATE: str = os.getenv('SMS_TEMPLATE')
 
     MONGO_USER: str = os.getenv('MONGO_USER')
     MONGO_PASS: str = os.getenv("MONGO_PASS")

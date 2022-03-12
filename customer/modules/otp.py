@@ -11,12 +11,12 @@ from config import config
 
 class OTP:
     client = redis.Redis(host=config.REDIS_HOST,
-                        port=config.REDIS_PORT,
-                        username=config.REDIS_USER,
-                        password=config.REDIS_PASS,
-                        decode_responses=True,
-                        db=config.REDIS_DB
-                        )
+                         port=config.REDIS_PORT,
+                         username=config.REDIS_USER,
+                         password=config.REDIS_PASS,
+                         decode_responses=True,
+                         db=config.REDIS_DB
+                         )
     SMS_SENDER_NUMBER: config.SMS_SENDER_NUMBER
     SMS_API_TOKEN: str = config.SMS_API_TOKEN
     SMS_TEMPLATE: str = config.SMS_TEMPLATE
@@ -83,5 +83,5 @@ class OTP:
     def delete_otp(self, phone_number: Optional[str] = None) -> bool:
         phone_number: str = phone_number or self.phone_number
         with self.client as r:
-            value: bytes = r.expire(phone_number)
+            value: bytes = r.expire(phone_number, 1)
             return True if value else False

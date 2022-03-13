@@ -16,14 +16,14 @@ def check_is_registered(customer_phone_number: str):
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
             "hasRegistered": True,
-            "massage": "شما قبلا ثبت نام کرده اید.",
+            "message": "شما قبلا ثبت نام کرده اید.",
             "redirect": redirect
         }
     else:
         status_code = 308
         message = {
             "hasRegistered": False,
-            "massage": "شما قبلا ثبت نام نکرده اید",
+            "message": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
     return {"success": True, "status_code": status_code, "message": message}
@@ -36,7 +36,7 @@ def send_otp_code(customer_phone_number: str):
         otp.generate_code(otp_code_length=4)
         otp.save()
         otp.send()
-        return {"success": True, "status_code": 202, "message": {"massage": "کد OTP ارسال شد"}}
+        return {"success": True, "status_code": 202, "message": {"message": "کد OTP ارسال شد"}}
     else:
         message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
         return {"success": False, "status_code": 406, "error": message}
@@ -46,9 +46,13 @@ def verify_otp_cod(customer_phone_number: str, customer_code: str):
     otp = OTP(customer_phone_number)
     if otp.get_otp() and otp.get_otp() == customer_code:
         customer = Customer(phone_number=customer_phone_number)
+        user = customer.get_customer()
         if customer.mobile_confirm():
             otp.delete_otp()
-            message = {"massage": "کد وارد شده صحیح است"}
+            message = {
+                "message": "کد وارد شده صحیح است",
+                "data": user
+            }
             return {"success": True, "status_code": 202, "message": message}
         else:
             message = "مشکلی رخ داده است لطفا بعدا امتحان کنید"
@@ -66,14 +70,14 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
             otp.delete_otp()
             log.save_login_log(customer_phone_number)
             user_info = customer.get_customer()
-            message = {"massage": "شما به درستی وارد شدید", "data": user_info}
+            message = {"message": "شما به درستی وارد شدید", "data": user_info}
             return {"success": True, "status_code": 202, "message": message}
         else:
             return {"success": False, "status_code": 401, "error": "کد وارد شده صحیح نمی‌باشد"}
     else:
         message = {
             "hasRegistered": False,
-            "massage": "شما قبلا ثبت نام نکرده اید",
+            "message": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
         return {"success": False, "status_code": 308, "error": message}
@@ -81,14 +85,14 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
 
 def checking_login_password(customer_phone_number: str, customer_password: str):
     customer = Customer(phone_number=customer_phone_number)
-    user = customer.get_customer()
+    user = customer.get_customer_password()
     if user:
         if auth_handler.verify_password(customer_password, user.get("customerPassword")):
             if user.get("customerIsMobileConfirm"):
                 log.save_login_log(customer_phone_number)
                 user_info = customer.get_customer()
                 message = {
-                    "massage": "شما به درستی وارد شدید",
+                    "message": "شما به درستی وارد شدید",
                     "data": user_info
                 }
                 return {"success": True, "status_code": 202, "message": message}
@@ -97,7 +101,7 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
                     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
                     "customerIsConfirm": user.get("customerIsConfirm"),
                     "hasRegistered": True,
-                    "massage": "شماره موبایل شما تایید نشده است",
+                    "message": "شماره موبایل شما تایید نشده است",
                 }
                 return {"success": False, "status_code": 406, "error": message}
         else:
@@ -115,6 +119,6 @@ def save_logout(username: str):
     result = log.save_logout_log(username)
     if result:
         # redirect to home page
-        return {"success": True, "status_code": 202, "message": {"massage": "خروج انجام شد"}}
+        return {"success": True, "status_code": 202, "message": {"message": "خروج انجام شد"}}
     else:
         return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}

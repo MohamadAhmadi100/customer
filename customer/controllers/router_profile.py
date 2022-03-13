@@ -1,45 +1,55 @@
-# from fastapi import APIRouter, Depends
-# from fastapi import Response, status
-#
-# from customer.models.model_register import Customer
-# from customer.models.model_profile import Profile
-# from customer.modules.auth import AuthHandler
-# from customer.validators import validation_profile, validation_auth
-#
-# router_profile = APIRouter(
-#     prefix="/profile",
-#     tags=["profile"]
-# )
-#
-# auth_handler = AuthHandler()
-#
-#
-# @router_profile.get("/")
-# def get_profile(
+from customer.models.model_register import Customer
+from customer.models.model_profile import Profile
+
+
+def get_profile(customer_phone_number: str):
+    profile = Profile({"customer_phone_number": customer_phone_number})
+    result = profile.get_profile_data()
+    if result:
+        return {"success": True, "message": result, "status_code": 200}
+    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
+
+# def edit_profile_data(
 #         response: Response,
+#         value: validation_profile.EditProfile,
 #         auth_header=Depends(auth_handler.check_current_user_tokens),
 #
 # ):
-#     user, header = auth_header
-#     profile = Profile(user)
-#     result = profile.get_profile_datas()
+#     customer_phone_number, header = auth_header
+#     if customer_phone_number:
+#         profile = Profile(customer_phone_number)
+#         result = profile.update_profile(value)
+#         response.status_code = status.HTTP_200_OK
+#         response.headers["accessToken"] = header.get("access_token")
+#         response.headers["refresh_token"] = header.get("refresh_token")
+#         return result
+#     response.status_code = status.HTTP_404_NOT_FOUND
+#     message = {"massage": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
+#     return message
 #
+#
+# def change_customer_password(
+#         response: Response,
+#         data: validation_profile.ChangePassword,
+#         auth_header=Depends(auth_handler.check_current_user_tokens),
+# ):
+#     response.status_code = status.HTTP_202_ACCEPTED
+#     phone_number, token_dict = auth_header
+#     customer = Customer(phone_number)
+#     profile = Profile(customer)
+#     result = profile.change_password(data)
 #     if result:
 #         response.status_code = status.HTTP_200_OK
-#         return result
-#     else:
-#         response.status_code = status.HTTP_404_NOT_FOUND
-#         message = {"massage": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
+#         response.headers["accessToken"] = token_dict.get("access_token")
+#         response.headers["refresh_token"] = token_dict.get("refresh_token")
+#         message = {
+#             "massage": "رمز عبور با موفقیت بروز شد",
+#         }
 #         return message
-#
-# @router_profile.put("/edit-data/")
-# def edit_profile_data(
-#         response: Response,
-#         value:validation_profile.EditProfile,
-#         # auth_header=Depends(auth_handler.check_current_user_tokens),
-#
-# ):
-#     profile = Profile(value)
-#     result = profile.update_profile()
-#
-#     return result
+#     response.status_code = status.HTTP_406_NOT_ACCEPTABLE
+#     response.headers["accessToken"] = token_dict.get("access_token")
+#     response.headers["refresh_token"] = token_dict.get("refresh_token")
+#     message = {
+#         "massage": "رمز وارد شده صحیح نمی باشد",
+#     }
+#     return message

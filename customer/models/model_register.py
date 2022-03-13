@@ -94,14 +94,13 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0, "customerPassword": 0}
-            result: dict = mongo.customer.find_one(query_operator, projection_operator)
+            result: dict = mongo.customer.find_one(query_operator, projection_operator) or {}
 
             # Todo delete request
             url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
             customer_addresses = requests.get(url)
             customer_addresses = json.loads(customer_addresses.content)
             result["addresses"] = customer_addresses.get("result")
-
             return result
 
     def save(self) -> bool:
@@ -146,3 +145,10 @@ class Customer:
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
         }
+
+    def get_customer_password(self):
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"_id": 0}
+            result: dict = mongo.customer.find_one(query_operator, projection_operator) or {}
+            return result

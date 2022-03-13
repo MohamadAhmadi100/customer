@@ -13,21 +13,20 @@ class Profile:
     ]
 
     def __init__(self, data):
-
-        self.customer_phone_number = data.customer_phone_number
-        self.customer_first_name: str = data.customer_first_name
-        self.customer_last_name: str = data.customer_last_name
-        self.customer_national_id: str = data.customer_national_id
-        self.customer_city: str = data.customer_city
-        self.customer_province: str = data.customer_province
+        self.customer_phone_number = data.get("customer_phone_number")
+        self.customer_first_name: str = data.get("customer_first_name")
+        self.customer_last_name: str = data.get("customer_last_name")
+        self.customer_national_id: str = data.get("customer_national_id")
+        self.customer_city: str = data.get("customer_city")
+        self.customer_province: str = data.get("customer_province")
         # self.customer_postal_code: str = customer_postal_code
 
-    def get_profile_datas(self):
+    def get_profile_data(self):
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            custom = mongo.customer.find_one(pipeline_find, {'_id': 0})
-            if custom is not None:
-                result = self.set_data(custom)
+            customer = mongo.customer.find_one(pipeline_find, {'_id': 0})
+            if customer is not None:
+                result = self.set_data(customer)
                 return result
             else:
                 return False

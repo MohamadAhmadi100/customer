@@ -39,10 +39,10 @@ def register(values: dict):
             "massage": "شما قبلا ثبت نام کرده اید.",
             "redirect": "login"
         }
-        return {"success": False, "message": message, "status_code": 308}
+        return {"success": False, "error": message, "status_code": 308}
     else:
         if value.customer_password != value.customer_verify_password:
-            return {"success": False, "message": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
+            return {"success": False, "error": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
         customer.set_data(
             customer_phone_number=value.customer_phone_number,
             customer_first_name=value.customer_first_name,
@@ -76,4 +76,4 @@ def register(values: dict):
             return {"success": True, "message": message, "status_code": 201}
         else:
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
-            return {"success": False, "message": message, "status_code": 417}
+            return {"success": False, "error": message, "status_code": 417}

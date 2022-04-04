@@ -4,6 +4,7 @@ import time
 import requests
 
 from customer.helper.connection import MongoConnection
+from customer.modules.auth import AuthHandler
 
 
 class Customer:
@@ -152,3 +153,11 @@ class Customer:
             projection_operator = {"_id": 0}
             result: dict = mongo.customer.find_one(query_operator, projection_operator) or {}
             return result
+
+    def change_customer_password(self, password: str) -> bool:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            hashed_password: str = AuthHandler().generate_hash_password(password)
+            set_operator = {"$set": {"customerPassword": hashed_password}}
+            result = mongo.customer.update_one(query_operator, set_operator)
+            return True if result.acknowledged else False

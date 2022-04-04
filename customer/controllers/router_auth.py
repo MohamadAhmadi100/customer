@@ -122,3 +122,13 @@ def save_logout(username: str):
         return {"success": True, "status_code": 202, "message": {"message": "خروج انجام شد"}}
     else:
         return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}
+
+
+def forget_password(customer_phone_number: str, password: str):
+    customer = Customer(phone_number=customer_phone_number)
+    if customer.is_exists_phone_number():
+        if customer.change_customer_password(password):
+            return {"success": True, "status_code": 200,
+                    "message": {"message": "رمز عبور با موفقیت تغییر کرد"}}
+        return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}
+    return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}

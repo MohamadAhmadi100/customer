@@ -36,7 +36,7 @@ def register(values: dict):
     if is_exists_phone_number or is_exists_national_id:
         message = {
             "hasRegistered": True,
-            "massage": "شما قبلا ثبت نام کرده اید.",
+            "message": "شما قبلا ثبت نام کرده اید.",
             "redirect": "login"
         }
         return {"success": False, "error": message, "status_code": 308}
@@ -71,7 +71,7 @@ def register(values: dict):
             log.save_login_log(value.customer_phone_number)
             requests.post(url, data=json.dumps(customer_address_data))
             message = {
-                "massage": "ثبت نام شما با موفقیت انجام شد",
+                "message": "ثبت نام شما با موفقیت انجام شد",
             }
             return {"success": True, "message": message, "status_code": 201}
         else:

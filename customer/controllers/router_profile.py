@@ -2,7 +2,8 @@ from customer.models.model_register import Customer
 from customer.models.model_profile import Profile
 
 
-def get_profile(customer_phone_number: str):
+def get_profile(customer_phone_number: dict):
+    customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     result = profile.get_profile_data()
     if result:
@@ -24,7 +25,8 @@ def get_profile(customer_phone_number: str):
 #         response.headers["refresh_token"] = header.get("refresh_token")
 #         return result
 #     response.status_code = status.HTTP_404_NOT_FOUND
-#     message = {"massage": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
+#     message = {"message": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
+#     message = {"message": "اطلاعاتی برای کاربر مورد نظر وجود ندارد"}
 #     return message
 #
 #
@@ -43,13 +45,13 @@ def get_profile(customer_phone_number: str):
 #         response.headers["accessToken"] = token_dict.get("access_token")
 #         response.headers["refresh_token"] = token_dict.get("refresh_token")
 #         message = {
-#             "massage": "رمز عبور با موفقیت بروز شد",
+#             "message": "رمز عبور با موفقیت بروز شد",
 #         }
 #         return message
 #     response.status_code = status.HTTP_406_NOT_ACCEPTABLE
 #     response.headers["accessToken"] = token_dict.get("access_token")
 #     response.headers["refresh_token"] = token_dict.get("refresh_token")
 #     message = {
-#         "massage": "رمز وارد شده صحیح نمی باشد",
+#         "message": "رمز وارد شده صحیح نمی باشد",
 #     }
 #     return message

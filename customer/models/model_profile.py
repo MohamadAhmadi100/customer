@@ -25,7 +25,7 @@ class Profile:
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
             customer = mongo.customer.find_one(pipeline_find, {'_id': 0})
-            if customer is not None:
+            if customer:
                 result = self.set_data(customer)
                 return result
             else:

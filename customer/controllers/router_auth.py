@@ -12,7 +12,7 @@ def check_is_registered(customer_phone_number: str):
     customer = Customer(phone_number=customer_phone_number)
     if customer.is_exists_phone_number():
         redirect = "login" if customer.is_mobile_confirm() else "loginOtp"
-        status_code = 308
+        status_code = 200
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
             "hasRegistered": True,
@@ -20,7 +20,7 @@ def check_is_registered(customer_phone_number: str):
             "redirect": redirect
         }
     else:
-        status_code = 308
+        status_code = 200
         message = {
             "hasRegistered": False,
             "message": "شما قبلا ثبت نام نکرده اید",

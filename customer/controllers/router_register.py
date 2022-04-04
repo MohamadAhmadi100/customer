@@ -51,6 +51,7 @@ def register(values: dict):
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():  # save customer and return result as bool
+            print("*****************")
             url = "http://devaddr.aasood.com/address/insert"
             customer_address_data = {
                 "customerName": value.customer_first_name + " " + customer.customer_last_name,

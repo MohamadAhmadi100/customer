@@ -95,7 +95,7 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
                     "message": "شما به درستی وارد شدید",
                     "data": user_info
                 }
-                return {"success": True, "status_code": 202, "message": message}
+                return dict({"success": True, "status_code": 202}, **message)
             else:
                 message = {
                     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),

@@ -2,13 +2,13 @@ from customer.models.model_register import Customer
 from customer.models.model_profile import Profile
 
 
-def get_profile(customer_phone_number: dict):
-    customer_phone_number = customer_phone_number.get('phone_number')
-    profile = Profile({"customer_phone_number": customer_phone_number})
-    result = profile.get_profile_data()
-    if result:
-        return {"success": True, "message": result, "status_code": 200}
-    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
+# def get_profile(customer_phone_number: dict):
+#     customer_phone_number = customer_phone_number.get('phone_number')
+#     profile = Profile({"customer_phone_number": customer_phone_number})
+#     result = profile.get_profile_data()
+#     if result:
+#         return {"success": True, "message": result, "status_code": 200}
+#     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
 
 # def edit_profile_data(
 #         response: Response,

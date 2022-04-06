@@ -108,7 +108,7 @@ class Customer:
         if self.get_next_sequence_customer_id():
             customer_data: dict = self.__dict__
             customer_data["customerID"] = self.customer_id
-            customer_data["customerCrateTime"] = time.time()
+            customer_data["customerCreateTime"] = time.time()
             customer_data["customerEmail"] = ""
             customer_data["customerShopName"] = ""
             customer_data["customerAccountNumber"] = ""

@@ -3,6 +3,7 @@ import jdatetime
 
 def get_customers_data():
     response = {
+        "totalDataCount": 17,
         "sortable": ["customerID", "customerLastName", "customerCreateTime", "totalOrdersPrice", "lastOrderDate"],
         "data": [
             {
@@ -2176,3 +2177,7 @@ def get_customers_data():
         ]
     }
     return {"success": True, "message": response, "status_code": 200}
+
+
+def get_customers_grid_data(data):
+    print(data)

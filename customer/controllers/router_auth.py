@@ -115,8 +115,9 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
         return {"success": False, "status_code": 401, "error": message}
 
 
-def save_logout(username: str):
-    result = log.save_logout_log(username)
+def save_logout(username: dict):
+    customer_id = username.get("user_id")
+    result = log.save_logout_log(customer_id)
     if result:
         # redirect to home page
         return {"success": True, "status_code": 202, "message": {"message": "خروج انجام شد"}}

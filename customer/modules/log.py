@@ -16,19 +16,21 @@ def save_login_log(customer_id: str) -> bool:
 
 def save_logout_log(customer_id: str) -> bool:
     with MongoConnection() as mongo:
-        result: object = mongo.log.find({"customerID": customer_id}, {'_id': 0}).limit(1).sort("customerCrateTime", -1)
-
-        # TODO handel index error
-        login_time = result[0].get("customerActionTime")
+        result: list = list(
+            mongo.log.find({"customerID": customer_id}, {'_id': 0}).limit(1).sort("customerCreateTime", -1))
+        login_time = time.time()
+        if len(result):
+            try:
+                login_time = result[0].get("customerActionTime")
+            except IndexError:
+                ...
 
     pipe_line = {
-            "customerID": customer_id,
-            "customerAction": "login",
-            "customerActionTime": time.time(),
-            "customerStayRateTime": time.time() - login_time
+        "customerID": customer_id,
+        "customerAction": "login",
+        "customerActionTime": time.time(),
+        "customerStayRateTime": time.time() - login_time
     }
     with MongoConnection() as mongo:
         result = mongo.log.insert_one(pipe_line)
     return True if result.acknowledged else False
-
-

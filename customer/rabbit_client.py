@@ -4,6 +4,7 @@ import sys
 import pika
 from customer.modules import terminal_log
 from config import config
+from pika.exceptions import ConnectionClosed, StreamLostError, ChannelWrongStateError
 
 
 class RabbitRPCClient:
@@ -28,10 +29,7 @@ class RabbitRPCClient:
         self.callback = callback
         self.fanout_callback = None
         self.headers = headers
-        if headers_match_all:
-            self.headers["x-match"] = "all"
-        else:
-            self.headers["x-match"] = "any"
+        self.headers["x-match"] = "all" if headers_match_all else "any"
         self.channel.queue_bind(
             exchange=exchange_name,
             queue=self.receiving_queue,
@@ -55,7 +53,7 @@ class RabbitRPCClient:
 
     def publish(self, channel, method, properties, body):
         message = self.callback(json.loads(body))
-        terminal_log.responce_log(message)
+        terminal_log.response_log(message)
         channel.basic_publish(exchange='',
                               routing_key=properties.reply_to,
                               properties=pika.BasicProperties(correlation_id=properties.correlation_id),
@@ -85,5 +83,9 @@ class RabbitRPCClient:
         try:
             terminal_log.connection_log(self.host, self.port, self.headers)
             self.channel.start_consuming()
+        except (ConnectionClosed, StreamLostError, ChannelWrongStateError) as e:
+            terminal_log.pika_exception_log(e)
+            self.connect()
+            self.consume()
         except KeyboardInterrupt:
             self.channel.stop_consuming()

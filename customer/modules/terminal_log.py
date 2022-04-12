@@ -23,8 +23,15 @@ def request_log(message, app_name):
     print(message.get(app_name).get("body"))
 
 
-def responce_log(message):
+def response_log(message):
     sys.stdout.write("\033[1;31m")
-    print("                  Responce: ", end="")
+    print("                  Response: ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
     print(message)
+
+
+def pika_exception_log(message):
+    sys.stdout.write("\033[1;31m")
+    print("        !!! ERROR !!!       =================== Pika Exception raised: ", end="")
+    sys.stdout.write("\033[;1m\033[1;31m")
+    print(message, "========================     ")

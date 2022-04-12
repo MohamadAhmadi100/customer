@@ -27,5 +27,8 @@ class Config:
     RABBIT_USER: str = os.getenv("RABBIT_USER")
     RABBIT_PASS: str = os.getenv("RABBIT_PASS")
 
+    VALID_PERIOD_FILTERS: list = os.getenv("VALID_PERIOD_FILTERS")
+    VALID_VALUE_FILTERS: list = os.getenv("VALID_VALUE_FILTERS")
+
 
 config = Config()

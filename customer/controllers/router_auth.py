@@ -12,7 +12,6 @@ def check_is_registered(customer_phone_number: str):
     customer = Customer(phone_number=customer_phone_number)
     if customer.is_exists_phone_number():
         redirect = "login" if customer.is_mobile_confirm() else "loginOtp"
-        status_code = 200
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
             "hasRegistered": True,
@@ -20,12 +19,12 @@ def check_is_registered(customer_phone_number: str):
             "redirect": redirect
         }
     else:
-        status_code = 200
         message = {
             "hasRegistered": False,
             "message": "شما قبلا ثبت نام نکرده اید",
             "redirect": "register"
         }
+    status_code = 200
     return {"success": True, "status_code": status_code, "message": message}
 
 
@@ -85,8 +84,7 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
 
 def checking_login_password(customer_phone_number: str, customer_password: str):
     customer = Customer(phone_number=customer_phone_number)
-    user = customer.get_customer_password()
-    if user:
+    if user := customer.get_customer_password():
         if auth_handler.verify_password(customer_password, user.get("customerPassword")):
             if user.get("customerIsMobileConfirm"):
                 log.save_login_log(customer_phone_number)
@@ -117,8 +115,7 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
 
 def save_logout(username: dict):
     customer_id = username.get("user_id")
-    result = log.save_logout_log(customer_id)
-    if result:
+    if result := log.save_logout_log(customer_id):
         # redirect to home page
         return {"success": True, "status_code": 202, "message": {"message": "خروج انجام شد"}}
     else:

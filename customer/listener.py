@@ -15,8 +15,7 @@ def callback(message: dict) -> dict:
     terminal_log.action_log(message, app_name)
     terminal_log.request_log(message, app_name)
     data = message.get(app_name, {})
-    action = data.get("action")
-    if action:
+    if action := data.get("action"):
         body = data.get("body", {})
         try:
             exec(f"global response; response['{app_name}'] = {action}(**{body})")

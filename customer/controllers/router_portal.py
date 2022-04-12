@@ -1,3 +1,5 @@
+import json
+
 import jdatetime
 
 
@@ -2181,3 +2183,4 @@ def get_customers_data():
 
 def get_customers_grid_data(data):
     print(data)
+    return {"success": True, "message": {"message": json.loads(data)}, "status_code": 200}

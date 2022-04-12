@@ -24,10 +24,8 @@ class Profile:
     def get_profile_data(self):
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
-            customer = mongo.customer.find_one(pipeline_find, {'_id': 0})
-            if customer:
-                result = self.set_data(customer)
-                return result
+            if customer := mongo.customer.find_one(pipeline_find, {'_id': 0}):
+                return self.set_data(customer)
             else:
                 return False
 
@@ -58,19 +56,13 @@ class Profile:
             customer_data = mongo.customer.find_one(pipeline_find, {'_id': 0})
             if customer_data is not None:
 
-                return {
-                    "customerPhoneNumber": self.customer_phone_number if self.customer_phone_number else customer_data.get(
-                        "customerPhoneNumber"),
-                    "customerFirstName": self.customer_first_name if self.customer_first_name else customer_data.get(
-                        "customerFirstName"),
-                    "customerLastName": self.customer_last_name if self.customer_last_name else customer_data.get(
-                        "customerLastName"),
-                    "customerNationalID": self.customer_national_id if self.customer_national_id else customer_data.get(
-                        "customerNationalID"),
-                    "customerCity": self.customer_city if self.customer_city else customer_data.get("customerCity"),
-                    "customerProvince": self.customer_province if self.customer_province else customer_data.get(
-                        "customerProvince"),
-                }
+                return {"customerPhoneNumber": self.customer_phone_number or customer_data.get("customerPhoneNumber"),
+                        "customerFirstName": self.customer_first_name or customer_data.get("customerFirstName"),
+                        "customerLastName": self.customer_last_name or customer_data.get("customerLastName"),
+                        "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
+                        "customerCity": self.customer_city or customer_data.get("customerCity"),
+                        "customerProvince": self.customer_province or customer_data.get("customerProvince")}
+
             else:
                 return False
 

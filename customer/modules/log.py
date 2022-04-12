@@ -11,7 +11,7 @@ def save_login_log(customer_id: str) -> bool:
     }
     with MongoConnection() as mongo:
         result = mongo.log.insert_one(pipe_line)
-    return True if result.acknowledged else False
+    return bool(result.acknowledged)
 
 
 def save_logout_log(customer_id: str) -> bool:
@@ -33,4 +33,4 @@ def save_logout_log(customer_id: str) -> bool:
     }
     with MongoConnection() as mongo:
         result = mongo.log.insert_one(pipe_line)
-    return True if result.acknowledged else False
+    return bool(result.acknowledged)

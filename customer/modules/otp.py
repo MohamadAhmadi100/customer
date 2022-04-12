@@ -27,7 +27,7 @@ class OTP:
         self.otp_code_length: int = 4
 
     def generate_code(self, otp_code_length) -> str:
-        for i in range(otp_code_length):
+        for _ in range(otp_code_length):
             self.otp_code += str(random.randint(0, 9))  # type: str
         return self.otp_code
 
@@ -62,7 +62,7 @@ class OTP:
         phone_number: str = phone_number or self.phone_number
         with self.client as r:
             value: bytes = r.get(phone_number)
-        return True if value and json.loads(value).get("verify") else False
+        return bool(value and json.loads(value).get("verify"))
 
     def is_expire_otp(self, receive_otp_code: Optional[str] = None, phone_number: Optional[str] = None) -> bool:
         phone_number: str = phone_number or self.phone_number
@@ -70,7 +70,7 @@ class OTP:
         with self.client as r:
             value: bytes = r.get(phone_number)
         otp_code: str = json.loads(value).get("code") if value else None
-        return True if otp_code and otp_code == receive_otp_code else False
+        return bool(otp_code and otp_code == receive_otp_code)
 
     def is_expire_otp_time(self, phone_number: Optional[str] = None) -> Union[Tuple[bool, int]]:
         phone_number: str = phone_number or self.phone_number
@@ -84,4 +84,4 @@ class OTP:
         phone_number: str = phone_number or self.phone_number
         with self.client as r:
             value: bytes = r.expire(phone_number, 1)
-            return True if value else False
+            return bool(value)

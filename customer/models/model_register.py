@@ -32,50 +32,50 @@ class Customer:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsActive": False}}
             result: object = mongo.customer.update_one(query_operator, set_operator)
-        return True if result.acknowledged else False
+        return bool(result.acknowledged)
 
     def is_exists_phone_number(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
-            return True if mongo.customer.find_one(query_operator) else False
+            return bool(mongo.customer.find_one(query_operator))
 
     def is_exists_national_id(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerNationalID": self.customer_national_id}
-            return True if mongo.customer.find_one(query_operator) else False
+            return bool(mongo.customer.find_one(query_operator))
 
     def login(self, password: str) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number, "customerPassword": password}
-            return True if mongo.customer.find_one(query_operator) else False
+            return bool(mongo.customer.find_one(query_operator))
 
     def is_mobile_confirm(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"customerIsMobileConfirm": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
-            return True if result.get("customerIsMobileConfirm") else False
+            return bool(result.get("customerIsMobileConfirm"))
 
     def is_customer_confirm(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"customerIsConfirm": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
-            return True if result.get("customerIsConfirm") else False
+            return bool(result.get("customerIsConfirm"))
 
     def mobile_confirm(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsMobileConfirm": True}}
             result = mongo.customer.update_one(query_operator, set_operator)
-            return True if result.acknowledged else False
+            return bool(result.acknowledged)
 
     def customer_confirm(self) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsConfirm": True}}
             result = mongo.customer.update_one(query_operator, set_operator)
-            return True if result.acknowledged else False
+            return bool(result.acknowledged)
 
     def get_next_sequence_customer_id(self) -> int:
         with MongoConnection() as mongo:
@@ -105,18 +105,17 @@ class Customer:
             return result
 
     def save(self) -> bool:
-        if self.get_next_sequence_customer_id():
-            customer_data: dict = self.__dict__
-            customer_data["customerID"] = self.customer_id
-            customer_data["customerCreateTime"] = time.time()
-            customer_data["customerEmail"] = ""
-            customer_data["customerShopName"] = ""
-            customer_data["customerAccountNumber"] = ""
-            with MongoConnection() as mongo:
-                result: object = mongo.customer.insert_one(customer_data)
-            return True if result.acknowledged else False
-        else:
+        if not self.get_next_sequence_customer_id():
             return False
+        customer_data: dict = self.__dict__
+        customer_data["customerID"] = self.customer_id
+        customer_data["customerCreateTime"] = time.time()
+        customer_data["customerEmail"] = ""
+        customer_data["customerShopName"] = ""
+        customer_data["customerAccountNumber"] = ""
+        with MongoConnection() as mongo:
+            result: object = mongo.customer.insert_one(customer_data)
+        return bool(result.acknowledged)
 
     def set_data(
             self,
@@ -151,8 +150,7 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0}
-            result: dict = mongo.customer.find_one(query_operator, projection_operator) or {}
-            return result
+            return mongo.customer.find_one(query_operator, projection_operator) or {}
 
     def change_customer_password(self, password: str) -> bool:
         with MongoConnection() as mongo:
@@ -160,4 +158,4 @@ class Customer:
             hashed_password: str = AuthHandler().generate_hash_password(password)
             set_operator = {"$set": {"customerPassword": hashed_password}}
             result = mongo.customer.update_one(query_operator, set_operator)
-            return True if result.acknowledged else False
+            return bool(result.acknowledged)

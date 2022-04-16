@@ -1,6 +1,6 @@
 import json
-
 import jdatetime
+from customer.modules.getter import Filter
 
 
 def get_customers_data():
@@ -2182,5 +2182,9 @@ def get_customers_data():
 
 
 def get_customers_grid_data(data):
-    print(data)
-    return {"success": True, "message": {"message": json.loads(data)}, "status_code": 200}
+    data = json.loads(data)
+    records = Filter()
+    period_filters = records.set_period_filters(data.get("filters"))
+    value_filters = records.set_value_filters(data.get("filters"))
+    print(period_filters, value_filters)
+    return {"success": True, "message": {"message": period_filters}, "status_code": 200}

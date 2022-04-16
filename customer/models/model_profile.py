@@ -9,6 +9,7 @@ class Profile:
         "customer_national_id",
         "customer_city",
         "customer_province",
+        "customer_ofogh_code"
 
     ]
 
@@ -19,6 +20,7 @@ class Profile:
         self.customer_national_id: str = data.get("customer_national_id")
         self.customer_city: str = data.get("customer_city")
         self.customer_province: str = data.get("customer_province")
+        self.customer_ofogh_code: int = data.get("customer_ofogh_code")
         # self.customer_postal_code: str = customer_postal_code
 
     def get_profile_data(self):
@@ -47,6 +49,7 @@ class Profile:
             "customerEmail": data.get("customerEmail"),
             "customerShopeName": data.get("customerShopeName"),
             "customerAccoountNumber": data.get("customerAccoountNumber"),
+            "customerOfoghCode": data.get("customerOfoghCode")
 
         }
 
@@ -61,7 +64,8 @@ class Profile:
                         "customerLastName": self.customer_last_name or customer_data.get("customerLastName"),
                         "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
                         "customerCity": self.customer_city or customer_data.get("customerCity"),
-                        "customerProvince": self.customer_province or customer_data.get("customerProvince")}
+                        "customerProvince": self.customer_province or customer_data.get("customerProvince"),
+                        "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode")}
 
             else:
                 return False

@@ -6,6 +6,7 @@ class Profile:
         "customer_phone_number",
         "customer_first_name",
         "customer_last_name",
+        "customer_email",
         "customer_national_id",
         "customer_city",
         "customer_province",
@@ -14,9 +15,10 @@ class Profile:
     ]
 
     def __init__(self, data):
-        self.customer_phone_number = data.get("customer_phone_number")
+        self.customer_phone_number: str = data.get("customer_phone_number")
         self.customer_first_name: str = data.get("customer_first_name")
         self.customer_last_name: str = data.get("customer_last_name")
+        self.customer_email: str = data.get("customer_email")
         self.customer_national_id: str = data.get("customer_national_id")
         self.customer_city: str = data.get("customer_city")
         self.customer_province: str = data.get("customer_province")
@@ -37,6 +39,7 @@ class Profile:
             "customerPhoneNumber": data.get("customerPhoneNumber"),
             "customerFirstName": data.get("customerFirstName"),
             "customerLastName": data.get("customerLastName"),
+            "customerEmail": data.get("customerEmail"),
             "customerNationalID": data.get("customerNationalID"),
             # "customerIsMobileConfirm": data.get("customerIsMobileConfirm"),
             # "customerIsConfirm": data.get("customerIsConfirm"),
@@ -46,7 +49,6 @@ class Profile:
             "customerProvinceCode": data.get("customerProvinceCode"),
             "customerAddress": data.get("customerAddress"),
             "customerType": data.get("customerType"),
-            "customerEmail": data.get("customerEmail"),
             "customerShopeName": data.get("customerShopeName"),
             "customerAccoountNumber": data.get("customerAccoountNumber"),
             "customerOfoghCode": data.get("customerOfoghCode")
@@ -62,6 +64,7 @@ class Profile:
                 return {"customerPhoneNumber": self.customer_phone_number or customer_data.get("customerPhoneNumber"),
                         "customerFirstName": self.customer_first_name or customer_data.get("customerFirstName"),
                         "customerLastName": self.customer_last_name or customer_data.get("customerLastName"),
+                        "customerEmail": self.customer_last_name or customer_data.get("customerEmail"),
                         "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
                         "customerCity": self.customer_city or customer_data.get("customerCity"),
                         "customerProvince": self.customer_province or customer_data.get("customerProvince"),

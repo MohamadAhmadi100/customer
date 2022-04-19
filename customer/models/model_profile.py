@@ -15,14 +15,14 @@ class Profile:
     ]
 
     def __init__(self, data):
-        self.customer_phone_number: str = data.get("customer_phone_number")
-        self.customer_first_name: str = data.get("customer_first_name")
-        self.customer_last_name: str = data.get("customer_last_name")
-        self.customer_email: str = data.get("customer_email")
-        self.customer_national_id: str = data.get("customer_national_id")
-        self.customer_city: str = data.get("customer_city")
-        self.customer_province: str = data.get("customer_province")
-        self.customer_ofogh_code: int = data.get("customer_ofogh_code")
+        self.customer_phone_number: str = data.get("customer_phone_number") or data.get("customerPhoneNumber")
+        self.customer_first_name: str = data.get("customer_first_name") or data.get("customerFirstName")
+        self.customer_last_name: str = data.get("customer_last_name") or data.get("customerLastName")
+        self.customer_email: str = data.get("customer_email") or data.get("customerEmail")
+        self.customer_national_id: str = data.get("customer_national_id") or data.get("customerNationalID")
+        self.customer_city: str = data.get("customer_city") or data.get("customerCity")
+        self.customer_province: str = data.get("customer_province") or data.get("customerProvince")
+        self.customer_ofogh_code: int = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
         # self.customer_postal_code: str = customer_postal_code
 
     def get_profile_data(self):
@@ -64,7 +64,7 @@ class Profile:
                 return {"customerPhoneNumber": self.customer_phone_number or customer_data.get("customerPhoneNumber"),
                         "customerFirstName": self.customer_first_name or customer_data.get("customerFirstName"),
                         "customerLastName": self.customer_last_name or customer_data.get("customerLastName"),
-                        "customerEmail": self.customer_last_name or customer_data.get("customerEmail"),
+                        "customerEmail": self.customer_email or customer_data.get("customerEmail"),
                         "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
                         "customerCity": self.customer_city or customer_data.get("customerCity"),
                         "customerProvince": self.customer_province or customer_data.get("customerProvince"),
@@ -75,12 +75,15 @@ class Profile:
 
     def update_profile(self):
         try:
-            if self.create_obj_to_update_profile():
+            if obj := self.create_obj_to_update_profile():
                 with MongoConnection() as mongo:
                     mongo.customer.update_one({"customerPhoneNumber": self.customer_phone_number},
-                                              {"$set": self.create_obj_to_update_profile()})
-                return {"type": True, "message": "success"}
+                                              {"$set": obj})
+                return {"status_code": 202, "success": True, "message": {"message": "اطلاعات شما با موفقیت به روز شد"}}
             else:
-                return {"type": True, "message": "کابری با این اطلاعات وجود ندارد"}
+                return {"status_code": 404, "success": True, "error": "کاربری با این اطلاعات وجود ندارد"}
         except TypeError:
-            return {"type": False, "message": "Error"}
+            return {"status_code": 417, "success": False, "error": "لطفا مجددا تلاش کنید"}
+
+    def change_password(self, data):
+        pass

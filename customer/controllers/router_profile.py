@@ -27,9 +27,10 @@ def change_customer_password(data: dict):
         customer = Customer(data.get("customer_phone_number"))
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
-    if customer.get_customer_password() == data.get("customer_old_password"):
+    customer_password = customer.get_customer_password().get("customerPassword")
+    if AuthHandler().verify_password(data.get("customer_old_password"), customer_password):
         if customer.change_customer_password(data.get("customer_new_password")):
             return {"success": True, "status_code": 200,
                     "message": {"message": "رمز عبور با موفقیت تغییر کرد"}}
         return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}
-    return {"success": False, "status_code": 404, "error": "رمز عبور قدیمی اشتباه است"}
+    return {"success": False, "status_code": 422, "error": "رمز عبور قدیمی اشتباه است"}

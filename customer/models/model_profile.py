@@ -10,7 +10,13 @@ class Profile:
         "customer_national_id",
         "customer_city",
         "customer_province",
-        "customer_ofogh_code"
+        "customer_ofogh_code",
+        "customer_shop_name",
+        "customer_account_number",
+        "customer_telephone_number",
+        "customer_shop_status",
+        "customer_shop_location",
+        "customer_education"
 
     ]
 
@@ -23,6 +29,13 @@ class Profile:
         self.customer_city: str = data.get("customer_city") or data.get("customerCity")
         self.customer_province: str = data.get("customer_province") or data.get("customerProvince")
         self.customer_ofogh_code: int = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
+        self.customer_shop_name: int = data.get("customer_shop_name") or data.get("customerShopName")
+        self.customer_account_number: int = data.get("customer_account_number") or data.get("customerAccountNumber")
+        self.customer_telephone_number: int = data.get("customer_telephone_number") or data.get("customerTelephoneNumber")
+        self.customer_shop_status: int = data.get("customer_shop_status") or data.get("customerShopStatus")
+        self.customer_shop_location: int = data.get("customer_shop_location") or data.get("customerShopLocation")
+        self.customer_education: int = data.get("customer_education") or data.get("customerEducation")
+
         # self.customer_postal_code: str = customer_postal_code
 
     def get_profile_data(self):
@@ -68,8 +81,14 @@ class Profile:
                         "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
                         "customerCity": self.customer_city or customer_data.get("customerCity"),
                         "customerProvince": self.customer_province or customer_data.get("customerProvince"),
-                        "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode")}
-
+                        "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode"),
+                        "customerShopName": self.customer_shop_name or customer_data.get("customerShopName"),
+                        "customerAccountNumber": self.customer_account_number or customer_data.get("customerAccountNumber"),
+                        "customerTelephoneNumber": self.customer_telephone_number or customer_data.get("customerTelephoneNumber"),
+                        "customerShopStatus": self.customer_shop_status or customer_data.get("customerShopStatus"),
+                        "customerShopLocation": self.customer_shop_location or customer_data.get("customerShopLocation"),
+                        "customerEducation": self.customer_education or customer_data.get("customerEducation")
+                }
             else:
                 return False
 

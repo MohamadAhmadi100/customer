@@ -54,17 +54,21 @@ class Profile:
             "customerLastName": data.get("customerLastName"),
             "customerEmail": data.get("customerEmail"),
             "customerNationalID": data.get("customerNationalID"),
-            # "customerIsMobileConfirm": data.get("customerIsMobileConfirm"),
-            # "customerIsConfirm": data.get("customerIsConfirm"),
-            # "customerIsActive": data.get("customerIsActive"),
+            "customerIsMobileConfirm": data.get("customerIsMobileConfirm"),
+            "customerIsConfirm": data.get("customerIsConfirm"),
+            "customerIsActive": data.get("customerIsActive"),
             "customerCity": data.get("customerCity"),
             "customerProvince": data.get("customerProvince"),
             "customerProvinceCode": data.get("customerProvinceCode"),
             "customerAddress": data.get("customerAddress"),
             "customerType": data.get("customerType"),
-            "customerShopeName": data.get("customerShopeName"),
-            "customerAccoountNumber": data.get("customerAccoountNumber"),
-            "customerOfoghCode": data.get("customerOfoghCode")
+            "customerShopName": data.get("customerShopName"),
+            "customerAccountNumber": data.get("customerAccountNumber"),
+            "customerOfoghCode": data.get("customerOfoghCode"),
+            "customerTelephoneNumber": data.get("customerTelephoneNumber"),
+            "customerShopStatus": data.get("customerShopStatus"),
+            "customerShopLocation": data.get("customerShopLocation"),
+            "customerEducation": data.get("customerEducation")
 
         }
 

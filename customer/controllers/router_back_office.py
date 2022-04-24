@@ -1,5 +1,7 @@
 import json
 import jdatetime
+
+from customer.modules.getter import GetData
 from customer.modules.setter import Filter
 
 
@@ -2181,15 +2183,21 @@ def get_customers_data():
     return {"success": True, "message": response, "status_code": 200}
 
 
-def get_customers_grid_data(data):
-    data = json.loads(data)
+def get_customers_grid_data(data: str = None):
+    data = {} if data is None else json.loads(data)
     records = Filter()
     period_filters: dict = {}
     value_filters: dict = {}
     if filters := data.get("filters"):
         period_filters = records.set_period_filters(filters)
-    if status := data.get("filters").get("status").get("values"):
-        value_filters = records.set_value_filters(status)
+        if status := filters.get("values"):
+            value_filters = records.set_value_filters(status.get("values"))
     filters = dict(period_filters, **value_filters)
     print(filters)
-    return {"success": True, "message": {"message": value_filters}, "status_code": 200}
+    return GetData().executor(
+        queries=filters,
+        number_of_records=data.get("perPage") or "15",
+        page=data.get("page") or "1",
+        sort_name=data.get("sortName") or "customerID",
+        sort_type=data.get("sortType") or "asc"
+    )

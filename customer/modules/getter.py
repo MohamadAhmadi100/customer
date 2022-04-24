@@ -9,24 +9,25 @@ class GetData:
         ...
 
     @staticmethod
-    def data(queries: dict, number_of_records: str = 15, page: str = 1, sort_name: str = "name",
-             sort_type: str = "desc"):
+    def handle_sort(sort_type):
+        return -1 if sort_type == "desc" else 1
+
+    def executor(self, queries: dict, number_of_records: str = "15", page: str = "1", sort_name: str = "customerID",
+                 sort_type: str = "asc"):
+        print(number_of_records, page, sort_type, sort_name)
+        sort_type = self.handle_sort(sort_type)
         with MongoConnection() as mongo:
             try:
+                print(queries)
                 customers = list(mongo.customer.find(
                     queries, {"_id": False}).limit(int(number_of_records)).skip(
                     int(number_of_records) * (int(page) - 1)).sort(sort_name,
                                                                    sort_type))
-                total_count = mongo.customer.find(
-                    queries, {"_id": False}).limit(int(number_of_records)).skip(
-                    int(number_of_records) * (int(page) - 1)).sort(sort_name,
-                                                                   sort_type).count_documents()
-                last_data = {
+                total_count = mongo.customer.count_documents(queries)
+                data = {
                     "data": customers,
                     "totalCount": total_count,
                 }
-                # return {"success": True, "message": last_data, "status_code": 200}
-                return {"data": last_data}
+                return {"success": True, "message": data, "status_code": 200}
             except Exception as e:
-                return {"success": False, "error": "مشکل در اتصال به سرور", "status_code": 500}
-        return False
+                return {"success": False, "error": e, "status_code": 404}

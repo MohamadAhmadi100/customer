@@ -1,10 +1,12 @@
 import json
 import time
+from datetime import datetime
 
 import requests
 
 from customer.helper.connection import MongoConnection
 from customer.modules.auth import AuthHandler
+from customer.modules.date_convertor import jalali_datetime
 
 
 class Customer:
@@ -83,7 +85,7 @@ class Customer:
                 self.customer_id = 0
                 return True
             else:
-                result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCrateTime", -1)
+                result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCreateTime", -1)
                 try:
                     self.customer_id = result[0].get("customerID") + 1
                 except IndexError:
@@ -110,6 +112,7 @@ class Customer:
         customer_data: dict = self.__dict__
         customer_data["customerID"] = self.customer_id
         customer_data["customerCreateTime"] = time.time()
+        customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerEmail"] = ""
         customer_data["customerShopName"] = ""
         customer_data["customerAccountNumber"] = ""

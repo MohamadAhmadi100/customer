@@ -29,6 +29,7 @@ class Config:
 
     VALID_PERIOD_FILTERS: list = os.getenv("VALID_PERIOD_FILTERS")
     VALID_VALUE_FILTERS: list = os.getenv("VALID_VALUE_FILTERS")
+    VALID_SEARCH_FIELDS: list = os.getenv("VALID_SEARCH_FIELDS")
 
 
 config = Config()

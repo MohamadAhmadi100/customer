@@ -1,7 +1,5 @@
 import json
-
 import requests
-
 from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
@@ -62,6 +60,7 @@ def register(values: dict):
 
             log.save_login_log(value.customer_phone_number)
             requests.post(url, data=json.dumps(customer_address_data))
+            customer.set_activity()
             message = {
                 "message": "ثبت نام شما با موفقیت انجام شد",
             }

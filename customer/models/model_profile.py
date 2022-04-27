@@ -31,7 +31,8 @@ class Profile:
         self.customer_ofogh_code: int = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
         self.customer_shop_name: int = data.get("customer_shop_name") or data.get("customerShopName")
         self.customer_account_number: int = data.get("customer_account_number") or data.get("customerAccountNumber")
-        self.customer_telephone_number: int = data.get("customer_telephone_number") or data.get("customerTelephoneNumber")
+        self.customer_telephone_number: int = data.get("customer_telephone_number") or data.get(
+            "customerTelephoneNumber")
         self.customer_shop_status: int = data.get("customer_shop_status") or data.get("customerShopStatus")
         self.customer_shop_location: int = data.get("customer_shop_location") or data.get("customerShopLocation")
         self.customer_education: int = data.get("customer_education") or data.get("customerEducation")
@@ -87,12 +88,15 @@ class Profile:
                         "customerProvince": self.customer_province or customer_data.get("customerProvince"),
                         "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode"),
                         "customerShopName": self.customer_shop_name or customer_data.get("customerShopName"),
-                        "customerAccountNumber": self.customer_account_number or customer_data.get("customerAccountNumber"),
-                        "customerTelephoneNumber": self.customer_telephone_number or customer_data.get("customerTelephoneNumber"),
+                        "customerAccountNumber": self.customer_account_number or customer_data.get(
+                            "customerAccountNumber"),
+                        "customerTelephoneNumber": self.customer_telephone_number or customer_data.get(
+                            "customerTelephoneNumber"),
                         "customerShopStatus": self.customer_shop_status or customer_data.get("customerShopStatus"),
-                        "customerShopLocation": self.customer_shop_location or customer_data.get("customerShopLocation"),
+                        "customerShopLocation": self.customer_shop_location or customer_data.get(
+                            "customerShopLocation"),
                         "customerEducation": self.customer_education or customer_data.get("customerEducation")
-                }
+                        }
             else:
                 return False
 
@@ -107,6 +111,3 @@ class Profile:
                 return {"status_code": 404, "success": True, "error": "کاربری با این اطلاعات وجود ندارد"}
         except TypeError:
             return {"status_code": 417, "success": False, "error": "لطفا مجددا تلاش کنید"}
-
-    def change_password(self, data):
-        pass

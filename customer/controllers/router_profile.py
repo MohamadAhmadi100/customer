@@ -34,3 +34,24 @@ def change_customer_password(data: dict):
                     "message": {"message": "رمز عبور با موفقیت تغییر کرد"}}
         return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}
     return {"success": False, "status_code": 422, "error": "رمز عبور قدیمی اشتباه است"}
+
+
+def add_delivery_person(data: dict = None) -> dict:
+    try:
+        customer_phone_number = data.get("customer_phone_number")
+        customer = Customer(customer_phone_number)
+    except Exception as e:
+        return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+
+    if customer.add_delivery(data.get("delivery")):
+        return {"success": True, "status_code": 200,
+                "message": {"message": "پیک با موفقیت ثبت شد"}}
+
+
+def get_delivery_persons(phone_number) -> dict:
+    try:
+        customer = Customer(phone_number)
+    except IndexError:
+        return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+    if persons := customer.delivery_persons():
+        return {"success": True, "status_code": 200, "message": {"message": persons}}

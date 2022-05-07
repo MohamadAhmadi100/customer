@@ -162,3 +162,19 @@ class Customer:
             set_operator = {"$set": {"customerPassword": hashed_password}}
             result = mongo.customer.update_one(query_operator, set_operator)
             return bool(result.acknowledged)
+
+    def add_delivery(self, person_info: dict) -> bool:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            push_operator = {"$push": {"customerDeliveryPersons": person_info}}
+            set_operator = {"$set": {"customerDeliveryPerson": person_info}}
+            result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
+            mongo.customer.update_one(query_operator, set_operator, upsert=True)
+            return bool(result.acknowledged)
+
+    def delivery_persons(self) -> list:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"_id": 0}
+            return mongo.customer.find_one(query_operator, projection_operator).get(
+                "customerDeliveryPersons") or None

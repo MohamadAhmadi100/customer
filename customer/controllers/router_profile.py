@@ -40,12 +40,15 @@ def add_delivery_person(data: dict = None) -> dict:
     try:
         customer_phone_number = data.get("customer_phone_number")
         customer = Customer(customer_phone_number)
+        if data is None:
+            return {"success": True, "status_code": 200, "message": {"data": customer.retrieve_default_delivery()}}
+        data = json.loads(data.get("delivery"))
     except Exception as e:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
-
-    if customer.add_delivery(data.get("delivery")):
-        return {"success": True, "status_code": 200,
-                "message": {"message": "پیک با موفقیت ثبت شد"}}
+    if customer.add_delivery(data):
+        return {"success": True, "status_code": 201,
+                "message": {"message": "پیک با موفقیت ثبت شد", "data": data}}
+    return {"success": True, "status_code": 200, "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
 
 
 def get_delivery_persons(phone_number) -> dict:

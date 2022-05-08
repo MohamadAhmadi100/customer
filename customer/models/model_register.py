@@ -166,15 +166,28 @@ class Customer:
     def add_delivery(self, person_info: dict) -> bool:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            deliveries = mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDeliveryPersons")
             push_operator = {"$push": {"customerDeliveryPersons": person_info}}
-            set_operator = {"$set": {"customerDeliveryPerson": person_info}}
+            set_default_operator = {"$set": {"customerDefaultDeliveryPerson": person_info}}
+            for delivery in deliveries:
+                if person_info.get("delivery_mobile_number") == json.loads(delivery).get("delivery_mobile_number"):
+                    mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
+                    return False
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
-            mongo.customer.update_one(query_operator, set_operator, upsert=True)
+            mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
             return bool(result.acknowledged)
 
-    def delivery_persons(self) -> list:
+    def retrieve_delivery_persons(self) -> list or None:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0}
-            return mongo.customer.find_one(query_operator, projection_operator).get(
-                "customerDeliveryPersons") or None
+            try:
+                return mongo.customer.find_one(query_operator, projection_operator).get("customerDeliveryPersons")[
+                       -5:] or None
+            except Exception as e:
+                return None
+
+    def retrieve_default_delivery(self) -> dict:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            return mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDefaultDeliveryPerson")

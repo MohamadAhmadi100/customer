@@ -51,10 +51,12 @@ def add_delivery_person(data: dict = None) -> dict:
     return {"success": True, "status_code": 200, "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
 
 
-def get_delivery_persons(phone_number) -> dict:
+def get_delivery_persons(data) -> dict:
     try:
+        phone_number= data.get("customer_phone_number")
         customer = Customer(phone_number)
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
-    if persons := customer.delivery_persons():
-        return {"success": True, "status_code": 200, "message": {"message": persons}}
+    if persons := customer.retrieve_delivery_persons():
+        print(persons)
+        return {"success": True, "status_code": 200, "message": {"data": [json.loads(person) for person in persons]}}

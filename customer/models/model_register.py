@@ -1,9 +1,8 @@
 import json
 import time
 from datetime import datetime
-
 import requests
-
+from pymongo.errors import WriteError
 from customer.helper.connection import MongoConnection
 from customer.modules.auth import AuthHandler
 from customer.modules.date_convertor import jalali_datetime
@@ -163,16 +162,31 @@ class Customer:
             result = mongo.customer.update_one(query_operator, set_operator)
             return bool(result.acknowledged)
 
-    def add_delivery(self, person_info: dict) -> bool:
+    def change_default_delivery(self, person_info: dict) -> bool or None:
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        identifier = [{"element.deliveryMobileNumber": person_info.get("deliveryMobileNumber")}]
+        set_operator = {"$set": {"customerDeliveryPersons.$[element]": person_info}}
+        set_default_operator = {"$set": {"customerDefaultDeliveryPerson": person_info}}
         with MongoConnection() as mongo:
-            query_operator = {"customerPhoneNumber": self.customer_phone_number}
-            deliveries = mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDeliveryPersons")
-            push_operator = {"$push": {"customerDeliveryPersons": person_info}}
-            set_default_operator = {"$set": {"customerDefaultDeliveryPerson": person_info}}
-            for delivery in deliveries:
-                if person_info.get("delivery_mobile_number") == json.loads(delivery).get("delivery_mobile_number"):
-                    mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
-                    return False
+            try:
+                result = mongo.customer.update_one(
+                    query_operator,
+                    set_operator,
+                    array_filters=identifier,
+                    upsert=True
+                )
+                mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
+                if result.acknowledged and result.matched_count:
+                    return True
+                return False
+            except WriteError:
+                return False
+
+    def add_delivery(self, person_info: dict) -> bool:
+        push_operator = {"$push": {"customerDeliveryPersons": person_info}}
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_default_operator = {"$set": {"customerDefaultDeliveryPerson": person_info}}
+        with MongoConnection() as mongo:
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
             mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
             return bool(result.acknowledged)
@@ -183,11 +197,19 @@ class Customer:
             projection_operator = {"_id": 0}
             try:
                 return mongo.customer.find_one(query_operator, projection_operator).get("customerDeliveryPersons")[
-                       -5:] or None
+                       -5:] or []
             except Exception as e:
                 return None
 
     def retrieve_default_delivery(self) -> dict:
         with MongoConnection() as mongo:
-            query_operator = {"customerPhoneNumber": self.customer_phone_number}
-            return mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDefaultDeliveryPerson")
+            try:
+                query_operator = {"customerPhoneNumber": self.customer_phone_number}
+                return mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDefaultDeliveryPerson")
+            except Exception as e:
+                print(e)
+
+# person_nfo = {'deliveryFirstName': 'aaaaaa11a68aaa', 'deliveryLastName': 'aaa77111aaaa', 'deliveryNationalId': 'aaa&&1111aaaa',
+#                'deliveryMobileNumber': 'string'}
+# customer = Customer("09358270867")
+# customer.add_delivery(person_nfo)

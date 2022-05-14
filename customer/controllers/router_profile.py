@@ -45,12 +45,18 @@ def add_delivery_person(data: dict = None) -> dict:
             if default_delivery := customer.retrieve_default_delivery():
                 return {"success": True, "status_code": 200, "message": {"data": default_delivery}}
             return {"success": False, "status_code": 404, "error": "پیک ثبت نشده است"}
-        if customer.change_default_delivery(data):
-            return {"success": True, "status_code": 200,
-                    "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
-        if customer.add_delivery(data):
-            return {"success": True, "status_code": 201,
-                    "message": {"message": "پیک با موفقیت ثبت شد", "data": data}}
+        if deliveries := customer.retrieve_delivery_persons():
+            exists = False
+            for delivery in deliveries:
+                if data.get("deliveryMobileNumber") == delivery.get("deliveryMobileNumber"):
+                    exists = True
+            if exists:
+                if customer.change_default_delivery(data):
+                    return {"success": True, "status_code": 200,
+                            "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
+            if customer.add_delivery(data):
+                return {"success": True, "status_code": 201,
+                        "message": {"message": "پیک با موفقیت ثبت شد", "data": data}}
         return {"success": False, "status_code": 417,
                 "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
     except Exception as e:

@@ -37,6 +37,7 @@ def change_customer_password(data: dict):
 
 
 def add_delivery_person(data: dict = None) -> dict:
+    # sourcery skip: merge-nested-ifs
     try:
         customer_phone_number = data.get("customer_phone_number")
         customer = Customer(customer_phone_number)

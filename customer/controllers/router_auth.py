@@ -8,7 +8,11 @@ auth_handler = AuthHandler()
 
 # mobile number generator and validation
 def check_is_registered(customer_phone_number: str):
-    # checking is exist mobile number in db
+    """
+    returns a flag, indicates that user is registered
+    :param customer_phone_number: a valid mobile number
+    :return: a dict with success flag
+    """
     customer = Customer(phone_number=customer_phone_number)
     if customer.is_exists_phone_number():
         redirect = "login" if customer.is_mobile_confirm() else "loginOtp"

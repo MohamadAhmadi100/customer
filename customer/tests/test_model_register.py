@@ -1,8 +1,4 @@
 import json
-import pytest
-from hypothesis import given
-import hypothesis.strategies as st
-from faker import Faker
 from faker.providers import person, phone_number
 from unittest import mock
 from customer.models.model_register import Customer

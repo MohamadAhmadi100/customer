@@ -38,8 +38,8 @@ test:
   tags:
     - ci-jon
   script:
-    - pip install pytest lovely-pytest-docker
-    - pytest -s customer/tests/
+    - python3 -m pip install pytest lovely-pytest-docker
+    - python3 pytest -s customer/tests/
     
 dev_deploy:
   stage: deploy

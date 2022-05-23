@@ -38,7 +38,9 @@ test:
   tags:
     - ci-jon
   script:
-    - docker-compose -f docker-compose.yaml up -d --build
+    - echo "Testing"
+    - python3 test_model_register.py
+
     
 dev_deploy:
   stage: deploy

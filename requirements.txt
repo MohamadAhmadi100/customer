@@ -46,3 +46,4 @@ typing_extensions==4.0.1
 urllib3==1.26.8
 uvicorn==0.16.0
 wrapt==1.13.3
+lovely-pytest-docker==0.3.0

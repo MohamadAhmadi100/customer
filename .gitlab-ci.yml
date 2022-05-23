@@ -39,8 +39,6 @@ test:
     - ci-jon
   script:
     - echo "Testing"
-    - cd /customer
-    - python -m pytest
     
 dev_deploy:
   stage: deploy

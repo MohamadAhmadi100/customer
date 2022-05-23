@@ -16,4 +16,6 @@ COPY ./customer /customer/customer
 
 RUN pip install -e /customer/.
 
+CMD ["pytest", "/customer/customer/"]
+
 CMD ["python", "/customer/customer/main.py"]

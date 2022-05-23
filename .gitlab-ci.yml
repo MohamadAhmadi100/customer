@@ -38,7 +38,7 @@ test:
   tags:
     - ci-jon
   script:
-    - python3 -m pytest
+    - docker-compose -f docker-compose.yaml up -d --build
 dev_deploy:
   stage: deploy
   only:

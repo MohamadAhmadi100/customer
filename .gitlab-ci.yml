@@ -39,7 +39,7 @@ test:
     - ci-jon
   script:
     - echo "Testing"
-    - cd /customer/tests
+    - cd /customer
     - python -m pytest
     
 dev_deploy:

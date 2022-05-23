@@ -38,7 +38,7 @@ test:
   tags:
     - ci-jon
   script:
-    - python3 pytest -s customer/tests/
+    - python3 pytest -s customer/customer/tests/
     
 dev_deploy:
   stage: deploy

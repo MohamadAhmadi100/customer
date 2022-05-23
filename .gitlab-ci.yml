@@ -38,7 +38,8 @@ test:
   tags:
     - ci-jon
   script:
-    - docker-compose -f docker-compose.yaml up -d --build
+    - pip install pytest lovely-pytest-docker
+    - pytest -s customer/tests/
     
 dev_deploy:
   stage: deploy

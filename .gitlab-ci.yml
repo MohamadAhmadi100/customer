@@ -39,8 +39,8 @@ test:
     - ci-jon
   script:
     - echo "Testing"
-    - python3 test_model_register.py
-
+    - cd /customer/tests
+    - python -m pytest
     
 dev_deploy:
   stage: deploy

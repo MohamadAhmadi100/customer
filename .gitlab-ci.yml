@@ -37,8 +37,7 @@ test:
     - dev
   tags:
     - ci-jon
-  script:
-    - docker-compose -f docker-compose.yaml up -d --build
+    
 dev_deploy:
   stage: deploy
   only:

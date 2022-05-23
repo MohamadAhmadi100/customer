@@ -18,4 +18,4 @@ RUN pip install -e /customer/.
 
 CMD ["python", "/customer/customer/main.py"]
 
-CMD ["pytest", "/customer/customer"]
+CMD ["pytest", "/customer/"]

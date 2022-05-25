@@ -28,10 +28,3 @@ class Filter:
     def set_search_query(self, search_phrase):
         return {search_field: {"$regex": search_phrase} for search_field in list(self.valid_search_fields) if
                 len(list(self.valid_search_fields))} or {}
-
-#
-# a = Filter()
-# print(a.set_period_filters({
-#     "registerDate": {"start": "1401-01-16 11:25:00", "end": "1401-01-18 23:25:00"},
-#     "lastOrderDate": {"start": "1401-01-17 11:25:00", "end": "1401-01-18 23:25:00"},
-#     "customerID": 12}))

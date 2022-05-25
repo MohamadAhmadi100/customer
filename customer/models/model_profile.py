@@ -39,7 +39,7 @@ class Profile:
 
         # self.customer_postal_code: str = customer_postal_code
 
-    def get_profile_data(self):
+    def get_profile_data(self) -> dict or None:
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
             if customer := mongo.customer.find_one(pipeline_find, {'_id': 0}):

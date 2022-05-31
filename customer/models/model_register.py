@@ -108,7 +108,7 @@ class Customer:
     def get_next_sequence_customer_id(self) -> bool:
         """
         auto increment id generator for self object
-        :return: True if customer is the first obj or correct id has been g
+        :return: True if customer is the first obj or correct id has been generated
         """
         with MongoConnection() as mongo:
             if not mongo.customer.find_one():
@@ -265,3 +265,37 @@ class Customer:
                 return mongo.customer.find_one(query_operator, {"_id": 0}).get("customerDefaultDeliveryPerson")
             except Exception as e:
                 return {}
+
+    def add_informal(self, informal_info: dict) -> bool:
+        """
+        :param informal_info: a dict contained informal mobile_number, national_id, name, family and kosar_code
+        :return: a bool flag showing success process
+        """
+        informal_info["informalID"] = self.get_next_sequence_informal_id()
+        push_operator = {"$push": {"customerInformalPersons": informal_info}}
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_flag_operator = {"$set": {"customerHasInformal": True}}
+        with MongoConnection() as mongo:
+            informal_persons: list = mongo.customer.find_one(query_operator).get("customerInformalPersons") or []
+            for informal in informal_persons:
+                if informal.get("informalNationalID") == informal_info.get("informalNationalID"):
+                    return False
+            result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
+            mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)
+            return bool(result.acknowledged)
+
+    def get_next_sequence_informal_id(self) -> int or bool:
+        """
+        auto increment id generator for informal object
+        :return: True if informal is the first obj or correct id has been generated
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return len(customer.get("informal") or [])
+                else:
+                    return False
+            except Exception as e:
+                return True

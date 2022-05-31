@@ -73,3 +73,18 @@ def get_delivery_persons(data) -> dict:
     if persons := customer.retrieve_delivery_persons():
         return {"success": True, "status_code": 200, "message": {"data": list(persons)}}
     return {"success": False, "status_code": 404, "error": "برای شما پیک ثبت نشده است"}
+
+
+def create_informal(data: dict) -> dict:
+    try:
+        mobile_number: str = data.get("customer_mobile_number")
+        customer = Customer(mobile_number)
+        data = json.loads(data.get("informal"))
+        if customer.add_informal(data):
+            return {"success": True, "status_code": 200,
+                    "message": f"{data.get('informalFirstName')} با موفقیت ثبت شد "}
+        else:
+            return {"success": False, "status_code": 417,
+                    "error": f"اطلاعات {data.get('informalFirstName')} تکراری است"}
+    except IndexError:
+        return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}

@@ -64,7 +64,7 @@ class TestAuth:
             "customer.modules.auth.AuthHandler.verify_password").return_value.verify_password.return_value = True
         mocker.patch(
             "customer.models.model_register.Customer.get_customer").return_value.get_customer.return_value = True
-        assert router_auth.checking_login_password("09358270867", "555555").get("status_code") == 202
+        assert router_auth.checking_login_password("09358270867", "zhila1234").get("status_code") == 202
 
     def test_save_logout(self, mocker: class_mocker):
         assert router_auth.save_logout(person.__dict__).get("success") is True

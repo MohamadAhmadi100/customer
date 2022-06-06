@@ -16,7 +16,9 @@ class Profile:
         "customer_telephone_number",
         "customer_shop_status",
         "customer_shop_location",
-        "customer_education"
+        "customer_education",
+        "customerInformalPersons",
+        "customerHasInformal"
 
     ]
 
@@ -69,7 +71,9 @@ class Profile:
             "customerTelephoneNumber": data.get("customerTelephoneNumber"),
             "customerShopStatus": data.get("customerShopStatus"),
             "customerShopLocation": data.get("customerShopLocation"),
-            "customerEducation": data.get("customerEducation")
+            "customerEducation": data.get("customerEducation"),
+            "customerHasInformal": data.get("customerHasInformal"),
+            "customerInformalPersons": data.get("customerInformalPersons")
 
         }
 

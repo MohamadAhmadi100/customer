@@ -88,3 +88,6 @@ def create_informal(data: dict) -> dict:
                     "error": f"اطلاعات {data.get('informalFirstName')} تکراری است"}
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+
+# def get_informal(data:dict):
+#     try:

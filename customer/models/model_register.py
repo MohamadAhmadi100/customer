@@ -299,3 +299,55 @@ class Customer:
                     return False
             except Exception as e:
                 return True
+
+    def get_informal_person(self, national_id: int) -> dict or bool:
+        """
+        finds a extra person matches national_id and customer mobile_number
+        :param national_id: 10 - digits int and unique
+        :return:
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if persons := mongo.customer.find_one(query_operator, projection_operator).get(
+                        "customerInformalPersons"):
+                    return next((person for person in persons if national_id == person.get("informalNationalID")),
+                                False)
+            except Exception:
+                return False
+
+    def set_status(self, status):
+        """
+        for declare a customer status
+        :param status: a str phrase pend, cancel, confirm
+        :return: a bool showing success process or None
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerStatus": status}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def get_status(self) -> str or None:
+        """
+        get customer status
+        :return: str phrase pend, cancel, confirm
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return customer.get("status")
+                else:
+                    return None
+            except Exception as e:
+                return None

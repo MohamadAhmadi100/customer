@@ -89,5 +89,16 @@ def create_informal(data: dict) -> dict:
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
 
-# def get_informal(data:dict):
-#     try:
+
+def get_informal(data: dict):
+    try:
+        if customer := Customer(data.get("customer_mobile_number")):
+            return customer.get_informal_person(data.get("informal_national_id")) or {"success": False,
+                                                                                      "status_code": 404,
+                                                                                      "error": "اطلاعات کاربر وجود ندارد"}
+        else:
+            return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+    except IndexError:
+        return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+    except Exception as e:
+        return {"success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}

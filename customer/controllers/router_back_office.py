@@ -3,6 +3,7 @@ import jdatetime
 
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
+from customer.models.model_register import Customer
 
 
 def get_customers_data():
@@ -2195,7 +2196,6 @@ def get_customers_grid_data(data: str = None):
     if search_phrase := data.get("search"):
         search_query = records.set_search_query(search_phrase)
     filters = dict(period_filters, **value_filters, **search_query)
-    print(filters)
     return GetData().executor(
         queries=filters,
         number_of_records=data.get("perPage") or "15",
@@ -2203,3 +2203,13 @@ def get_customers_grid_data(data: str = None):
         sort_name=data.get("sortName") or "customerID",
         sort_type=data.get("sortType") or "asc"
     )
+
+
+def set_status(mobileNumber: str, status: str) -> dict:
+    customer = Customer(mobileNumber)
+    if result := customer.set_status(status):
+        return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
+    else:
+        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}

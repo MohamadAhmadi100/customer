@@ -14,22 +14,25 @@ def check_is_registered(customer_phone_number: str):
     :return: a dict with success flag
     """
     customer = Customer(phone_number=customer_phone_number)
+    status = customer.get_status()
     if customer.is_exists_phone_number():
         redirect = "login" if customer.is_mobile_confirm() else "loginOtp"
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
             "hasRegistered": True,
             "message": "شما قبلا ثبت نام کرده اید.",
-            "redirect": redirect
+            "redirect": redirect,
+            "status": status
         }
     else:
         message = {
             "hasRegistered": False,
             "message": "شما قبلا ثبت نام نکرده اید",
-            "redirect": "register"
+            "redirect": "register",
+            "status": status
+
         }
-    status_code = 200
-    return {"success": True, "status_code": status_code, "message": message}
+    return {"success": True, "status_code": 200, "message": message}
 
 
 def send_otp_code(customer_phone_number: str):

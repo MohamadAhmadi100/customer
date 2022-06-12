@@ -93,11 +93,9 @@ def create_informal(data: dict) -> dict:
 def get_informal(data: dict):
     try:
         if customer := Customer(data.get("customer_mobile_number")):
-            return customer.get_informal_person(data.get("informal_national_id")) or {"success": False,
-                                                                                      "status_code": 404,
-                                                                                      "error": "اطلاعات کاربر وجود ندارد"}
-        else:
-            return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
+            if informal := customer.get_informal_person(str(data.get("informal_national_id"))):
+                return {"success": True, "status_code": 200, "message": informal}
+        return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
     except Exception as e:

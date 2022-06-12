@@ -15,7 +15,8 @@ class Customer:
         "customer_password",
         "customer_first_name",
         "customer_last_name",
-        "customer_national_id"
+        "customer_national_id",
+        "customer_status"
     ]
 
     CUSTOMER_TYPE: tuple = ('B2B',)
@@ -27,6 +28,7 @@ class Customer:
         self.customer_first_name: str = ""
         self.customer_last_name: str = ""
         self.customer_national_id: str = ""
+        self.customer_status: str = ""
 
     def set_activity(self) -> bool:
         """
@@ -36,8 +38,10 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsActive": False}}
+            set_status_operator = {"$set": {"customerStatus": "pend"}}
             result: object = mongo.customer.update_one(query_operator, set_operator)
-        return bool(result.acknowledged)
+            status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
+        return bool(result.acknowledged) and bool(status_result.acknowledged)
 
     def is_exists_phone_number(self) -> bool:
         """
@@ -92,6 +96,8 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsMobileConfirm": True}}
+            set_status_operator = {"$set": {"customerStatus": "pend"}}
+
             result = mongo.customer.update_one(query_operator, set_operator)
             return bool(result.acknowledged)
 
@@ -180,6 +186,7 @@ class Customer:
             "customerIsActive": True,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
+            "customerStatus": self.customer_status
         }
 
     def get_customer_password(self):
@@ -300,7 +307,7 @@ class Customer:
             except Exception as e:
                 return True
 
-    def get_informal_person(self, national_id: int) -> dict or bool:
+    def get_informal_person(self, national_id: str) -> dict or bool:
         """
         finds a extra person matches national_id and customer mobile_number
         :param national_id: 10 - digits int and unique

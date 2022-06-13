@@ -2,7 +2,6 @@ import json
 
 from customer.models.model_register import Customer
 from customer.models.model_profile import Profile
-from customer.controllers import router_auth
 from customer.modules.auth import AuthHandler
 
 

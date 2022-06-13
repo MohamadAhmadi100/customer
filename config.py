@@ -31,5 +31,12 @@ class Config:
     VALID_VALUE_FILTERS: list = os.getenv("VALID_VALUE_FILTERS")
     VALID_SEARCH_FIELDS: list = os.getenv("VALID_SEARCH_FIELDS")
 
+    VALID_GRID_KEYS: list = os.getenv("VALID_GRID_KEYS")
 
+
+VALID_GRID_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastName", "customerID", "customerCity",
+                   "customerProvince", "customerCity", "customerPostalCode", "customerClass", "customerType",
+                   "customerJalaliCreateTime", "customerShopName", "customerNationalID", "customerJalaliConfirmDate",
+                   "customerShopLocation", "customerEducation", "customerDocumentStatus", "customerShopPostalCode",
+                   "customerEmail", "customerShopStatus", "customerAddress"]
 config = Config()

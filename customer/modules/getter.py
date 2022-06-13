@@ -1,4 +1,5 @@
 from customer.helper.connection import MongoConnection
+from config import VALID_GRID_KEYS
 
 
 class GetData:
@@ -13,7 +14,6 @@ class GetData:
                  sort_type: str = "asc", search_query=None):
         if search_query is None:
             search_query = {}
-        print(number_of_records, page, sort_type, sort_name)
         sort_type = self.handle_sort(sort_type)
         with MongoConnection() as mongo:
             try:
@@ -22,6 +22,12 @@ class GetData:
                     int(number_of_records) * (int(page) - 1)).sort(sort_name,
                                                                    sort_type))
                 total_count = mongo.customer.count_documents(queries)
+                for customer in customers:
+                    print(type(list(VALID_GRID_KEYS)))
+                    print(list(VALID_GRID_KEYS))
+                    for grid_attribute in VALID_GRID_KEYS:
+                        if grid_attribute not in customer.keys():
+                            customer[grid_attribute] = None
                 data = {
                     "data": customers,
                     "totalCount": total_count,

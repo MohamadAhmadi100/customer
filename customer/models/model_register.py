@@ -301,7 +301,7 @@ class Customer:
         with MongoConnection() as mongo:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
-                    return len(customer.get("informal") or [])
+                    return len(customer.get("customerInformalPersons") or 0)
                 else:
                     return False
             except Exception as e:
@@ -321,6 +321,21 @@ class Customer:
                         "customerInformalPersons"):
                     return next((person for person in persons if national_id == person.get("informalNationalID")),
                                 False)
+            except Exception:
+                return False
+
+    def get_informal_persons(self) -> dict or bool:
+        """
+        finds a extra person matches national_id and customer mobile_number
+        :param national_id: 10 - digits int and unique
+        :return:
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                return mongo.customer.find_one(query_operator, projection_operator).get(
+                    "customerInformalPersons") or None
             except Exception:
                 return False
 

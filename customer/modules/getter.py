@@ -21,15 +21,14 @@ class GetData:
                     queries, {"_id": False}).limit(int(number_of_records)).skip(
                     int(number_of_records) * (int(page) - 1)).sort(sort_name,
                                                                    sort_type))
-                total_count = mongo.customer.count_documents(queries)
+                total_count = len(list(mongo.customer.find(queries, {"_id": False})))
+                # total_count = mongo.customer.count_documents(queries)
+                result = []
                 for customer in customers:
-                    print(type(list(VALID_GRID_KEYS)))
-                    print(list(VALID_GRID_KEYS))
-                    for grid_attribute in VALID_GRID_KEYS:
-                        if grid_attribute not in customer.keys():
-                            customer[grid_attribute] = None
+                    record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
+                    result.append(record)
                 data = {
-                    "data": customers,
+                    "data": result,
                     "totalCount": total_count,
                 }
                 return {"success": True, "message": data, "status_code": 200}

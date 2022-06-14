@@ -1,6 +1,6 @@
 import json
 import jdatetime
-from config import VALID_GRID_KEYS
+from config import VALID_GRID_KEYS, VALID_PROFILE_KEYS
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
 from customer.models.model_register import Customer
@@ -2210,10 +2210,8 @@ def crm_get_profile(customer_phone_number: dict):
     customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
-        for grid_attribute in VALID_GRID_KEYS:
-            if grid_attribute not in result.keys():
-                result[grid_attribute] = None
-        return {"success": True, "message": result, "status_code": 200}
+        customer = {grid_attribute: result.get(grid_attribute) for grid_attribute in VALID_PROFILE_KEYS}
+        return {"success": True, "message": customer, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
 
 

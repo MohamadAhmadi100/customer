@@ -21,8 +21,8 @@ class GetData:
                     queries, {"_id": False}).limit(int(number_of_records)).skip(
                     int(number_of_records) * (int(page) - 1)).sort(sort_name,
                                                                    sort_type))
-                total_count = len(list(mongo.customer.find(queries, {"_id": False})))
-                # total_count = mongo.customer.count_documents(queries)
+                # total_count = len(list(mongo.customer.find(queries, {"_id": False})))
+                total_count = mongo.customer.count_documents(queries)
                 result = []
                 for customer in customers:
                     record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}

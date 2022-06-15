@@ -2230,4 +2230,4 @@ def edit_customers_grid_data(data):
     print(data)
     print(type(data))
     customer = Customer(data.get("customerMobileNumber"))
-    return {}
+    return {"success": True, "message": "اطلاعات کاربر با موفقیت تغییر کرد", "status_code": 200}

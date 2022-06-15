@@ -26,6 +26,7 @@ class GetData:
                 result = []
                 for customer in customers:
                     record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
+                    record["customerMobileNumber"] = customer.get("customerPhoneNumber")
                     result.append(record)
                 data = {
                     "data": result,

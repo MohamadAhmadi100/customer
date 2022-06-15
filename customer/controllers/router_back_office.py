@@ -2215,6 +2215,10 @@ def crm_get_profile(customer_phone_number: dict):
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
 
 
+def get_kosar_data():
+    ...
+
+
 def set_status(mobileNumber: str, status: str) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.set_status(status):

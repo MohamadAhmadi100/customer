@@ -2223,3 +2223,11 @@ def set_status(mobileNumber: str, status: str) -> dict:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
+
+
+def edit_customers_grid_data(data):
+    data = json.loads(data)
+    print(data)
+    print(type(data))
+    customer = Customer(data.get("customerMobileNumber"))
+    return {}

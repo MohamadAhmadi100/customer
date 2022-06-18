@@ -2227,10 +2227,10 @@ def set_status(mobileNumber: str, status: str) -> dict:
 
 def edit_customers_grid_data(data):
     data = json.loads(data)
-    print(data)
-    print(type(data))
-    customer = Customer(data.get("customerMobileNumber"))
-    return {"success": True, "message": "اطلاعات کاربر با موفقیت تغییر کرد", "status_code": 200}
+    if data.get("customerMobileNumber"):
+        profile = Profile(data)
+        return profile.update_profile()
+    return {"status_code": 422, "success": False, "error": "ورود شماره موبایل الزامی است."}
 
 
 def get_kosar_data(customerMobileNumber: str):

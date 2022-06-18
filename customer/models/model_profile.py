@@ -18,12 +18,16 @@ class Profile:
         "customer_shop_location",
         "customer_education",
         "customerInformalPersons",
-        "customerHasInformal"
-
+        "customerHasInformal",
+        "customer_postal_code",
+        "customer_class",
+        "customer_shop_postal_code",
+        "customer_address",
     ]
 
     def __init__(self, data):
-        self.customer_phone_number: str = data.get("customer_phone_number") or data.get("customerPhoneNumber")
+        self.customer_phone_number: str = data.get("customer_phone_number") or data.get(
+            "customerPhoneNumber") or data.get("customerMobileNumber") or data.get("customer_mobile_number")
         self.customer_first_name: str = data.get("customer_first_name") or data.get("customerFirstName")
         self.customer_last_name: str = data.get("customer_last_name") or data.get("customerLastName")
         self.customer_email: str = data.get("customer_email") or data.get("customerEmail")
@@ -38,8 +42,11 @@ class Profile:
         self.customer_shop_status: int = data.get("customer_shop_status") or data.get("customerShopStatus")
         self.customer_shop_location: int = data.get("customer_shop_location") or data.get("customerShopLocation")
         self.customer_education: int = data.get("customer_education") or data.get("customerEducation")
-
-        # self.customer_postal_code: str = customer_postal_code
+        self.customer_postal_code: int = data.get("customer_postal_code") or data.get("customerPostalCode")
+        self.customer_class: int = data.get("customer_class") or data.get("customerClass")
+        self.customer_shop_postal_code: int = data.get("customer_shop_postal_code") or data.get(
+            "customerShopPostalCode")
+        self.customer_address: int = data.get("customer_address") or data.get("customerAddress")
 
     def get_profile_data(self) -> dict or None:
         with MongoConnection() as mongo:
@@ -73,7 +80,10 @@ class Profile:
             "customerShopLocation": data.get("customerShopLocation"),
             "customerEducation": data.get("customerEducation"),
             "customerHasInformal": data.get("customerHasInformal"),
-            "customerInformalPersons": data.get("customerInformalPersons")
+            "customerInformalPersons": data.get("customerInformalPersons"),
+            "customerClass": data.get("customerClass"),
+            "customerShopPostalCode": data.get("customerShopPostalCode"),
+            "customerPostalCode": data.get("customerPostalCode")
 
         }
 
@@ -99,7 +109,11 @@ class Profile:
                         "customerShopStatus": self.customer_shop_status or customer_data.get("customerShopStatus"),
                         "customerShopLocation": self.customer_shop_location or customer_data.get(
                             "customerShopLocation"),
-                        "customerEducation": self.customer_education or customer_data.get("customerEducation")
+                        "customerEducation": self.customer_education or customer_data.get("customerEducation"),
+                        "customerPostalCode": self.customer_postal_code or customer_data.get("customerPostalCode"),
+                        "customerClass": self.customer_class or customer_data.get("customerClass"),
+                        "customerShopPostalCode": self.customer_class or customer_data.get("customerShopPostalCode"),
+                        "customerAddress": self.customer_address or customer_data.get("customerAddress"),
                         }
             else:
                 return False
@@ -108,10 +122,11 @@ class Profile:
         try:
             if obj := self.create_obj_to_update_profile():
                 with MongoConnection() as mongo:
+                    print(self.customer_phone_number)
                     mongo.customer.update_one({"customerPhoneNumber": self.customer_phone_number},
                                               {"$set": obj})
-                return {"status_code": 202, "success": True, "message": {"message": "اطلاعات شما با موفقیت به روز شد"}}
+                return {"status_code": 202, "success": True, "message": {"message": "اطلاعات با موفقیت به روز شد"}}
             else:
-                return {"status_code": 404, "success": True, "error": "کاربری با این اطلاعات وجود ندارد"}
+                return {"status_code": 404, "success": False, "error": "کاربری با این اطلاعات وجود ندارد"}
         except TypeError:
             return {"status_code": 417, "success": False, "error": "لطفا مجددا تلاش کنید"}

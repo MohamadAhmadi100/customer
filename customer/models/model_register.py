@@ -377,6 +377,53 @@ class Customer:
 
     def kosar_getter(self):
         """
-        syncs req
-        :return:
+        syncs needed data for kosar service
+        :return: a dict contained user data
         """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return {"IsPerson": True,
+                            "gnr_Person_Name":customer.get("customerFirstName") or False,
+                            "gnr_Person_Family":customer.get("customerLastName") or False,
+                            "gnr_Person_NationalCode":customer.get("customerNationalID") or False,
+                            "mainFormalGroupingName":f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                            "AddressDTOLst": [customer.get("customerAddress") or False],
+
+                            }
+
+
+                else:
+                    return None
+            except Exception as e:
+                return None
+
+
+
+            # "IsPerson": True,
+            # "gnr_Person_Name": "",
+            # "gnr_Person_Family": "",
+            # "gnr_Person_NationalCode": "",
+            # "gnr_Person_Sexuality": "",
+            # "mainFormalGroupingName": "",
+            # "otherFormalGroupingNameLst": [""],
+            # "AddressDTOLst": [
+            #     {
+            #         "gnr_Address_Title": "",
+            #         "gnr_Address_No": "",
+            #         "gnr_Address_Street": "", "gnr_Address_PostCode": "",
+            #     }
+            #     "gnr_Land_PhoneCode": ""
+            # ],
+            # "PhoneDTOLst": [
+            #     {
+            #         "gnr_Phone_Title": "",
+            #         "gnr_Phone_Priority": 1,
+            #         "gnr_Phone_No": "",
+            #     }
+            # 
+            # ]
+            # }
+            # "gnr_Land_PhoneCode": ""

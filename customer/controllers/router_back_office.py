@@ -2215,10 +2215,6 @@ def crm_get_profile(customer_phone_number: dict):
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
 
 
-def get_kosar_data():
-    ...
-
-
 def set_status(mobileNumber: str, status: str) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.set_status(status):
@@ -2235,3 +2231,13 @@ def edit_customers_grid_data(data):
     print(type(data))
     customer = Customer(data.get("customerMobileNumber"))
     return {"success": True, "message": "اطلاعات کاربر با موفقیت تغییر کرد", "status_code": 200}
+
+
+def get_kosar_data(customerMobileNumber: str):
+    customer = Customer(customerMobileNumber)
+    if result := customer.kosar_getter():
+        return {"success": True, "message": result, "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
+    else:
+        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}

@@ -374,3 +374,9 @@ class Customer:
                     return None
             except Exception as e:
                 return None
+
+    def kosar_getter(self):
+        """
+        syncs req
+        :return:
+        """

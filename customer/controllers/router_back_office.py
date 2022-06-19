@@ -2234,7 +2234,7 @@ def edit_customers_grid_data(data):
     return {"status_code": 422, "success": False, "error": "ورود شماره موبایل الزامی است."}
 
 
-def set_informal_flag(mobileNumber: str, hasInformal: str):
+def set_informal_flag(mobileNumber: str, hasInformal: bool):
     customer = Customer(mobileNumber)
     if result := customer.set_has_informal(hasInformal):
         return {"success": True, "message": "وضعیت غیر رسمی کاربر با موفقیت به روز شد", "status_code": 200}

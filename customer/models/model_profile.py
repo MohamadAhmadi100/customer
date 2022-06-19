@@ -83,8 +83,12 @@ class Profile:
             "customerInformalPersons": data.get("customerInformalPersons"),
             "customerClass": data.get("customerClass"),
             "customerShopPostalCode": data.get("customerShopPostalCode"),
-            "customerPostalCode": data.get("customerPostalCode")
-
+            "customerPostalCode": data.get("customerPostalCode"),
+            "customerStatus": data.get("customerStatus"),
+            "customerID": data.get("customerID"),
+            "customerJalaliCreateTime": data.get("customerJalaliCreateTime"),
+            "customerJalaliConfirmDate": data.get("customerJalaliConfirmDate"),
+            "customerDocumentStatus": data.get("customerDocumentStatus")
         }
 
     def create_obj_to_update_profile(self):

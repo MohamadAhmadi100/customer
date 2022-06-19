@@ -38,7 +38,7 @@ VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastN
                       "customerProvince", "customerCity", "customerPostalCode", "customerClass", "customerType",
                       "customerJalaliCreateTime", "customerShopName", "customerNationalID", "customerJalaliConfirmDate",
                       "customerShopLocation", "customerEducation", "customerDocumentStatus", "customerShopPostalCode",
-                      "customerEmail", "customerShopStatus", "customerAddress", "customerStatus"]
+                      "customerEmail", "customerShopStatus", "customerAddress", "customerStatus", "customerID"]
 VALID_GRID_KEYS = ["customerID", "customerFirstName", "customerLastName", "customerMobileNumber",
                    "customerJalaliCreateTime", "customerStatus", "customerLastOrderDate", "customerWholeOrderNumber",
                    "customerWholeOrderAmount"]

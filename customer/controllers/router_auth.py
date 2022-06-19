@@ -42,7 +42,7 @@ def send_otp_code(customer_phone_number: str):
         otp.generate_code(otp_code_length=4)
         otp.save()
         otp.send()
-        return {"success": True, "status_code": 202, "message": {"message": "کد OTP ارسال شد"}}
+        return {"success": True, "status_code": 202, "message": {"message": "کد یک بار مصرف ارسال شد"}}
     else:
         message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
         return {"success": False, "status_code": 406, "error": message}

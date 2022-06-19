@@ -2219,7 +2219,7 @@ def crm_get_profile(customer_phone_number: dict):
 def set_status(mobileNumber: str, status: str) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.set_status(status):
-        return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
+        return {"success": True, "userData": result, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
     elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:

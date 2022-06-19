@@ -357,7 +357,12 @@ class Customer:
                     result = mongo.customer.update_one(query_operator, set_operator)
                     if status == "confirm":
                         mongo.customer.update_one(query_operator, set_active_operator)
-                    return bool(result.acknowledged)
+                    if bool(result.acknowledged):
+                        customer_data = mongo.customer.find_one(query_operator, projection_operator)
+                        return {"customer_id": customer_data.get("customerID"),
+                                "phone_number": self.customer_phone_number,
+                                "customer_name": customer_data.get("customerFirstName")
+                                }
                 return False
             except Exception:
                 return

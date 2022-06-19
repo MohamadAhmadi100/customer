@@ -28,7 +28,7 @@ class Customer:
         self.customer_first_name: str = ""
         self.customer_last_name: str = ""
         self.customer_national_id: str = ""
-        self.customer_status: str = ""
+        self.customer_status: str = "pend"
 
     def set_activity(self) -> bool:
         """
@@ -348,12 +348,15 @@ class Customer:
         """
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         set_operator = {"$set": {"customerStatus": status}}
+        set_active_operator = {"$set": {"customerIsActive": False}}
         projection_operator = {"_id": 0}
 
         with MongoConnection() as mongo:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
+                    if status == "confirm":
+                        mongo.customer.update_one(query_operator, set_active_operator)
                     return bool(result.acknowledged)
                 return False
             except Exception:

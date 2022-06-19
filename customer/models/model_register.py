@@ -375,6 +375,20 @@ class Customer:
             except Exception as e:
                 return None
 
+    def set_has_informal(self, hasInformal: bool) -> bool or None:
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"hasInformal": hasInformal}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return False
+
     def kosar_getter(self):
         """
         syncs needed data for kosar service
@@ -386,10 +400,10 @@ class Customer:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
                     return {"IsPerson": True,
-                            "gnr_Person_Name":customer.get("customerFirstName") or False,
-                            "gnr_Person_Family":customer.get("customerLastName") or False,
-                            "gnr_Person_NationalCode":customer.get("customerNationalID") or False,
-                            "mainFormalGroupingName":f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                            "gnr_Person_Name": customer.get("customerFirstName") or False,
+                            "gnr_Person_Family": customer.get("customerLastName") or False,
+                            "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
+                            "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
                             "AddressDTOLst": [customer.get("customerAddress") or False],
 
                             }
@@ -399,8 +413,6 @@ class Customer:
                     return None
             except Exception as e:
                 return None
-
-
 
             # "IsPerson": True,
             # "gnr_Person_Name": "",

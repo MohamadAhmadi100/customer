@@ -2210,6 +2210,7 @@ def crm_get_profile(customer_phone_number: dict):
     customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
+        print(result)
         customer = {grid_attribute: result.get(grid_attribute) or None for grid_attribute in VALID_PROFILE_KEYS}
         return {"success": True, "message": customer, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
@@ -2231,6 +2232,16 @@ def edit_customers_grid_data(data):
         profile = Profile(data)
         return profile.update_profile()
     return {"status_code": 422, "success": False, "error": "ورود شماره موبایل الزامی است."}
+
+
+def set_informal_flag(mobileNumber: str, hasInformal: str):
+    customer = Customer(mobileNumber)
+    if result := customer.set_has_informal(hasInformal):
+        return {"success": True, "message": "وضعیت غیر رسمی کاربر با موفقیت به روز شد", "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
+    else:
+        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
 
 
 def get_kosar_data(customerMobileNumber: str):

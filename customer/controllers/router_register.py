@@ -47,6 +47,12 @@ def register(values: dict):
             customer_first_name=value.customer_first_name,
             customer_last_name=value.customer_last_name,
             customer_national_id=value.customer_national_id,
+            customer_province=value.customer_province,
+            customer_city=value.customer_city,
+            customer_city_id=value.customer_city_id,
+            customer_postal_code=value.customer_postal_code,
+            customer_address=value.customer_address,
+            customer_region_code=value.customer_region_code,
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():  # save customer and return result as bool

@@ -16,7 +16,13 @@ class Customer:
         "customer_first_name",
         "customer_last_name",
         "customer_national_id",
-        "customer_status"
+        "customer_status",
+        "customer_province",
+        "customer_city",
+        "customer_city_id",
+        "customer_postal_code",
+        "customer_address",
+        "customer_region_code"
     ]
 
     CUSTOMER_TYPE: tuple = ('B2B',)
@@ -29,6 +35,12 @@ class Customer:
         self.customer_last_name: str = ""
         self.customer_national_id: str = ""
         self.customer_status: str = "pend"
+        self.customer_province: str = ""
+        self.customer_city: str = ""
+        self.customer_city_id: str = ""
+        self.customer_postal_code: str = ""
+        self.customer_address: str = ""
+        self.customer_region_code: str = ""
 
     def set_activity(self) -> bool:
         """
@@ -156,6 +168,12 @@ class Customer:
         customer_data["customerEmail"] = ""
         customer_data["customerShopName"] = ""
         customer_data["customerAccountNumber"] = ""
+        customer_data["customerProvince"] = ""
+        customer_data["customerCity"] = ""
+        customer_data["customerCityId"] = ""
+        customer_data["customerPostalCode"] = ""
+        customer_data["customerAddress"] = ""
+        customer_data["customerRegionCode"] = ""
         with MongoConnection() as mongo:
             result: object = mongo.customer.insert_one(customer_data)
         return bool(result.acknowledged)
@@ -166,13 +184,26 @@ class Customer:
             customer_first_name,
             customer_last_name,
             customer_national_id,
-            customer_password
+            customer_password,
+            customer_province,
+            customer_city,
+            customer_city_id,
+            customer_postal_code="",
+            customer_address="",
+            customer_region_code=""
+
     ) -> None:
         self.customer_phone_number = customer_phone_number
         self.customer_first_name = customer_first_name
         self.customer_last_name = customer_last_name
         self.customer_national_id = customer_national_id
         self.customer_password = customer_password
+        self.customer_province = customer_province
+        self.customer_city = customer_city
+        self.customer_city_id = customer_city_id
+        self.customer_postal_code = customer_postal_code
+        self.customer_address = customer_address
+        self.customer_region_code = customer_region_code
 
     @property
     def __dict__(self) -> dict:
@@ -359,10 +390,41 @@ class Customer:
                         mongo.customer.update_one(query_operator, set_active_operator)
                     if bool(result.acknowledged):
                         customer_data = mongo.customer.find_one(query_operator, projection_operator)
-                        return {"customer_id": customer_data.get("customerID"),
-                                "phone_number": self.customer_phone_number,
-                                "customer_name": customer_data.get("customerFirstName")
-                                }
+                        return {
+                            "customer_id": customer_data.get("customerID"),
+                            "phone_number": self.customer_phone_number,
+                            "customer_name": customer_data.get("customerFirstName")
+                        }
+                return False
+            except Exception:
+                return
+
+    def cancel_status(self) -> bool or None:
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerStatus": "cancel"}}
+        set_active_operator = {"$set": {"customerIsActive": False}}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    mongo.customer.update_one(query_operator, set_active_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def confirm_status(self) -> bool or None:
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerStatus": "confirm"}}
+        set_active_operator = {"$set": {"customerIsActive": True}}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    mongo.customer.update_one(query_operator, set_active_operator)
+                    return bool(result.acknowledged)
                 return False
             except Exception:
                 return
@@ -407,16 +469,14 @@ class Customer:
         with MongoConnection() as mongo:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
-                    return {"IsPerson": True,
-                            "gnr_Person_Name": customer.get("customerFirstName") or False,
-                            "gnr_Person_Family": customer.get("customerLastName") or False,
-                            "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
-                            "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                            "AddressDTOLst": [customer.get("customerAddress") or False],
-
-                            }
-
-
+                    return {
+                        "IsPerson": True,
+                        "gnr_Person_Name": customer.get("customerFirstName") or False,
+                        "gnr_Person_Family": customer.get("customerLastName") or False,
+                        "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
+                        "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                        "AddressDTOLst": [customer.get("customerAddress") or False],
+                    }
                 else:
                     return None
             except Exception as e:

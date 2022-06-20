@@ -2217,9 +2217,21 @@ def crm_get_profile(customer_phone_number: dict):
 
 def set_status(mobileNumber: str, status: str) -> dict:
     customer = Customer(mobileNumber)
-    if result := customer.set_status(status):
-        return {"success": True, "userData": result, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
-    elif result is None:
+    result = customer.set_status(status)
+    if status == "cancel":
+        if customer.cancel_status():
+            return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
+        elif result is None:
+            return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
+        else:
+            return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
+    if status == "confirm":
+        kosar_result = customer.kosar_getter()
+        result = customer.confirm_status()
+    if type(result) == dict and type(kosar_result) == dict:
+        return {"success": True, "walletData": result, "kosarData": kosar_result,
+                "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
+    elif result is None or kosar_result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}

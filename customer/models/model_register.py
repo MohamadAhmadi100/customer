@@ -22,7 +22,9 @@ class Customer:
         "customer_city_id",
         "customer_postal_code",
         "customer_address",
-        "customer_region_code"
+        "customer_region_code",
+        "customer_province_id",
+        "customer_email"
     ]
 
     CUSTOMER_TYPE: tuple = ('B2B',)
@@ -41,6 +43,8 @@ class Customer:
         self.customer_postal_code: str = ""
         self.customer_address: str = ""
         self.customer_region_code: str = ""
+        self.customer_province_id: str = ""
+        self.customer_email: str = ""
 
     def set_activity(self) -> bool:
         """
@@ -165,15 +169,15 @@ class Customer:
         customer_data["customerCreateTime"] = time.time()
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
-        customer_data["customerEmail"] = ""
-        customer_data["customerShopName"] = ""
-        customer_data["customerAccountNumber"] = ""
-        customer_data["customerProvince"] = ""
-        customer_data["customerCity"] = ""
-        customer_data["customerCityId"] = ""
-        customer_data["customerPostalCode"] = ""
-        customer_data["customerAddress"] = ""
-        customer_data["customerRegionCode"] = ""
+        # customer_data["customerEmail"] = ""
+        # customer_data["customerShopName"] = ""
+        # customer_data["customerAccountNumber"] = ""
+        # customer_data["customerProvince"] = ""
+        # customer_data["customerCity"] = ""
+        # customer_data["customerCityId"] = ""
+        # customer_data["customerPostalCode"] = ""
+        # customer_data["customerAddress"] = ""
+        # customer_data["customerRegionCode"] = ""
         with MongoConnection() as mongo:
             result: object = mongo.customer.insert_one(customer_data)
         return bool(result.acknowledged)
@@ -190,7 +194,8 @@ class Customer:
             customer_city_id,
             customer_postal_code="",
             customer_address="",
-            customer_region_code=""
+            customer_region_code="",
+            customer_province_id=""
 
     ) -> None:
         self.customer_phone_number = customer_phone_number
@@ -204,6 +209,7 @@ class Customer:
         self.customer_postal_code = customer_postal_code
         self.customer_address = customer_address
         self.customer_region_code = customer_region_code
+        self.customer_province_id = customer_province_id
 
     @property
     def __dict__(self) -> dict:
@@ -212,13 +218,19 @@ class Customer:
             "customerID": self.customer_id,
             "customerFirstName": self.customer_first_name,
             "customerLastName": self.customer_last_name,
+            "customerEmail": self.customer_email,
             "customerNationalID": self.customer_national_id,
             "customerIsMobileConfirm": False,
             "customerIsConfirm": False,
             "customerIsActive": True,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
-            "customerStatus": self.customer_status
+            "customerStatus": self.customer_status,
+            "customerCity": self.customer_city,
+            "customerProvince": self.customer_province,
+            "customerCityId": self.customer_city_id,
+            "customerProvinceId": self.customer_province_id,
+            "customerAddress": self.customer_address
         }
 
     def get_customer_password(self):

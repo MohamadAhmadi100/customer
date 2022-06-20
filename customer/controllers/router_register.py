@@ -12,6 +12,7 @@ class Request:
         self.customer_region_code = None
         self.customer_address = None
         self.customer_city_id = None
+        self.customer_email = None
         self.customer_province_id = None
         self.customer_verify_password = None
         self.customer_password = None
@@ -53,6 +54,7 @@ def register(values: dict):
             customer_postal_code=value.customer_postal_code,
             customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
+            customer_province_id=value.customer_province_id,
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():  # save customer and return result as bool

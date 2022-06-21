@@ -58,20 +58,25 @@ def register(values: dict):
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():  # save customer and return result as bool
-            url = "http://devaddr.aasood.com/address/insert"
-            customer_address_data = {"customerName": f'{value.customer_first_name} {customer.customer_last_name}',
-                                     "customerId": customer_data.get("customerID"),
-                                     "stateName": value.customer_province, "cityName": value.customer_city,
-                                     "stateId": value.customer_province_id, "cityId": value.customer_city_id,
-                                     "postalCode": value.customer_postal_code, "street": value.customer_address,
-                                     "isDefault": True, "regionCode": value.customer_region_code, "alley": "",
-                                     "plaque": "", "unit": "", "tel": value.customer_phone_number}
+            # url = "http://devaddr.aasood.com/address/insert"
+            # customer_address_data = {"customerName": f'{value.customer_first_name} {customer.customer_last_name}',
+            #                          "customerId": customer_data.get("customerID"),
+            #                          "stateName": value.customer_province, "cityName": value.customer_city,
+            #                          "stateId": value.customer_province_id, "cityId": value.customer_city_id,
+            #                          "postalCode": value.customer_postal_code, "street": value.customer_address,
+            #                          "isDefault": True, "regionCode": value.customer_region_code, "alley": "",
+            #                          "plaque": "", "unit": "", "tel": value.customer_phone_number}
 
             log.save_login_log(value.customer_phone_number)
-            requests.post(url, data=json.dumps(customer_address_data))
+            # requests.post(url, data=json.dumps(customer_address_data))
             customer.set_activity()
+            customer_id = customer.get_customer().get("customerID")
+            print(customer_id)
             message = {
                 "message": "ثبت نام شما با موفقیت انجام شد",
+                "data": {
+                    "customerID": customer_id
+                }
             }
             return {"success": True, "message": message, "status_code": 201}
         else:

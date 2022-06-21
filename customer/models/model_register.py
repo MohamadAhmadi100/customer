@@ -451,7 +451,7 @@ class Customer:
         with MongoConnection() as mongo:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
-                    return customer.get("status")
+                    return customer.get("customerStatus")
                 else:
                     return None
             except Exception as e:

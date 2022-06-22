@@ -152,14 +152,12 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0, "customerPassword": 0}
-            result: dict = mongo.customer.find_one(query_operator, projection_operator) or {}
-
             # Todo delete request
-            url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
-            customer_addresses = requests.get(url)
-            customer_addresses = json.loads(customer_addresses.content)
-            result["addresses"] = customer_addresses.get("result")
-            return result
+            # url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
+            # customer_addresses = requests.get(url)
+            # customer_addresses = json.loads(customer_addresses.content)
+            # result["addresses"] = customer_addresses.get("result")
+            return mongo.customer.find_one(query_operator, projection_operator) or {}
 
     def save(self) -> bool:
         if not self.get_next_sequence_customer_id():
@@ -469,6 +467,16 @@ class Customer:
                     result = mongo.customer.update_one(query_operator, set_operator)
                     return bool(result.acknowledged)
                 return False
+            except Exception:
+                return False
+
+    @staticmethod
+    def unique_national_id(national_id):
+        query_operator = {"customerNationalID": national_id}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                return not mongo.customer.find_one(query_operator, projection_operator)
             except Exception:
                 return False
 

@@ -27,8 +27,8 @@ class Request:
         self.__dict__.update(kwargs)
 
 
-def register(values: dict):
-    value = Request(**values)
+def register(data: dict):
+    value = Request(**data)
     customer = Customer(phone_number=value.customer_phone_number)
     customer_data = customer.get_customer()
     is_exists_phone_number = customer_data.get("customerPhoneNumber")
@@ -75,7 +75,9 @@ def register(values: dict):
             message = {
                 "message": "ثبت نام شما با موفقیت انجام شد",
                 "data": {
-                    "customerID": customer_id
+                    "customerID": customer_id,
+                    "customerStatus": customer.customer_status,
+                    "customerIsActive": False
                 }
             }
             return {"success": True, "message": message, "status_code": 201}

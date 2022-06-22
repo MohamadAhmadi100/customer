@@ -169,6 +169,8 @@ class Customer:
         customer_data["customerCreateTime"] = time.time()
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
+        customer_data["customerIsActive"] = False
+        customer_data["customerIsMobileConfirm"] = False
         # customer_data["customerEmail"] = ""
         # customer_data["customerShopName"] = ""
         # customer_data["customerAccountNumber"] = ""
@@ -221,8 +223,7 @@ class Customer:
             "customerEmail": self.customer_email,
             "customerNationalID": self.customer_national_id,
             "customerIsMobileConfirm": False,
-            "customerIsConfirm": False,
-            "customerIsActive": True,
+            "customerIsActive": False,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
             "customerStatus": self.customer_status,

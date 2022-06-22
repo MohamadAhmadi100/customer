@@ -75,6 +75,8 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
             otp.delete_otp()
             log.save_login_log(customer_phone_number)
             user_info = customer.get_customer()
+            if not customer.is_mobile_confirm():
+                customer.mobile_confirm()
             message = {"message": "شما به درستی وارد شدید", "data": user_info}
             return {"success": True, "status_code": 202, "message": message}
         else:

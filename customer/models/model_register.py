@@ -59,6 +59,13 @@ class Customer:
             status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
         return bool(result.acknowledged) and bool(status_result.acknowledged)
 
+    def activate(self):
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_operator = {"$set": {"customerIsActive": True}}
+            result: object = mongo.customer.update_one(query_operator, set_operator)
+        return bool(result.acknowledged)
+
     def is_exists_phone_number(self) -> bool:
         """
         :return: a flag showing repeated customer mobile number
@@ -382,34 +389,6 @@ class Customer:
             except Exception:
                 return False
 
-    def set_status(self, status):
-        """
-        for declare a customer status
-        :param status: a str phrase pend, cancel, confirm
-        :return: a bool showing success process or None
-        """
-        query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerStatus": status}}
-        set_active_operator = {"$set": {"customerIsActive": False}}
-        projection_operator = {"_id": 0}
-
-        with MongoConnection() as mongo:
-            try:
-                if mongo.customer.find_one(query_operator, projection_operator):
-                    result = mongo.customer.update_one(query_operator, set_operator)
-                    if status == "confirm":
-                        mongo.customer.update_one(query_operator, set_active_operator)
-                    if bool(result.acknowledged):
-                        customer_data = mongo.customer.find_one(query_operator, projection_operator)
-                        return {
-                            "customer_id": customer_data.get("customerID"),
-                            "phone_number": self.customer_phone_number,
-                            "customer_name": customer_data.get("customerFirstName")
-                        }
-                return False
-            except Exception:
-                return
-
     def cancel_status(self) -> bool or None:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         set_operator = {"$set": {"customerStatus": "cancel"}}
@@ -419,8 +398,8 @@ class Customer:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
-                    mongo.customer.update_one(query_operator, set_active_operator)
-                    return bool(result.acknowledged)
+                    active_result = mongo.customer.update_one(query_operator, set_active_operator)
+                    return bool(result.acknowledged) and bool(active_result.acknowledged)
                 return False
             except Exception:
                 return
@@ -428,13 +407,11 @@ class Customer:
     def confirm_status(self) -> bool or None:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         set_operator = {"$set": {"customerStatus": "confirm"}}
-        set_active_operator = {"$set": {"customerIsActive": True}}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
-                    mongo.customer.update_one(query_operator, set_active_operator)
                     return bool(result.acknowledged)
                 return False
             except Exception:
@@ -496,7 +473,7 @@ class Customer:
                         "gnr_Person_Family": customer.get("customerLastName") or False,
                         "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                        "AddressDTOLst": [customer.get("customerAddress") or False],
+                        "AddressDTOLst": customer.get("customerAddress") or False
                     }
                 else:
                     return None
@@ -528,3 +505,28 @@ class Customer:
             # ]
             # }
             # "gnr_Land_PhoneCode": ""
+
+# def kosar_getterfgf():
+#     """
+#     syncs needed data for kosar service
+#     :return: a dict contained user data
+#     """
+#     query_operator = {"customerPhoneNumber": "09358270867"}
+#     projection_operator = {"_id": 0}
+#     with MongoConnection() as mongo:
+#
+#
+#         dd= {
+#                 "customerStateName": "تهران",
+#                 "customerStateId": "02",
+#                 "customerCityId": "3432",
+#                 "customerCityName": "تهران",
+#                 "customerRegionCode": "432",
+#                 "customerStreet": "است",
+#                 "customerAlley": "است",
+#                 "customerPlaque": "58",
+#                 "customerTelephone": "01255447788",
+#                 "customerPostalCode": "545455444",
+#             }
+#         mongo.customer.update_one(query_operator, {"$push": {"customerAddress": dd}}, upsert=True)
+# kosar_getterfgf()

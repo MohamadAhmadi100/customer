@@ -2215,23 +2215,32 @@ def crm_get_profile(customer_phone_number: dict):
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
 
 
-def set_status(mobileNumber: str, status: str) -> dict:
+def set_confirm_status(mobileNumber: str) -> dict:
     customer = Customer(mobileNumber)
-    result = customer.set_status(status)
-    if status == "cancel":
-        if customer.cancel_status():
-            return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
-        elif result is None:
-            return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
-        else:
-            return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
-    if status == "confirm":
-        kosar_result = customer.kosar_getter()
+    try:
+        kosar_data = customer.kosar_getter() or {}
+        for key, value in kosar_data.items():
+            if not value:
+                return {"success": False, "error": "اطلاعات کاربر تکمیل نشده است. کاربر فعال نشد", "status_code": 401}
         result = customer.confirm_status()
-    if type(result) == dict and type(kosar_result) == dict:
-        return {"success": True, "walletData": result, "kosarData": kosar_result,
-                "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
-    elif result is None or kosar_result is None:
+        mobile_confirm = customer.is_mobile_confirm()
+        if result and mobile_confirm:
+            customer.activate()
+            return {"success": True, "message": "کاربر با موفقیت فعال شد", "kosar_data": kosar_data, "status_code": 200}
+        if result:
+            return {"success": True,
+                    "message": "برای انجام خرید کاربر نیاز به تایید شماره موبایل با رمز یک بار مصرف دارد",
+                    "kosar_data": kosar_data, "status_code": 200}
+        return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
+    except Exception:
+        return {"success": False, "error": "مشکلی به وجود آمد. لطفا مجددا تلاش کنید", "status_code": 404}
+
+
+def set_cancel_status(mobileNumber: str) -> dict:
+    customer = Customer(mobileNumber)
+    if result := customer.cancel_status():
+        return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
+    elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
@@ -2249,16 +2258,6 @@ def set_informal_flag(mobileNumber: str, hasInformal: bool):
     customer = Customer(mobileNumber)
     if result := customer.set_has_informal(hasInformal):
         return {"success": True, "message": "وضعیت غیر رسمی کاربر با موفقیت به روز شد", "status_code": 200}
-    elif result is None:
-        return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
-    else:
-        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
-
-
-def get_kosar_data(customerMobileNumber: str):
-    customer = Customer(customerMobileNumber)
-    if result := customer.kosar_getter():
-        return {"success": True, "message": result, "status_code": 200}
     elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:

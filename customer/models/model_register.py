@@ -480,6 +480,23 @@ class Customer:
             except Exception as e:
                 return None
 
+    def get_wallet_data(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return {
+
+                        "customer_id": customer.get("customerID"),
+                        "phone_number": self.customer_phone_number,
+                        "customer_name": f"{customer.get('customerFirstName')} {customer.get('customerLastName')}"
+                    }
+                else:
+                    return None
+            except Exception as e:
+                return None
+
             # "IsPerson": True,
             # "gnr_Person_Name": "",
             # "gnr_Person_Family": "",

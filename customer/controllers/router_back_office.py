@@ -2230,7 +2230,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 "success": True,
                 "message": "کاربر با موفقیت فعال شد",
                 "userData": customer.get_wallet_data() or {},
-                "kosar_data": kosar_data,
+                "kosarData": kosar_data,
                 "status_code": 200
             }
         if result:

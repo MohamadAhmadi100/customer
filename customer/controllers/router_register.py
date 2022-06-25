@@ -72,7 +72,6 @@ def register(data: dict):
             # requests.post(url, data=json.dumps(customer_address_data))
             customer.set_activity()
             customer_id = customer.get_customer().get("customerID")
-            print(customer_id)
             message = {
                 "message": "ثبت نام شما با موفقیت انجام شد",
                 "data": {

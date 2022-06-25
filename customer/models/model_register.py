@@ -487,7 +487,6 @@ class Customer:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
                     return {
-
                         "customer_id": customer.get("customerID"),
                         "phone_number": self.customer_phone_number,
                         "customer_name": f"{customer.get('customerFirstName')} {customer.get('customerLastName')}"

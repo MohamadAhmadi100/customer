@@ -2226,13 +2226,21 @@ def set_confirm_status(mobileNumber: str) -> dict:
         mobile_confirm = customer.is_mobile_confirm()
         if result and mobile_confirm:
             customer.activate()
-            return {"success": True, "message": "کاربر با موفقیت فعال شد", "kosar_data": kosar_data, "status_code": 200}
+            return {
+                "success": True,
+                "message": "کاربر با موفقیت فعال شد",
+                "userData": customer.get_wallet_data() or {},
+                "kosar_data": kosar_data,
+                "status_code": 200
+            }
         if result:
-            return {"success": True,
-                    "message": "برای انجام خرید کاربر نیاز به تایید شماره موبایل با رمز یک بار مصرف دارد",
-                    "userData": customer.get_wallet_data() or {},
-                    "kosarData": kosar_data,
-                    "status_code": 200}
+            return {
+                "success": True,
+                "message": "برای انجام خرید کاربر نیاز به تایید شماره موبایل با رمز یک بار مصرف دارد",
+                "userData": customer.get_wallet_data() or {},
+                "kosarData": kosar_data,
+                "status_code": 200
+            }
         return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
     except Exception:
         return {"success": False, "error": "مشکلی به وجود آمد. لطفا مجددا تلاش کنید", "status_code": 404}

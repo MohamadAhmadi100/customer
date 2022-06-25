@@ -13,6 +13,7 @@ def action_log(message, app_name):
     sys.stdout.write("\033[1;31m")
     print("\n => Entry action: ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
+    # print(message.get(app_name))
     print(message.get(app_name).get("action"))
 
 

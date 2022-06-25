@@ -473,7 +473,24 @@ class Customer:
                         "gnr_Person_Family": customer.get("customerLastName") or False,
                         "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                        "AddressDTOLst": customer.get("customerAddress") or False
+                        "AddressDTOLst": [
+                            {
+                                "AddressDTOLst": [
+                                    {
+                                        "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
+                                        "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                                        "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
+                                    }
+                                ],
+                                "PhoneDTOLst": [
+                                    {
+                                        "gnr_Phone_Priority": int(self.customer_phone_number),
+                                        "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                                        "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 else:
                     return None
@@ -507,7 +524,8 @@ class Customer:
             #     {
             #         "gnr_Address_Title": "",
             #         "gnr_Address_No": "",
-            #         "gnr_Address_Street": "", "gnr_Address_PostCode": "",
+            #         "gnr_Address_Street": "",
+            #         "gnr_Address_PostCode": "",
             #     }
             #     "gnr_Land_PhoneCode": ""
             # ],

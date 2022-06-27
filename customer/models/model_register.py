@@ -484,7 +484,7 @@ class Customer:
                             {
                                 "gnr_Phone_Priority": 1,
                                 "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
-                                "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
+                                "gnr_Land_PhoneCode": "021"
                             }
                         ]
                     }

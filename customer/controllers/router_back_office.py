@@ -1,10 +1,10 @@
 import json
-import jdatetime
-from config import VALID_GRID_KEYS, VALID_PROFILE_KEYS
+
+from config import VALID_PROFILE_KEYS
+from customer.models.model_profile import Profile
+from customer.models.model_register import Customer
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
-from customer.models.model_register import Customer
-from customer.models.model_profile import Profile
 
 
 def get_customers_data():
@@ -2217,6 +2217,8 @@ def crm_get_profile(customer_phone_number: dict):
 
 def set_confirm_status(mobileNumber: str) -> dict:
     customer = Customer(mobileNumber)
+    if not customer.is_exists_phone_number():
+        return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
     try:
         kosar_data = customer.kosar_getter() or {}
         for key, value in kosar_data.items():
@@ -2254,6 +2256,13 @@ def set_cancel_status(mobileNumber: str) -> dict:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
+
+
+def set_kosar_data(mobileNumber, kosarData) -> dict:
+    customer = Customer(mobileNumber)
+    if result := customer.kosar_setter(kosarData):
+        print(result)
+        return True
 
 
 def edit_customers_grid_data(data):

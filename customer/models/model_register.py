@@ -475,20 +475,16 @@ class Customer:
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
                         "AddressDTOLst": [
                             {
-                                "AddressDTOLst": [
-                                    {
-                                        "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
-                                        "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
-                                        "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
-                                    }
-                                ],
-                                "PhoneDTOLst": [
-                                    {
-                                        "gnr_Phone_Priority": int(self.customer_phone_number),
-                                        "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
-                                        "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
-                                    }
-                                ]
+                                "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
+                                "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                                "gnr_Land_PhoneCode": "021"
+                            }
+                        ],
+                        "PhoneDTOLst": [
+                            {
+                                "gnr_Phone_Priority": 1,
+                                "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                                "gnr_Land_PhoneCode": customer.get("customerAddress")[0].get("customerCityId")
                             }
                         ]
                     }
@@ -496,6 +492,10 @@ class Customer:
                     return None
             except Exception as e:
                 return None
+
+    def kosar_setter(self, kosar_data):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        # set_operator = {"$set": {"hasInformal": hasInformal}}
 
     def get_wallet_data(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}

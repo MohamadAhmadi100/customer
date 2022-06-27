@@ -159,11 +159,6 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0, "customerPassword": 0}
-            # Todo delete request
-            # url = f"http://devaddr.aasood.com/address/customer_addresses?customerId={result.get('customerID')}"
-            # customer_addresses = requests.get(url)
-            # customer_addresses = json.loads(customer_addresses.content)
-            # result["addresses"] = customer_addresses.get("result")
             return mongo.customer.find_one(query_operator, projection_operator) or {}
 
     def save(self) -> bool:
@@ -176,15 +171,6 @@ class Customer:
         customer_data["customerStatus"] = "pend"
         customer_data["customerIsActive"] = False
         customer_data["customerIsMobileConfirm"] = False
-        # customer_data["customerEmail"] = ""
-        # customer_data["customerShopName"] = ""
-        # customer_data["customerAccountNumber"] = ""
-        # customer_data["customerProvince"] = ""
-        # customer_data["customerCity"] = ""
-        # customer_data["customerCityId"] = ""
-        # customer_data["customerPostalCode"] = ""
-        # customer_data["customerAddress"] = ""
-        # customer_data["customerRegionCode"] = ""
         with MongoConnection() as mongo:
             result: object = mongo.customer.insert_one(customer_data)
         return bool(result.acknowledged)
@@ -493,9 +479,21 @@ class Customer:
             except Exception as e:
                 return None
 
-    def kosar_setter(self, kosar_data):
+    def kosar_setter(self, acc_FormalAcc_Id, acc_FormalAcc_Code):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        # set_operator = {"$set": {"hasInformal": hasInformal}}
+        projection_operator = {"_id": 0}
+        set_operator = {"$set": {
+            "acc_FormalAcc_Id": acc_FormalAcc_Id,
+            "acc_FormalAcc_Code": acc_FormalAcc_Code
+        }}
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return None
 
     def get_wallet_data(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
@@ -512,55 +510,3 @@ class Customer:
                     return None
             except Exception as e:
                 return None
-
-            # "IsPerson": True,
-            # "gnr_Person_Name": "",
-            # "gnr_Person_Family": "",
-            # "gnr_Person_NationalCode": "",
-            # "gnr_Person_Sexuality": "",
-            # "mainFormalGroupingName": "",
-            # "otherFormalGroupingNameLst": [""],
-            # "AddressDTOLst": [
-            #     {
-            #         "gnr_Address_Title": "",
-            #         "gnr_Address_No": "",
-            #         "gnr_Address_Street": "",
-            #         "gnr_Address_PostCode": "",
-            #     }
-            #     "gnr_Land_PhoneCode": ""
-            # ],
-            # "PhoneDTOLst": [
-            #     {
-            #         "gnr_Phone_Title": "",
-            #         "gnr_Phone_Priority": 1,
-            #         "gnr_Phone_No": "",
-            #     }
-            # 
-            # ]
-            # }
-            # "gnr_Land_PhoneCode": ""
-
-# def kosar_getterfgf():
-#     """
-#     syncs needed data for kosar service
-#     :return: a dict contained user data
-#     """
-#     query_operator = {"customerPhoneNumber": "09358270867"}
-#     projection_operator = {"_id": 0}
-#     with MongoConnection() as mongo:
-#
-#
-#         dd= {
-#                 "customerStateName": "تهران",
-#                 "customerStateId": "02",
-#                 "customerCityId": "3432",
-#                 "customerCityName": "تهران",
-#                 "customerRegionCode": "432",
-#                 "customerStreet": "است",
-#                 "customerAlley": "است",
-#                 "customerPlaque": "58",
-#                 "customerTelephone": "01255447788",
-#                 "customerPostalCode": "545455444",
-#             }
-#         mongo.customer.update_one(query_operator, {"$push": {"customerAddress": dd}}, upsert=True)
-# kosar_getterfgf()

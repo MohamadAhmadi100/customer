@@ -1,8 +1,9 @@
-import json
 import time
 from datetime import datetime
-import requests
+
 from pymongo.errors import WriteError
+
+import config
 from customer.helper.connection import MongoConnection
 from customer.modules.auth import AuthHandler
 from customer.modules.date_convertor import jalali_datetime
@@ -462,6 +463,8 @@ class Customer:
                         "gnr_Person_Family": customer.get("customerLastName") or False,
                         "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                        "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
+                                                                                    "0"),
                         "AddressDTOLst": [
                             {
                                 "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),

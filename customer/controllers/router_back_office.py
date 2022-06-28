@@ -83,7 +83,7 @@ def set_cancel_status(mobileNumber: str) -> dict:
 def set_kosar_data(mobileNumber, kosarData) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.kosar_setter(
-            kosarData.get("acc_FormalAcc_Id"),
+            kosarData.get("sel_Customer_Code"),
             kosarData.get("acc_FormalAcc_Code")):
         return {"success": True, "message": "کاربر با موفقیت فعال شد", "status_code": 200}
     elif result is None:

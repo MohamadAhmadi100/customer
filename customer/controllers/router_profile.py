@@ -1,7 +1,7 @@
 import json
 
-from customer.models.model_register import Customer
 from customer.models.model_profile import Profile
+from customer.models.model_register import Customer
 from customer.modules.auth import AuthHandler
 
 
@@ -79,9 +79,12 @@ def create_informal(data: dict) -> dict:
         mobile_number: str = data.get("customer_mobile_number")
         customer = Customer(mobile_number)
         data = json.loads(data.get("informal"))
-        if customer.add_informal(data):
+        if result := customer.add_informal(data):
             return {"success": True, "status_code": 200,
                     "message": f"{data.get('informalFirstName')} با موفقیت ثبت شد "}
+        elif result is None:
+            return {"success": False, "status_code": 400,
+                    "error": "تعداد کاربران غیر رسمی شما به سقف مجاز رسیده است. با پشتیبانی تماس بگیرید. "}
         else:
             return {"success": False, "status_code": 417,
                     "error": f"اطلاعات {data.get('informalFirstName')} تکراری است"}

@@ -309,7 +309,7 @@ class Customer:
             except Exception as e:
                 return {}
 
-    def add_informal(self, informal_info: dict) -> bool:
+    def add_informal(self, informal_info: dict) -> bool or None:
         """
         :param informal_info: a dict contained informal mobile_number, national_id, name, family and kosar_code
         :return: a bool flag showing success process
@@ -320,8 +320,11 @@ class Customer:
         set_flag_operator = {"$set": {"customerHasInformal": True}}
         with MongoConnection() as mongo:
             informal_persons: list = mongo.customer.find_one(query_operator).get("customerInformalPersons") or []
+            if len(informal_persons) >= 5:
+                return None
             for informal in informal_persons:
-                if informal.get("informalNationalID") == informal_info.get("informalNationalID"):
+                if informal.get("informalNationalID") == informal_info.get("informalNationalID") or informal.get(
+                        "informalMobileNumber") == informal_info.get("informalMobileNumber"):
                     return False
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
             mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)

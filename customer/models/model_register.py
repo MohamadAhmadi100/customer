@@ -489,7 +489,7 @@ class Customer:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         projection_operator = {"_id": 0}
         set_operator = {"$set": {
-            "customerAccFormalAccId": acc_FormalAcc_Id,
+            "customerSelCustomerCode": acc_FormalAcc_Id,
             "customerAccFormalAccCode": acc_FormalAcc_Code
         }}
         with MongoConnection() as mongo:

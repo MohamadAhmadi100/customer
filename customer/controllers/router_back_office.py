@@ -50,6 +50,14 @@ def set_confirm_status(mobileNumber: str) -> dict:
         mobile_confirm = customer.is_mobile_confirm()
         if result and mobile_confirm:
             customer.activate()
+            data = customer.get_customer()
+            if data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
+                return {
+                    "success": True,
+                    "message": "کاربر با موفقیت فعال شد",
+                    "userData": customer.get_wallet_data() or {},
+                    "status_code": 200
+                }
             return {
                 "success": True,
                 "message": "کاربر با موفقیت فعال شد",

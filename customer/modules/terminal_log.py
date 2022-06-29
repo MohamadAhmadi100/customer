@@ -13,8 +13,7 @@ class LogHandler(RotatingFileHandler):
     def doRollover(self):
         dates = []
         if os.path.isfile("app.log.8"):
-            for i in range(1, 8):
-                dates.append(os.path.getmtime(f"app.log.{i}"))
+            dates.extend(os.path.getmtime(f"app.log.{i}") for i in range(1, 8))
             should_remove = sorted(dates, reverse=True).pop(-1)
             os.remove(f"app.log.{should_remove}")
         super().doRollover()

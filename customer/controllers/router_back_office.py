@@ -56,7 +56,9 @@ def set_confirm_status(mobileNumber: str) -> dict:
                     "success": True,
                     "message": "کاربر با موفقیت فعال شد",
                     "userData": customer.get_wallet_data() or {},
-                    "status_code": 200
+                    "status_code": 200,
+                    "kosarData": kosar_data,
+
                 }
             return {
                 "success": True,

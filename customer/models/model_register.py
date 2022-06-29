@@ -458,6 +458,7 @@ class Customer:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
                     return {
+                        "customerId": customer.get("customerID"),
                         "IsPerson": True,
                         "gnr_Person_Name": customer.get("customerFirstName") or False,
                         "gnr_Person_Family": customer.get("customerLastName") or False,

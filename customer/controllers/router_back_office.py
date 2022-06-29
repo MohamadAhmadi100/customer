@@ -118,3 +118,11 @@ def set_informal_flag(mobileNumber: str, hasInformal: bool):
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
+
+
+def get_customer_data_by_id(id_list: list):
+    return Customer.get_customers_by_id(id_list)
+
+
+
+

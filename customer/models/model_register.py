@@ -527,3 +527,13 @@ class Customer:
                     return None
             except Exception as e:
                 return None
+
+    @staticmethod
+    def get_customers_by_id(id_list):
+        query_operator = {"customerID": {"$in": id_list}}
+        projection_operator = {"customerFirstName": 1, "customerLastName": 1, "customerSelCustomerCode": 1, "_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                return list(mongo.customer.find(query_operator, projection_operator))
+            except Exception:
+                return []

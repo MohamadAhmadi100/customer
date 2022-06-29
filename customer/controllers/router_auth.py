@@ -22,7 +22,8 @@ def check_is_registered(customer_phone_number: str):
             "hasRegistered": True,
             "message": "شما قبلا ثبت نام کرده اید.",
             "redirect": redirect,
-            "customerStatus": status
+            "customerStatus": status,
+            "customerIsActive": customer.is_customer_active()
         }
     else:
         message = {

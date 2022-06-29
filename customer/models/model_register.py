@@ -113,6 +113,16 @@ class Customer:
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
             return bool(result.get("customerIsConfirm"))
 
+    def is_customer_active(self) -> bool:
+        """
+        :return: a bool showing customer active flag
+        """
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            projection_operator = {"customerIsActive": 1}
+            result: dict = mongo.customer.find_one(query_operator, projection_operator)
+            return bool(result.get("customerIsActive"))
+
     def mobile_confirm(self) -> bool:
         """
         :return: a bool showing success update mobile confirm for customer

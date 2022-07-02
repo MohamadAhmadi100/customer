@@ -8,6 +8,7 @@ from customer.modules.setter import Filter
 
 
 def get_customers_grid_data(data: str = None):
+    print(data)
     data = {} if data is None else json.loads(data)
     records = Filter()
     period_filters: dict = {}
@@ -19,6 +20,7 @@ def get_customers_grid_data(data: str = None):
     if search_phrase := data.get("search"):
         search_query = records.set_search_query(search_phrase)
     filters = dict(period_filters, **value_filters, **search_query)
+    print(filters)
     return GetData().executor(
         queries=filters,
         number_of_records=data.get("perPage") or "15",
@@ -121,8 +123,16 @@ def set_informal_flag(mobileNumber: str, hasInformal: bool):
 
 
 def get_customer_data_by_id(id_list: list):
-    return Customer.get_customers_by_id(id_list)
+    if result := Customer.get_customers_by_id(id_list):
+        return {"success": True, "message": result, "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
 
 
 def search_customers_by_name(phrase: str):
-    return Customer.find_customers(phrase)
+    result = Customer.find_customers(phrase)
+    result = [res["customerID"] for res in result]
+    if result:
+        return {"success": True, "message": result, "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}

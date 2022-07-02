@@ -540,12 +540,38 @@ class Customer:
 
     @staticmethod
     def find_customers(name: str):
-        query_operator = {"customerID": {"$in": name}}
-        projection_operator = {"customerID": 1, "_id": 0}
-        regx = re.compile("^foo", re.IGNORECASE)
-        # db.users.find_one({"files": regx})
         with MongoConnection() as mongo:
-            try:
-                return list(mongo.customer.find(query_operator, projection_operator))
-            except Exception:
-                return []
+            result = list(mongo.customer.aggregate([
+                {
+                    "$project": {
+                        "customerFullName": {
+                            "$concat": ["$customerFirstName", " ", "$customerLastName"]
+                        }
+                        ,
+                        "customerFirstName": 1,
+                        "customerLastName": 1,
+                        "customerID": 1,
+                        "_id": 0
+                    }
+                },
+                {
+                    "$match": {
+                        "$or": [
+                            {
+                                "customerFirstName": {"$regex": name}}
+                            , {
+                                "customerLastName": {"$regex": name}
+                            },
+                            {
+                                "customerFullName": {"$regex": name}
+                            }
+                        ],
+                    }
+                },
+                {
+                    "$project": {
+                        "customerID": 1
+                    }
+                }
+            ]))
+        return result

@@ -131,8 +131,7 @@ def get_customer_data_by_id(id_list: list):
 
 def search_customers_by_name(phrase: str):
     result = Customer.find_customers(phrase)
-    result = [res["customerID"] for res in result]
-    if result:
+    if result := [res["customerID"] for res in result]:
         return {"success": True, "message": result, "status_code": 200}
     elif result is None:
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}

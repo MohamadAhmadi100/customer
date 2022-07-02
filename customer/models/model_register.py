@@ -531,10 +531,20 @@ class Customer:
     @staticmethod
     def get_customers_by_id(id_list):
         query_operator = {"customerID": {"$in": id_list}}
-        projection_operator = {"customerFirstName": 1, "customerLastName": 1, "customerSelCustomerCode": 1, "_id": 0}
+        projection_operator = {
+            "first_name": "$customerFirstName",
+            "last_name": "$customerLastName",
+            "kowsar_number": "$customerSelCustomerCode",
+            "customer_id": "$customerID",
+            "_id": 0
+        }
         with MongoConnection() as mongo:
             try:
-                return list(mongo.customer.find(query_operator, projection_operator))
+                final_dict = {}
+                result = list(mongo.customer.find(query_operator, projection_operator))
+                for customer in result:
+                    final_dict[customer["customer_id"]] = customer
+                return final_dict
             except Exception:
                 return []
 

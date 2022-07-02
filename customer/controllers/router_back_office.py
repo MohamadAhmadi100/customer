@@ -124,5 +124,5 @@ def get_customer_data_by_id(id_list: list):
     return Customer.get_customers_by_id(id_list)
 
 
-
-
+def search_customers_by_name(phrase: str):
+    return Customer.find_customers(phrase)

@@ -70,7 +70,7 @@ class Profile:
             "customerCity": data.get("customerCity"),
             "customerProvince": data.get("customerProvince"),
             "customerProvinceCode": data.get("customerProvinceCode"),
-            "customerAddress": data.get("customerAddress"),
+            # "customerAddress": data.get("customerAddress"),
             "customerType": data.get("customerType"),
             "customerShopName": data.get("customerShopName"),
             "customerAccountNumber": data.get("customerAccountNumber"),

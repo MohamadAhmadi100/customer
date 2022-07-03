@@ -40,8 +40,7 @@ VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastN
                       "customerShopLocation", "customerEducation", "customerDocumentStatus", "customerShopPostalCode",
                       "customerEmail", "customerShopStatus", "customerAddress", "customerStatus", "customerID"]
 VALID_GRID_KEYS = ["customerID", "customerFirstName", "customerLastName", "customerMobileNumber",
-                   "customerJalaliCreateTime", "customerStatus", "customerLastOrderDate", "customerWholeOrderNumber",
-                   "customerWholeOrderAmount"]
+                   "customerJalaliCreateTime", "customerStatus", "customerNationalID"]
 KOSAR_REGION_CODES = {"R1": "1", "TE": "9", "TO": "8", "TC": "4", "TWN": "7", "TN": "10", "R4": "5", "R5": "6",
                       "TW": "11", "R2": "2", "R3": "3"}
 config = Config()

@@ -540,11 +540,8 @@ class Customer:
         }
         with MongoConnection() as mongo:
             try:
-                final_dict = {}
                 result = list(mongo.customer.find(query_operator, projection_operator))
-                for customer in result:
-                    final_dict[customer["customer_id"]] = customer
-                return final_dict
+                return {customer["customer_id"]: customer for customer in result}
             except Exception:
                 return []
 

@@ -1,11 +1,13 @@
-from config import config
+VALID_PERIOD_FILTERS = ["customerJalaliCreateTime", "customerLastOrderDate"]
+VALID_VALUE_FILTERS = ["customerIsMobileConfirm", "customerIsConfirm", "customerIsActive", "customerStatus"]
+VALID_SEARCH_FIELDS = []
 
 
 class Filter:
     def __init__(self):
-        self.valid_period_filters: list = config.VALID_PERIOD_FILTERS or []
-        self.valid_value_filters: list = config.VALID_VALUE_FILTERS or []
-        self.valid_search_fields: list = config.VALID_SEARCH_FIELDS or []
+        self.valid_period_filters: list = VALID_PERIOD_FILTERS or []
+        self.valid_value_filters: list = VALID_VALUE_FILTERS or []
+        self.valid_search_fields: list = VALID_SEARCH_FIELDS or []
         self.period_filters: dict = {}
         self.value_filters: dict = {}
 
@@ -18,6 +20,7 @@ class Filter:
                 value["$lt"] = value.get("end")
                 del value["start"]
                 del value["end"]
+                print()
         return self.period_filters
 
     def set_value_filters(self, values: dict) -> dict:

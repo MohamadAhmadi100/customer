@@ -29,7 +29,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         LogHandler("log/app.log", mode='a',
-                   maxBytes=1000,
+                   maxBytes=5_000_000,
                    backupCount=8),
     ]
 )
@@ -68,3 +68,10 @@ def response_log(message):
     sys.stdout.write("\033[;1m\033[1;34m")
     logging.info(f"Response: {message}")
     print(message)
+
+
+def pika_exception_log(error):
+    sys.stdout.write("\033[1;31m")
+    sys.stdout.write("\033[;1m\033[1;34m")
+    logging.error(f"Error: {error}")
+    print(error)

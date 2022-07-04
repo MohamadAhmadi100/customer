@@ -582,3 +582,8 @@ class Customer:
                 }
             ]))
         return result
+
+
+# def pend_all():
+#     with MongoConnection() as mongo:
+#         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})

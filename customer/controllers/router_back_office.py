@@ -8,17 +8,14 @@ from customer.modules.setter import Filter
 
 
 def get_customers_grid_data(data: str = None):
-    print(data)
     data = {} if data is None else json.loads(data)
     records = Filter()
     period_filters: dict = {}
     value_filters: dict = {}
     search_query: dict = {}
-    # if filters := data.get("filters"):
-    #     period_filters: dict = records.set_period_filters(filters) or {}
-    #     value_filters: dict = records.set_value_filters(filters) or {}
-    #     print(period_filters)
-    #     print(value_filters)
+    if filters := data.get("filters"):
+        period_filters: dict = records.set_period_filters(filters) or {}
+        value_filters: dict = records.set_value_filters(filters) or {}
     if search_phrase := data.get("search"):
         search_query = records.set_search_query(search_phrase)
     filters = dict(period_filters, **value_filters, **search_query)
@@ -61,7 +58,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
                     "message": "کاربر با موفقیت فعال شد",
                     "userData": customer.get_wallet_data() or {},
                     "status_code": 200,
-                    "kosarData": kosar_data,
+                    # "kosarData": kosar_data,
 
                 }
             return {

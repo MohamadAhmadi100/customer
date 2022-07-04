@@ -1,3 +1,5 @@
+import datetime
+
 from customer.modules import terminal_log
 from config import config
 
@@ -13,6 +15,7 @@ app_name = config.APP_NAME
 
 def callback(message: dict) -> dict:
     terminal_log.action_log(message, app_name)
+    print(f"{datetime.datetime.now()} - {message, app_name}")
     terminal_log.request_log(message, app_name)
     data = message.get(app_name, {})
     if action := data.get("action"):

@@ -55,7 +55,6 @@ class RabbitRPCClient:
     def publish(self, channel, method, properties, body):
         message = self.callback(json.loads(body))
         terminal_log.response_log(message)
-        print(f"{datetime.datetime.now()} - {message} ")
         channel.basic_publish(exchange='',
                               routing_key=properties.reply_to,
                               properties=pika.BasicProperties(correlation_id=properties.correlation_id),
@@ -84,7 +83,6 @@ class RabbitRPCClient:
         self.channel.basic_consume(queue=self.receiving_queue, on_message_callback=self.publish)
         try:
             terminal_log.connection_log(self.host, self.port, self.headers)
-            print(f"{datetime.datetime.now()} - {self.host, self.port, self.headers}")
             self.channel.start_consuming()
         except (ConnectionClosed, StreamLostError, ChannelWrongStateError) as e:
             terminal_log.pika_exception_log(e)

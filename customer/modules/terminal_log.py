@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import sys
@@ -56,7 +57,7 @@ def action_log(message, app_name):
 
 def request_log(message, app_name):
     sys.stdout.write("\033[1;31m")
-    print("                  Request:  ", end="")
+    print(f"{datetime.datetime.now()}                  Request:  ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
     logging.info(f"Request: {message.get(app_name).get('body')}")
     print(message.get(app_name).get("body"))
@@ -64,7 +65,7 @@ def request_log(message, app_name):
 
 def response_log(message):
     sys.stdout.write("\033[1;31m")
-    print("                  Response: ", end="")
+    print(f"{datetime.datetime.now()}                  Response: ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
     logging.info(f"Response: {message}")
     print(message)

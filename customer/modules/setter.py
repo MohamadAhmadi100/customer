@@ -1,5 +1,5 @@
 VALID_PERIOD_FILTERS = ["customerJalaliCreateTime", "customerLastOrderDate"]
-VALID_VALUE_FILTERS = ["customerIsMobileConfirm", "customerIsConfirm", "customerIsActive", "customerStatus"]
+VALID_VALUE_FILTERS = ["customerStatus"]
 VALID_SEARCH_FIELDS = []
 
 

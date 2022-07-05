@@ -19,7 +19,6 @@ def get_customers_grid_data(data: str = None):
     if search_phrase := data.get("search"):
         search_query = records.set_search_query(search_phrase)
     filters = dict(period_filters, **value_filters, **search_query)
-    print(filters)
     return GetData().executor(
         queries=filters,
         number_of_records=data.get("perPage") or "15",

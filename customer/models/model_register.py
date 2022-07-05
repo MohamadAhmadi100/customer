@@ -406,7 +406,9 @@ class Customer:
 
     def confirm_status(self) -> bool or None:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerStatus": "confirm"}}
+        set_operator = {
+            "$set": {"customerStatus": "confirm", "customerJalaliConfirmDate": jalali_datetime(datetime.now()),
+                     "customerConfirmDate": datetime.now()}}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:
@@ -582,7 +584,6 @@ class Customer:
                 }
             ]))
         return result
-
 
 # def pend_all():
 #     with MongoConnection() as mongo:

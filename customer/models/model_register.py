@@ -180,6 +180,7 @@ class Customer:
         customer_data["customerCreateTime"] = time.time()
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
+        customer_data["customerDocumentStatus"] = "unset"
         customer_data["customerIsActive"] = False
         customer_data["customerIsMobileConfirm"] = False
         with MongoConnection() as mongo:

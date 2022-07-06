@@ -329,7 +329,7 @@ class Customer:
         informal_info["informalID"] = self.get_next_sequence_informal_id()
         push_operator = {"$push": {"customerInformalPersons": informal_info}}
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_flag_operator = {"$set": {"customerHasInformal": True}}
+        # set_flag_operator = {"$set": {"customerHasInformal": True}}
         with MongoConnection() as mongo:
             informal_persons: list = mongo.customer.find_one(query_operator).get("customerInformalPersons") or []
             if len(informal_persons) >= 5:
@@ -339,7 +339,7 @@ class Customer:
                         "informalMobileNumber") == informal_info.get("informalMobileNumber"):
                     return False
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
-            mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)
+            # mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)
             return bool(result.acknowledged)
 
     def get_next_sequence_informal_id(self) -> int or bool:

@@ -27,8 +27,7 @@ class Request:
         self.__dict__.update(kwargs)
 
 
-def register(data: dict, test):
-    print(test)
+def register(data: dict):
     value = Request(**data)
     customer = Customer(phone_number=value.customer_phone_number)
     customer_data = customer.get_customer()

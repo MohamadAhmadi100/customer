@@ -409,7 +409,7 @@ class Customer:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         set_operator = {
             "$set": {"customerStatus": "confirm", "customerJalaliConfirmDate": jalali_datetime(datetime.now()),
-                     "customerConfirmDate": datetime.now()}}
+                     "customerConfirmDate": time.time()}}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:

@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-import re
+
 from pymongo.errors import WriteError
 
 import config
@@ -145,23 +145,36 @@ class Customer:
             result = mongo.customer.update_one(query_operator, set_operator)
             return bool(result.acknowledged)
 
-    def get_next_sequence_customer_id(self) -> bool:
+    def get_next_sequence_customer_id(self) -> int:
         """
         auto increment id generator for self object
         :return: True if customer is the first obj or correct id has been generated
         """
         with MongoConnection() as mongo:
-            if not mongo.customer.find_one():
-                self.customer_id = 0
-                return True
-            else:
-                result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCreateTime", -1)
-                try:
-                    self.customer_id = result[0].get("customerID") + 1
-                except IndexError:
-                    return False
-                else:
-                    return True
+            customer_id = mongo.customer_counter.find_one({"type": "customer"})
+            if customer_id is not None:
+                self.customer_id = customer_id.get("customerId") + 1
+                mongo.counter_collection.update_one({"type": "customer", "customerId": self.customer_id})
+            mongo.counter_collection.insert_one({"type": "customer", "customerId": 1})
+            self.customer_id = 10000
+
+    # def get_next_sequence_customer_id(self) -> bool:
+    #     """
+    #     auto increment id generator for self object
+    #     :return: True if customer is the first obj or correct id has been generated
+    #     """
+    #     with MongoConnection() as mongo:
+    #         if not mongo.customer.find_one():
+    #             self.customer_id = 0
+    #             return True
+    #         else:
+    #             result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCreateTime", -1)
+    #             try:
+    #                 self.customer_id = result[0].get("customerID") + 1
+    #             except IndexError:
+    #                 return False
+    #             else:
+    #                 return True
 
     def get_customer(self) -> dict:
         """
@@ -183,6 +196,7 @@ class Customer:
         customer_data["customerDocumentStatus"] = "unset"
         customer_data["customerIsActive"] = False
         customer_data["customerIsMobileConfirm"] = False
+        customer_data["customerHasInformal"] = False
         with MongoConnection() as mongo:
             result: object = mongo.customer.insert_one(customer_data)
         return bool(result.acknowledged)
@@ -326,7 +340,9 @@ class Customer:
         :param informal_info: a dict contained informal mobile_number, national_id, name, family and kosar_code
         :return: a bool flag showing success process
         """
-        informal_info["informalID"] = self.get_next_sequence_informal_id()
+        if not self.get_next_sequence_customer_id():
+            return False
+        informal_info["informalID"] = self.customer_id
         push_operator = {"$push": {"customerInformalPersons": informal_info}}
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         # set_flag_operator = {"$set": {"customerHasInformal": True}}
@@ -436,9 +452,21 @@ class Customer:
             except Exception as e:
                 return None
 
-    def set_has_informal(self, hasInformal: bool) -> bool or None:
+    def get_has_informal(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"hasInformal": hasInformal}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return customer.get("customerHasInformal") or False
+                return False
+            except Exception:
+                return None
+
+    def set_has_informal(self, customerHasInformal: bool) -> bool or None:
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerHasInformal": customerHasInformal}}
         projection_operator = {"_id": 0}
 
         with MongoConnection() as mongo:

@@ -110,9 +110,21 @@ def edit_customers_grid_data(data):
     return {"status_code": 422, "success": False, "error": "ورود شماره موبایل الزامی است."}
 
 
-def set_informal_flag(mobileNumber: str, hasInformal: bool):
+def get_informal_flag(mobileNumber: str):
     customer = Customer(mobileNumber)
-    if result := customer.set_has_informal(hasInformal):
+    if result := customer.get_has_informal():
+        return {"success": True, "message": "کاربر امکان فروش غیر رسمی دارد", "customerHasInformal": True,
+                "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 417}
+    else:
+        return {"success": False, "error": "کاربر امکان فروش غیر رسمی ندارد", "customerHasInformal": False,
+                "status_code": 417}
+
+
+def set_informal_flag(mobileNumber: str, customerHasInformal: bool):
+    customer = Customer(mobileNumber)
+    if result := customer.set_has_informal(customerHasInformal):
         return {"success": True, "message": "وضعیت غیر رسمی کاربر با موفقیت به روز شد", "status_code": 200}
     elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}

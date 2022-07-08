@@ -3,7 +3,7 @@ from config import config
 
 
 class MongoConnection:
-    __slots__ = ["__client", "__db_name", "collection", "__instance", "__db_name_log"]
+    __slots__ = ["__client", "__db_name", "collection", "__instance", "__db_name_log", "__db_name_counter"]
 
     @classmethod
     def __new__(cls, *args, **kwargs):
@@ -20,6 +20,7 @@ class MongoConnection:
         )
         self.__db_name = self.__client["db-customer"]
         self.__db_name_log = self.__client["db-log"]
+        # self.__db_name_counter = self.__client["counter"]
 
     def __enter__(self):
         return self
@@ -34,3 +35,7 @@ class MongoConnection:
     @property
     def log(self):
         return self.__db_name_log["log"]
+
+    @property
+    def counter(self):
+        return self.__db_name["customer"].counter

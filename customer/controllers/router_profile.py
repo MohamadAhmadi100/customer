@@ -79,9 +79,11 @@ def create_informal(data: dict) -> dict:
         mobile_number: str = data.get("customer_mobile_number")
         customer = Customer(mobile_number)
         data = json.loads(data.get("informal"))
+        if not customer.get_customer().get("customerPhoneNumber"):
+            return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
         if result := customer.add_informal(data):
             return {"success": True, "status_code": 200,
-                    "message": f"{data.get('informalFirstName')} با موفقیت ثبت شد "}
+                    "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
         elif result is None:
             return {"success": False, "status_code": 400,
                     "error": "تعداد کاربران غیر رسمی شما به سقف مجاز رسیده است. با پشتیبانی تماس بگیرید. "}

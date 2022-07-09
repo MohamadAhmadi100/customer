@@ -119,8 +119,8 @@ class Profile:
                         "customerClass": self.customer_class or customer_data.get("customerClass"),
                         "customerShopPostalCode": self.customer_shop_postal_code or customer_data.get(
                             "customerShopPostalCode"),
-                        "customerDocumentSatus": self.customer_document_status or customer_data.get(
-                            "customerDocumentSatus"),
+                        "customerDocumentStatus": self.customer_document_status or customer_data.get(
+                            "customerDocumentStatus"),
                         # "customerAddress": self.customer_address or customer_data.get("customerAddress"),
                         }
             else:
@@ -130,7 +130,6 @@ class Profile:
         try:
             if obj := self.create_obj_to_update_profile():
                 with MongoConnection() as mongo:
-                    print(self.customer_phone_number)
                     mongo.customer.update_one({"customerPhoneNumber": self.customer_phone_number},
                                               {"$set": obj})
                 return {"status_code": 202, "success": True, "message": {"message": "اطلاعات با موفقیت به روز شد"}}

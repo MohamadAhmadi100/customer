@@ -150,12 +150,14 @@ class Customer:
         auto increment id generator for self object
         :return: True if customer is the first obj or correct id has been generated
         """
+        projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
-            customer_id = mongo.customer_counter.find_one({"type": "customer"})
+            customer_id = mongo.counter.find_one({"type": "customer"}, projection_operator)
+            print(customer_id)
             if customer_id is not None:
                 self.customer_id = customer_id.get("customerId") + 1
-                mongo.counter_collection.update_one({"type": "customer", "customerId": self.customer_id})
-            mongo.counter_collection.insert_one({"type": "customer", "customerId": 1})
+                mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
+            mongo.counter.insert_one({"type": "customer", "customerId": 10000})
             self.customer_id = 10000
 
     # def get_next_sequence_customer_id(self) -> bool:
@@ -342,6 +344,7 @@ class Customer:
         """
         if not self.get_next_sequence_customer_id():
             return False
+        print(informal_info)
         informal_info["informalID"] = self.customer_id
         push_operator = {"$push": {"customerInformalPersons": informal_info}}
         query_operator = {"customerPhoneNumber": self.customer_phone_number}

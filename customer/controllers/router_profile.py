@@ -89,7 +89,7 @@ def create_informal(data: dict) -> dict:
                     "error": "تعداد کاربران غیر رسمی شما به سقف مجاز رسیده است. با پشتیبانی تماس بگیرید. "}
         else:
             return {"success": False, "status_code": 417,
-                    "error": f"اطلاعات {data.get('informalFirstName')} تکراری است"}
+                    "error": f"اطلاعات {data.get('informalFirstName')} {data.get('informalLastName')} تکراری است "}
     except IndexError:
         return {"success": False, "status_code": 404, "error": "اطلاعات کاربر وجود ندارد"}
 

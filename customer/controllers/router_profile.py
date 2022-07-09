@@ -86,7 +86,7 @@ def create_informal(data: dict) -> dict:
                     "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
         elif result is None:
             return {"success": False, "status_code": 400,
-                    "error": "تعداد کاربران غیر رسمی شما به سقف مجاز رسیده است. با پشتیبانی تماس بگیرید. "}
+                    "error": "دسترسی شما محدود شده است. لطفا با پشتیبانی تماس بگیرید "}
         else:
             return {"success": False, "status_code": 417,
                     "error": f"اطلاعات {data.get('informalFirstName')} {data.get('informalLastName')} تکراری است "}

@@ -157,8 +157,8 @@ class Customer:
                     self.customer_id = customer_id.get("customerId") + 1
                     mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
                 else:
-                    mongo.counter.insert_one({"type": "customer", "customerId": 10000})
-                    self.customer_id = 10000
+                    mongo.counter.insert_one({"type": "customer", "customerId": 20000})
+                    self.customer_id = 20000
                 return True
             except Exception:
                 return False
@@ -347,16 +347,20 @@ class Customer:
         """
         if not self.get_next_sequence_customer_id():
             return False
-        print(informal_info)
         informal_info["informalID"] = self.customer_id
         push_operator = {"$push": {"customerInformalPersons": informal_info}}
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         # set_flag_operator = {"$set": {"customerHasInformal": True}}
         with MongoConnection() as mongo:
-            informal_persons: list = mongo.customer.find_one(query_operator).get("customerInformalPersons") or []
+            customer = mongo.customer.find_one(query_operator)
+            if not customer.get("customerHasInformal"):
+                return
+            informal_persons: list = customer.get("customerInformalPersons", [])
+            print(len(informal_persons))
             if len(informal_persons) >= 5:
-                return None
+                return
             for informal in informal_persons:
+                print(informal_persons)
                 if informal.get("informalNationalID") == informal_info.get("informalNationalID") or informal.get(
                         "informalMobileNumber") == informal_info.get("informalMobileNumber"):
                     return False

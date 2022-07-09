@@ -27,9 +27,10 @@ class GetData:
                 for customer in customers:
                     record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
                     record["customerMobileNumber"] = customer.get("customerPhoneNumber")
-                    record["customerStateName"] = customer.get("customerAddress")[0].get("customerStateName")
-                    record["customerCityName"] = customer.get("customerAddress")[0].get("customerCityName")
-                    record["customerRegionCode"] = customer.get("customerAddress")[0].get("customerRegionCode")
+                    if customer.get("customerAddress") and type(customer.get("customerAddress")) == list:
+                        record["customerStateName"] = customer.get("customerAddress")[0].get("customerStateName")
+                        record["customerCityName"] = customer.get("customerAddress")[0].get("customerCityName")
+                        record["customerRegionCode"] = customer.get("customerAddress")[0].get("customerRegionCode")
                     result.append(record)
                 data = {
                     "data": result,

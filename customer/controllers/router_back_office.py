@@ -8,24 +8,28 @@ from customer.modules.setter import Filter
 
 
 def get_customers_grid_data(data: str = None):
-    data = {} if data is None else json.loads(data)
-    records = Filter()
-    period_filters: dict = {}
-    value_filters: dict = {}
-    search_query: dict = {}
-    if filters := data.get("filters"):
-        period_filters: dict = records.set_period_filters(filters) or {}
-        value_filters: dict = records.set_value_filters(filters) or {}
-    if search_phrase := data.get("search"):
-        search_query = records.set_search_query(search_phrase)
-    filters = dict(period_filters, **value_filters, **search_query)
-    return GetData().executor(
-        queries=filters,
-        number_of_records=data.get("perPage") or "15",
-        page=data.get("page") or "1",
-        sort_name=data.get("sortName") or "customerID",
-        sort_type=data.get("sortType") or "asc"
-    )
+    try:
+        data = {} if data is None else json.loads(data)
+        records = Filter()
+        period_filters: dict = {}
+        value_filters: dict = {}
+        search_query: dict = {}
+        if filters := data.get("filters"):
+            period_filters: dict = records.set_period_filters(filters) or {}
+            value_filters: dict = records.set_value_filters(filters) or {}
+        if search_phrase := data.get("search"):
+            search_query = records.set_search_query(search_phrase)
+        filters = dict(period_filters, **value_filters, **search_query)
+        return GetData().executor(
+            queries=filters,
+            number_of_records=data.get("perPage") or "15",
+            page=data.get("page") or "1",
+            sort_name=data.get("sortName") or "customerID",
+            sort_type=data.get("sortType") or "asc"
+        )
+    except Exception as e:
+        print(e)
+        return {"success": False, "error": e, "status_code": 404}
 
 
 def crm_get_profile(customer_phone_number: dict):

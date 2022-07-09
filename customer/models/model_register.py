@@ -345,10 +345,6 @@ class Customer:
         :param informal_info: a dict contained informal mobile_number, national_id, name, family and kosar_code
         :return: a bool flag showing success process
         """
-        if not self.get_next_sequence_customer_id():
-            return False
-        informal_info["informalID"] = self.customer_id
-        push_operator = {"$push": {"customerInformalPersons": informal_info}}
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         # set_flag_operator = {"$set": {"customerHasInformal": True}}
         with MongoConnection() as mongo:
@@ -362,6 +358,10 @@ class Customer:
                 if informal.get("informalNationalID") == informal_info.get("informalNationalID") or informal.get(
                         "informalMobileNumber") == informal_info.get("informalMobileNumber"):
                     return False
+            if not self.get_next_sequence_customer_id():
+                return False
+            informal_info["informalID"] = self.customer_id
+            push_operator = {"$push": {"customerInformalPersons": informal_info}}
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
             # mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)
             return bool(result.acknowledged)

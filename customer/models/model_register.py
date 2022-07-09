@@ -130,7 +130,6 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             set_operator = {"$set": {"customerIsMobileConfirm": True}}
-            set_status_operator = {"$set": {"customerStatus": "pend"}}
 
             result = mongo.customer.update_one(query_operator, set_operator)
             return bool(result.acknowledged)
@@ -157,8 +156,9 @@ class Customer:
             if customer_id is not None:
                 self.customer_id = customer_id.get("customerId") + 1
                 mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
-            mongo.counter.insert_one({"type": "customer", "customerId": 10000})
-            self.customer_id = 10000
+            else:
+                mongo.counter.insert_one({"type": "customer", "customerId": 10000})
+                self.customer_id = 10000
 
     # def get_next_sequence_customer_id(self) -> bool:
     #     """

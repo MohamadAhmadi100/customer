@@ -23,6 +23,7 @@ class Profile:
         "customer_class",
         "customer_shop_postal_code",
         "customer_address",
+        "customer_document_status"
     ]
 
     def __init__(self, data):
@@ -32,21 +33,22 @@ class Profile:
         self.customer_last_name: str = data.get("customer_last_name") or data.get("customerLastName")
         self.customer_email: str = data.get("customer_email") or data.get("customerEmail")
         self.customer_national_id: str = data.get("customer_national_id") or data.get("customerNationalID")
-        self.customer_city: str = data.get("customer_city") or data.get("customerCity")
-        self.customer_province: str = data.get("customer_province") or data.get("customerProvince")
-        self.customer_ofogh_code: int = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
-        self.customer_shop_name: int = data.get("customer_shop_name") or data.get("customerShopName")
-        self.customer_account_number: int = data.get("customer_account_number") or data.get("customerAccountNumber")
-        self.customer_telephone_number: int = data.get("customer_telephone_number") or data.get(
+        # self.customer_city: str = data.get("customer_city") or data.get("customerCity")
+        # self.customer_province: str = data.get("customer_province") or data.get("customerProvince")
+        self.customer_ofogh_code: str = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
+        self.customer_shop_name: str = data.get("customer_shop_name") or data.get("customerShopName")
+        self.customer_account_number: str = data.get("customer_account_number") or data.get("customerAccountNumber")
+        self.customer_telephone_number: str = data.get("customer_telephone_number") or data.get(
             "customerTelephoneNumber")
-        self.customer_shop_status: int = data.get("customer_shop_status") or data.get("customerShopStatus")
-        self.customer_shop_location: int = data.get("customer_shop_location") or data.get("customerShopLocation")
-        self.customer_education: int = data.get("customer_education") or data.get("customerEducation")
-        self.customer_postal_code: int = data.get("customer_postal_code") or data.get("customerPostalCode")
-        self.customer_class: int = data.get("customer_class") or data.get("customerClass")
-        self.customer_shop_postal_code: int = data.get("customer_shop_postal_code") or data.get(
+        self.customer_shop_status: str = data.get("customer_shop_status") or data.get("customerShopStatus")
+        self.customer_shop_location: str = data.get("customer_shop_location") or data.get("customerShopLocation")
+        self.customer_education: str = data.get("customer_education") or data.get("customerEducation")
+        # self.customer_postal_code: str = data.get("customer_postal_code") or data.get("customerPostalCode")
+        self.customer_class: str = data.get("customer_class") or data.get("customerClass")
+        self.customer_shop_postal_code: str = data.get("customer_shop_postal_code") or data.get(
             "customerShopPostalCode")
-        self.customer_address: int = data.get("customer_address") or data.get("customerAddress")
+        # self.customer_address: list = data.get("customer_address") or data.get("customerAddress")
+        self.customer_document_status: str = data.get("customer_document_status") or data.get("customerDocumentStatus")
 
     def get_profile_data(self) -> dict or None:
         with MongoConnection() as mongo:
@@ -102,8 +104,8 @@ class Profile:
                         "customerLastName": self.customer_last_name or customer_data.get("customerLastName"),
                         "customerEmail": self.customer_email or customer_data.get("customerEmail"),
                         "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
-                        "customerCity": self.customer_city or customer_data.get("customerCity"),
-                        "customerProvince": self.customer_province or customer_data.get("customerProvince"),
+                        # "customerCity": self.customer_city or customer_data.get("customerCity"),
+                        # "customerProvince": self.customer_province or customer_data.get("customerProvince"),
                         "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode"),
                         "customerShopName": self.customer_shop_name or customer_data.get("customerShopName"),
                         "customerAccountNumber": self.customer_account_number or customer_data.get(
@@ -114,10 +116,11 @@ class Profile:
                         "customerShopLocation": self.customer_shop_location or customer_data.get(
                             "customerShopLocation"),
                         "customerEducation": self.customer_education or customer_data.get("customerEducation"),
-                        "customerPostalCode": self.customer_postal_code or customer_data.get("customerPostalCode"),
+                        # "customerPostalCode": self.customer_postal_code or customer_data.get("customerPostalCode"),
                         "customerClass": self.customer_class or customer_data.get("customerClass"),
                         "customerShopPostalCode": self.customer_class or customer_data.get("customerShopPostalCode"),
-                        "customerAddress": self.customer_address or customer_data.get("customerAddress"),
+                        "customerDocumentSatus": self.customer_document_status or customer_data.get("customerDocumentSatus"),
+                        # "customerAddress": self.customer_address or customer_data.get("customerAddress"),
                         }
             else:
                 return False

@@ -356,11 +356,9 @@ class Customer:
             if not customer.get("customerHasInformal"):
                 return
             informal_persons: list = customer.get("customerInformalPersons", [])
-            print(len(informal_persons))
             if len(informal_persons) >= 5:
                 return
             for informal in informal_persons:
-                print(informal_persons)
                 if informal.get("informalNationalID") == informal_info.get("informalNationalID") or informal.get(
                         "informalMobileNumber") == informal_info.get("informalMobileNumber"):
                     return False

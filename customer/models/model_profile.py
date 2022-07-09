@@ -59,7 +59,6 @@ class Profile:
                 return False
 
     def set_data(self, data):
-
         return {
             "customerPhoneNumber": data.get("customerPhoneNumber"),
             "customerFirstName": data.get("customerFirstName"),
@@ -85,7 +84,7 @@ class Profile:
             "customerInformalPersons": data.get("customerInformalPersons"),
             "customerClass": data.get("customerClass"),
             "customerShopPostalCode": data.get("customerShopPostalCode"),
-            # "customerPostalCode": data.get("customerPostalCode"),
+            "customerPostalCode": data.get("customerPostalCode"),
             "customerStatus": data.get("customerStatus"),
             "customerID": data.get("customerID"),
             "customerJalaliCreateTime": data.get("customerJalaliCreateTime"),
@@ -116,10 +115,12 @@ class Profile:
                         "customerShopLocation": self.customer_shop_location or customer_data.get(
                             "customerShopLocation"),
                         "customerEducation": self.customer_education or customer_data.get("customerEducation"),
-                        # "customerPostalCode": self.customer_postal_code or customer_data.get("customerPostalCode"),
+                        "customerPostalCode": self.customer_postal_code or customer_data.get("customerPostalCode"),
                         "customerClass": self.customer_class or customer_data.get("customerClass"),
-                        "customerShopPostalCode": self.customer_class or customer_data.get("customerShopPostalCode"),
-                        "customerDocumentSatus": self.customer_document_status or customer_data.get("customerDocumentSatus"),
+                        "customerShopPostalCode": self.customer_shop_postal_code or customer_data.get(
+                            "customerShopPostalCode"),
+                        "customerDocumentSatus": self.customer_document_status or customer_data.get(
+                            "customerDocumentSatus"),
                         # "customerAddress": self.customer_address or customer_data.get("customerAddress"),
                         }
             else:

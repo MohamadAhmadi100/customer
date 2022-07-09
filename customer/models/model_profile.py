@@ -43,7 +43,7 @@ class Profile:
         self.customer_shop_status: str = data.get("customer_shop_status") or data.get("customerShopStatus")
         self.customer_shop_location: str = data.get("customer_shop_location") or data.get("customerShopLocation")
         self.customer_education: str = data.get("customer_education") or data.get("customerEducation")
-        # self.customer_postal_code: str = data.get("customer_postal_code") or data.get("customerPostalCode")
+        self.customer_postal_code: str = data.get("customer_postal_code") or data.get("customerPostalCode")
         self.customer_class: str = data.get("customer_class") or data.get("customerClass")
         self.customer_shop_postal_code: str = data.get("customer_shop_postal_code") or data.get(
             "customerShopPostalCode")

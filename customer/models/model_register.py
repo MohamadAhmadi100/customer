@@ -151,14 +151,17 @@ class Customer:
         """
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
-            customer_id = mongo.counter.find_one({"type": "customer"}, projection_operator)
-            print(customer_id)
-            if customer_id is not None:
-                self.customer_id = customer_id.get("customerId") + 1
-                mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
-            else:
-                mongo.counter.insert_one({"type": "customer", "customerId": 10000})
-                self.customer_id = 10000
+            try:
+                customer_id = mongo.counter.find_one({"type": "customer"}, projection_operator)
+                if customer_id is not None:
+                    self.customer_id = customer_id.get("customerId") + 1
+                    mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
+                else:
+                    mongo.counter.insert_one({"type": "customer", "customerId": 10000})
+                    self.customer_id = 10000
+                return True
+            except Exception:
+                return False
 
     # def get_next_sequence_customer_id(self) -> bool:
     #     """

@@ -587,30 +587,41 @@ class Customer:
             except Exception as e:
                 return None
 
-    def kosar_setter(self, sel_Customer_Code: str, acc_FormalAcc_Code: str, customer_type: list = False,
+    def kosar_setter(self, sel_Customer_Code: str, acc_FormalAcc_Code: str, customer_type=None,
                      customer_national_id: str = ""):
+        if customer_type is None:
+            customer_type = ["B2B"]
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        informal_query_operator = {"customerPhoneNumber": self.customer_phone_number,
+                                   "customerInformalPersons.informalNationalID": customer_national_id}
         projection_operator = {"_id": 0}
         set_operator = {"$set": {
             "customerSelCustomerCode": sel_Customer_Code,
             "customerAccFormalAccCode": acc_FormalAcc_Code
         }}
+        # informal_set_operator = {
+        #     "$set": {
+        #         "customerInformalPersons.$[customerSelCustomerCode]": sel_Customer_Code,
+        #         "customerInformalPersons.$[customerAccFormalAccCode]": acc_FormalAcc_Code
+        #     },
+        #     "arrayFilters": [
+        #         {
+        #             "informalNationalID": customer_national_id
+        #         }
+        #     ]
+        # }
         informal_set_operator = {
-            "$set": {
-                "customerInformalPersons.$[customerSelCustomerCode]": sel_Customer_Code,
-                "customerInformalPersons.$[customerAccFormalAccCode]": acc_FormalAcc_Code
-            },
-            "arrayFilters": [
+            "$set":
                 {
-                    "informalNationalID": customer_national_id}
-            ],
-            "upsert": True
+                    "customerInformalPersons.$.customerSelCustomerCode": sel_Customer_Code,
+                    "customerInformalPersons.$.customerAccFormalAccCode": acc_FormalAcc_Code,
+                }
         }
         with MongoConnection() as mongo:
             try:
                 if customer_type[0] == "informal":
                     if mongo.customer.find_one(query_operator, projection_operator):
-                        result = mongo.customer.update_one(query_operator, informal_set_operator)
+                        result = mongo.customer.update_one(informal_query_operator, informal_set_operator)
                         return bool(result.acknowledged)
                     return False
                 if mongo.customer.find_one(query_operator, projection_operator):

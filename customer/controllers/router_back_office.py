@@ -46,7 +46,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
     if not customer.is_exists_phone_number():
         return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
     try:
-        kosar_data = customer.kosar_getter() or {}
+        kosar_data = customer.kosar_getter(informal_flag=False) or {}
         for key, value in kosar_data.items():
             if not value:
                 return {"success": False, "error": "اطلاعات کاربر تکمیل نشده است. کاربر فعال نشد", "status_code": 401}

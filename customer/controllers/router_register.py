@@ -1,5 +1,3 @@
-import json
-import requests
 from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
@@ -33,8 +31,9 @@ def register(data: dict):
     customer_data = customer.get_customer()
     is_exists_phone_number = customer_data.get("customerPhoneNumber")
     is_exists_national_id = customer_data.get("customerNationalID")
-    is_unique_national_id = customer.unique_national_id(customer_data.get("customerNationalID"))
-    if is_exists_phone_number or is_exists_national_id or not is_unique_national_id:
+
+    if is_exists_phone_number or is_exists_national_id or not customer.is_unique_national_id(
+            value.customer_national_id):
         message = {
             "hasRegistered": True,
             "message": "شما قبلا ثبت نام کرده اید.",

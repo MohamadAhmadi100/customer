@@ -346,7 +346,6 @@ class Customer:
         :return: a bool flag showing success process
         """
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        # set_flag_operator = {"$set": {"customerHasInformal": True}}
         with MongoConnection() as mongo:
             customer = mongo.customer.find_one(query_operator)
             if not customer.get("customerHasInformal"):
@@ -360,10 +359,9 @@ class Customer:
                     return False
             if not self.get_next_sequence_customer_id():
                 return False
-            informal_info["informalID"] = self.customer_id
+            informal_info["customerID"] = self.customer_id
             push_operator = {"$push": {"customerInformalPersons": informal_info}}
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
-            # mongo.customer.update_one(query_operator, set_flag_operator, upsert=True)
             return bool(result.acknowledged)
 
     def get_next_sequence_informal_id(self) -> int or bool:
@@ -496,40 +494,59 @@ class Customer:
             except Exception:
                 return False
 
-    def kosar_getter(self):
+    @staticmethod
+    def is_unique_national_id(national_id: str) -> bool or None:
+        """
+        A func for find out is national id unique
+        :param national_id: customer national id
+        :return: True if national id is unique, False for national id exists and None for Exception
+        """
+        query_operator = {"customerNationalID": national_id}
+        informal_query_operator = {"customerInformalPersons.informalNationalID": national_id}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                return not mongo.customer.find_one(query_operator, projection_operator) and not list(
+                    mongo.customer.find(informal_query_operator, projection_operator))
+            except Exception:
+                return
+
+    def kosar_getter(self, informal_flag: bool):
         """
         syncs needed data for kosar service
         :return: a dict contained user data
         """
+
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:
                 if customer := mongo.customer.find_one(query_operator, projection_operator):
-                    return {
-                        "customerId": customer.get("customerID"),
-                        "IsPerson": True,
-                        "gnr_Person_Name": customer.get("customerFirstName") or False,
-                        "gnr_Person_Family": customer.get("customerLastName") or False,
-                        "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
-                        "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                        "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
-                                                                                    "0"),
-                        "AddressDTOLst": [
-                            {
-                                "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
-                                "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
-                                "gnr_Land_PhoneCode": "021"
-                            }
-                        ],
-                        "PhoneDTOLst": [
-                            {
-                                "gnr_Phone_Priority": 1,
-                                "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
-                                "gnr_Land_PhoneCode": "021"
-                            }
-                        ]
-                    }
+                    if not informal_flag:
+                        return {
+                            "customerId": customer.get("customerID"),
+                            "IsPerson": True,
+                            "gnr_Person_Name": customer.get("customerFirstName") or False,
+                            "gnr_Person_Family": customer.get("customerLastName") or False,
+                            "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
+                            "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                            "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
+                                                                                        "0"),
+                            "AddressDTOLst": [
+                                {
+                                    "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
+                                    "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                                    "gnr_Land_PhoneCode": "021"
+                                }
+                            ],
+                            "PhoneDTOLst": [
+                                {
+                                    "gnr_Phone_Priority": 1,
+                                    "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                                    "gnr_Land_PhoneCode": "021"
+                                }
+                            ]
+                        }
                 else:
                     return None
             except Exception as e:

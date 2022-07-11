@@ -89,6 +89,8 @@ class Profile:
             "customerID": data.get("customerID"),
             "customerJalaliCreateTime": data.get("customerJalaliCreateTime"),
             "customerJalaliConfirmDate": data.get("customerJalaliConfirmDate"),
+            "customerAccFormalAccCode": data.get("customerAccFormalAccCode"),
+            "customerSelCustomerCode": data.get("customerSelCustomerCode"),
             "customerDocumentStatus": data.get("customerDocumentStatus")
         }
 

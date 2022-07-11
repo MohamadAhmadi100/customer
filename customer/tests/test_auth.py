@@ -1,11 +1,9 @@
-from faker.providers import person, phone_number
+from faker.providers import person
+from pytest_mock import class_mocker, module_mocker
+
 from customer.controllers import router_auth
 from customer.models.model_register import Customer
 from customer.modules.auth import AuthHandler
-from pytest_mock import class_mocker, module_mocker, session_mocker
-from customer.modules.otp import OTP
-from customer.tests.helper import fixtures
-from unittest import mock
 
 
 # class TestOtp:

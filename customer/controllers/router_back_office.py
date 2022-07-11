@@ -95,6 +95,7 @@ def set_cancel_status(mobileNumber: str) -> dict:
 
 
 def set_kosar_data(mobileNumber, kosarData) -> dict:
+
     customer = Customer(mobileNumber)
     if result := customer.kosar_setter(
             sel_Customer_Code=kosarData.get("sel_Customer_Code"),

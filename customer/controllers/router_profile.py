@@ -85,9 +85,12 @@ def create_informal(data: dict) -> dict:
             return {"success": False, "status_code": 417,
                     "error": f"اطلاعات {data.get('informalFirstName')} {data.get('informalLastName')} تکراری است "}
         if result := customer.add_informal(data):
-            if kosar_data := customer.kosar_getter(informal_flag=True):
+            if kosar_data := customer.kosar_getter(informal_flag=True,
+                                                   national_id=data.get('informalNationalID')):
                 return {"success": True, "status_code": 200, "kosarData": kosar_data,
                         "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
+            return {"success": True, "status_code": 200,
+                    "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
         elif result is None:
             return {"success": False, "status_code": 400,
                     "error": "دسترسی شما محدود شده است. لطفا با پشتیبانی تماس بگیرید "}

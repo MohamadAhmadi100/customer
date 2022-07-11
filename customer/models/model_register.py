@@ -511,7 +511,7 @@ class Customer:
             except Exception:
                 return
 
-    def kosar_getter(self, informal_flag: bool):
+    def kosar_getter(self, informal_flag: bool = False, national_id: str = ""):
         """
         syncs needed data for kosar service
         :return: a dict contained user data
@@ -521,46 +521,98 @@ class Customer:
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:
-                if customer := mongo.customer.find_one(query_operator, projection_operator):
-                    if not informal_flag:
-                        return {
-                            "customerId": customer.get("customerID"),
-                            "IsPerson": True,
-                            "gnr_Person_Name": customer.get("customerFirstName") or False,
-                            "gnr_Person_Family": customer.get("customerLastName") or False,
-                            "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
-                            "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                            "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
-                                                                                        "0"),
-                            "AddressDTOLst": [
-                                {
-                                    "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
-                                    "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
-                                    "gnr_Land_PhoneCode": "021"
-                                }
-                            ],
-                            "PhoneDTOLst": [
-                                {
-                                    "gnr_Phone_Priority": 1,
-                                    "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
-                                    "gnr_Land_PhoneCode": "021"
-                                }
-                            ]
-                        }
-                else:
+                if not (customer := mongo.customer.find_one(query_operator, projection_operator)):
                     return None
+                if not informal_flag:
+                    return {
+                        "customerType": customer.get("customerType"),
+                        "customerId": customer.get("customerID"),
+                        "IsPerson": True,
+                        "gnr_Person_Name": customer.get("customerFirstName") or False,
+                        "gnr_Person_Family": customer.get("customerLastName") or False,
+                        "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
+                        "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                        "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(
+                            customer.get("customerRegionCode"),
+                            "0"),
+                        "AddressDTOLst": [
+                            {
+                                "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
+                                "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                                "gnr_Land_PhoneCode": "021"
+                            }
+                        ],
+                        "PhoneDTOLst": [
+                            {
+                                "gnr_Phone_Priority": 1,
+                                "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                                "gnr_Land_PhoneCode": "021"
+                            }
+                        ]
+                    }
+                informal_persons: list = customer.get("customerInformalPersons")
+                informal = {}
+                for person in informal_persons:
+                    if person.get("informalNationalID") == national_id:
+                        informal = person
+                if not informal:
+                    return None
+
+                return {
+                    "customerType": ["informal"],
+                    "customerId": informal.get("customerID"),
+                    "IsPerson": True,
+                    "gnr_Person_Name": informal.get("informalFirstName") or False,
+                    "gnr_Person_Family": informal.get("informalLastName") or False,
+                    "gnr_Person_NationalCode": informal.get("informalNationalID") or False,
+                    "mainFormalGroupingName": f'{informal.get("informalFirstName")} {informal.get("informalLastName")}',
+                    "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(
+                        customer.get("customerRegionCode"),
+                        "0"),
+                    "AddressDTOLst": [
+                        {
+                            "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
+                            "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                            "gnr_Land_PhoneCode": "021"
+                        }
+                    ],
+                    "PhoneDTOLst": [
+                        {
+                            "gnr_Phone_Priority": 1,
+                            "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                            "gnr_Land_PhoneCode": "021"
+                        }
+                    ]
+                }
             except Exception as e:
                 return None
 
-    def kosar_setter(self, acc_FormalAcc_Id, acc_FormalAcc_Code):
+    def kosar_setter(self, sel_Customer_Code: str, acc_FormalAcc_Code: str, customer_type: list = False,
+                     customer_national_id: str = ""):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         projection_operator = {"_id": 0}
         set_operator = {"$set": {
-            "customerSelCustomerCode": acc_FormalAcc_Id,
+            "customerSelCustomerCode": sel_Customer_Code,
             "customerAccFormalAccCode": acc_FormalAcc_Code
         }}
+        informal_set_operator = {
+            "$set": {
+                "customerInformalPersons.$[customerSelCustomerCode]": sel_Customer_Code,
+                "customerInformalPersons.$[customerAccFormalAccCode]": acc_FormalAcc_Code
+            },
+            "arrayFilters": [
+                {
+                    "informalNationalID": customer_national_id}
+            ],
+            "upsert": True
+        }
         with MongoConnection() as mongo:
             try:
+                if customer_type[0] == "informal":
+                    if mongo.customer.find_one(query_operator, projection_operator):
+                        result = mongo.customer.update_one(query_operator, informal_set_operator)
+                        return bool(result.acknowledged)
+                    return False
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
                     return bool(result.acknowledged)

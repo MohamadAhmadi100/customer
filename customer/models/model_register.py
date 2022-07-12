@@ -25,7 +25,8 @@ class Customer:
         "customer_address",
         "customer_region_code",
         "customer_province_id",
-        "customer_email"
+        "customer_email",
+        "customer_document_status"
     ]
 
     CUSTOMER_TYPE: tuple = ('B2B',)
@@ -46,6 +47,7 @@ class Customer:
         self.customer_region_code: str = ""
         self.customer_province_id: str = ""
         self.customer_email: str = ""
+        self.customer_document_status: str = ""
 
     def set_activity(self) -> bool:
         """
@@ -156,8 +158,8 @@ class Customer:
                 if customer_id is not None:
                     self.customer_id = customer_id.get("customerId") + 1
                     mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
-                if customer_id < 20000:
-                    mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": 20000}})
+                    if customer_id.get("customerId") < 20000:
+                        mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": 20000}})
                 else:
                     mongo.counter.insert_one({"type": "customer", "customerId": 20000})
                     self.customer_id = 20000
@@ -200,7 +202,6 @@ class Customer:
         customer_data["customerCreateTime"] = time.time()
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
-        customer_data["customerDocumentStatus"] = "unset"
         customer_data["customerIsActive"] = False
         customer_data["customerIsMobileConfirm"] = False
         customer_data["customerHasInformal"] = False
@@ -221,7 +222,8 @@ class Customer:
             customer_postal_code="",
             customer_address="",
             customer_region_code="",
-            customer_province_id=""
+            customer_province_id="",
+            customer_document_status="",
 
     ) -> None:
         self.customer_phone_number = customer_phone_number
@@ -236,6 +238,7 @@ class Customer:
         self.customer_address = customer_address
         self.customer_region_code = customer_region_code
         self.customer_province_id = customer_province_id
+        self.customer_document_status = customer_document_status
 
     @property
     def __dict__(self) -> dict:
@@ -255,7 +258,8 @@ class Customer:
             "customerProvince": self.customer_province,
             "customerCityId": self.customer_city_id,
             "customerProvinceId": self.customer_province_id,
-            "customerAddress": self.customer_address
+            "customerAddress": self.customer_address,
+            "customerDocumentStatus": self.customer_document_status
         }
 
     def get_customer_password(self):

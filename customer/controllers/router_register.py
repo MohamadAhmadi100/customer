@@ -22,6 +22,7 @@ class Request:
         self.customer_first_name = None
         self.customer_phone_number = None
         self.customer_delivery_persons = None
+        self.customer_document_status = None
         self.__dict__.update(kwargs)
 
 
@@ -55,6 +56,7 @@ def register(data: dict):
             customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
             customer_province_id=value.customer_province_id,
+            customer_document_status=value.customer_document_status,
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():

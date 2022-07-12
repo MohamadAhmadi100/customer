@@ -156,6 +156,8 @@ class Customer:
                 if customer_id is not None:
                     self.customer_id = customer_id.get("customerId") + 1
                     mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": self.customer_id}})
+                if customer_id < 20000:
+                    mongo.counter.update_one({"type": "customer"}, {"$set": {"customerId": 20000}})
                 else:
                     mongo.counter.insert_one({"type": "customer", "customerId": 20000})
                     self.customer_id = 20000
@@ -399,8 +401,7 @@ class Customer:
 
     def get_informal_persons(self) -> dict or bool:
         """
-        finds a extra person matches national_id and customer mobile_number
-        :param national_id: 10 - digits int and unique
+        finds an extra person matches national_id and customer mobile_number
         :return:
         """
         query_operator = {"customerPhoneNumber": self.customer_phone_number}

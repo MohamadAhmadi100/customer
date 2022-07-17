@@ -59,6 +59,7 @@ class RabbitRPCClient:
                               routing_key=properties.reply_to,
                               properties=pika.BasicProperties(correlation_id=properties.correlation_id),
                               body=json.dumps(message))
+        print(properties.reply_to)
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def fanout_callback_runnable(self, channel, method, properties, body):

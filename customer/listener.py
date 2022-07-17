@@ -1,15 +1,9 @@
-import datetime
-
 from customer.modules import terminal_log
 from config import config
 
-# Important imports don't remove
-from customer.controllers.router_auth import *
-from customer.controllers.router_profile import *
-from customer.controllers.router_register import *
-from customer.controllers.router_back_office import *
+# Important import...please do not remove this at home
+import customer.controllers.main_controller as controller
 
-response = {}
 app_name = config.APP_NAME
 
 
@@ -20,7 +14,8 @@ def callback(message: dict) -> dict:
     if action := data.get("action"):
         body = data.get("body", {})
         try:
-            exec(f"global response; response['{app_name}'] = {action}(**{body})")
+            func = getattr(controller, action)
+            response = {str(app_name): func(**body)}
             return response
         except Exception as e:
             return {f"{app_name}": {"success": False, "status_code": 503, "error": f"{app_name}: {e}"}}

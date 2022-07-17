@@ -1,6 +1,6 @@
 VALID_PERIOD_FILTERS = ["customerJalaliCreateTime"]
-VALID_VALUE_FILTERS = ["customerStatus"]
-VALID_SEARCH_FIELDS = []
+VALID_VALUE_FILTERS = ["customerStatus", "customerStateName", "customerCityName", "customerRegionCode"]
+VALID_SEARCH_FIELDS = ["customerFirstName", "customerLastName", "customerPhoneNumber", "customerNationalID"]
 
 
 class Filter:
@@ -25,13 +25,21 @@ class Filter:
         return period
 
     def set_value_filters(self, values: dict) -> dict:
-        self.value_filters = {filter_: value for filter_, value in values.items() if
-                              filter_ in self.valid_value_filters and value}
-        for filter, value in self.value_filters.items():
-            if type(value) == list:
-                self.value_filters[filter] = {"$in": value}
+        self.value_filters = {}
+        for filter_, value in values.items():
+            if filter_ in self.valid_value_filters and value:
+                # todo: return comment!
+                # self.value_filters[filter_] = value
+                if type(value) == list:
+                    self.value_filters[filter_] = {"$in": value}
+                elif filter_ == "customerStateName":
+                    self.value_filters["customerAddress.customerStateName"] = value
+                elif filter_ == "customerCityName":
+                    self.value_filters["customerAddress.customerCityName"] = value
+                elif filter_ == "customerRegionCode":
+                    self.value_filters["customerAddress.customerRegionCode"] = value
         return self.value_filters
 
     def set_search_query(self, search_phrase):
-        return {search_field: {"$regex": search_phrase} for search_field in list(self.valid_search_fields) if
-                len(list(self.valid_search_fields))} or {}
+        search_list = [{search_field: {"$regex": search_phrase}} for search_field in self.valid_search_fields]
+        return {"$or": search_list} if search_list else {}

@@ -28,7 +28,6 @@ def get_customers_grid_data(data: str = None):
             sort_type=data.get("sortType") or "asc"
         )
     except Exception as e:
-        print(e)
         return {"success": False, "error": e, "status_code": 404}
 
 
@@ -114,7 +113,7 @@ def edit_customers_grid_data(data):
     data = json.loads(data)
     if data.get("customerMobileNumber"):
         profile = Profile(data)
-        return profile.update_profile()
+        return profile.back_office_update_profile()
     return {"status_code": 422, "success": False, "error": "ورود شماره موبایل الزامی است."}
 
 

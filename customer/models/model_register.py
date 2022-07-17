@@ -18,13 +18,13 @@ class Customer:
         "customer_last_name",
         "customer_national_id",
         "customer_status",
-        "customer_province",
-        "customer_city",
+        "customer_state_name",
+        "customer_city_name",
         "customer_city_id",
         "customer_postal_code",
         "customer_address",
         "customer_region_code",
-        "customer_province_id",
+        "customer_state_id",
         "customer_email",
         "customer_document_status"
     ]
@@ -39,13 +39,13 @@ class Customer:
         self.customer_last_name: str = ""
         self.customer_national_id: str = ""
         self.customer_status: str = "pend"
-        self.customer_province: str = ""
-        self.customer_city: str = ""
+        self.customer_state_name: str = ""
+        self.customer_city_name: str = ""
         self.customer_city_id: str = ""
         self.customer_postal_code: str = ""
         self.customer_address: str = ""
         self.customer_region_code: str = ""
-        self.customer_province_id: str = ""
+        self.customer_state_id: str = ""
         self.customer_email: str = ""
         self.customer_document_status: str = ""
 
@@ -216,13 +216,13 @@ class Customer:
             customer_last_name,
             customer_national_id,
             customer_password,
-            customer_province,
-            customer_city,
+            customer_state_name,
+            customer_city_name,
             customer_city_id,
             customer_postal_code="",
             customer_address="",
             customer_region_code="",
-            customer_province_id="",
+            customer_state_id="",
             customer_document_status="",
 
     ) -> None:
@@ -231,13 +231,13 @@ class Customer:
         self.customer_last_name = customer_last_name
         self.customer_national_id = customer_national_id
         self.customer_password = customer_password
-        self.customer_province = customer_province
-        self.customer_city = customer_city
+        self.customer_state_name = customer_state_name
+        self.customer_city_name = customer_city_name
         self.customer_city_id = customer_city_id
         self.customer_postal_code = customer_postal_code
         self.customer_address = customer_address
         self.customer_region_code = customer_region_code
-        self.customer_province_id = customer_province_id
+        self.customer_state_id = customer_state_id
         self.customer_document_status = customer_document_status
 
     @property
@@ -254,10 +254,11 @@ class Customer:
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
             "customerStatus": self.customer_status,
-            "customerCity": self.customer_city,
-            "customerProvince": self.customer_province,
+            "customerCityName": self.customer_city_name,
+            "customerStateName": self.customer_state_name,
             "customerCityId": self.customer_city_id,
-            "customerProvinceId": self.customer_province_id,
+            "customerStateId": self.customer_state_id,
+            "customerRegionCode": self.customer_region_code,
             "customerAddress": self.customer_address,
             "customerDocumentStatus": self.customer_document_status
         }

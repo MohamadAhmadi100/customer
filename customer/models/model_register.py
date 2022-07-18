@@ -367,6 +367,9 @@ class Customer:
             if not self.get_next_sequence_customer_id():
                 return False
             informal_info["customerID"] = self.customer_id
+            informal_info["customerType"] = ["informal"]
+            informal_info["customerAccFormalAccCode"] = None
+            informal_info["customerSelCustomerCode"] = None
             push_operator = {"$push": {"customerInformalPersons": informal_info}}
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
             return bool(result.acknowledged)
@@ -595,7 +598,7 @@ class Customer:
 
     def kosar_setter(self, sel_Customer_Code: str, acc_FormalAcc_Code: str, customer_type=None,
                      customer_national_id: str = ""):
-        if customer_type is None:
+        if customer_type is None or type(customer_type) != list:
             customer_type = ["B2B"]
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         informal_query_operator = {"customerPhoneNumber": self.customer_phone_number,

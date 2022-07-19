@@ -1,6 +1,8 @@
 from customer.modules import terminal_log
 from config import config
-import customer.controllers as controller
+
+# Important import...please do not remove this at home
+import customer.controllers.main_controller as controller
 
 app_name = config.APP_NAME
 

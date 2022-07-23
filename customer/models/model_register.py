@@ -249,8 +249,6 @@ class Customer:
             "customerLastName": self.customer_last_name,
             "customerEmail": self.customer_email,
             "customerNationalID": self.customer_national_id,
-            "customerIsMobileConfirm": False,
-            "customerIsActive": False,
             "customerType": self.CUSTOMER_TYPE,
             "customerPassword": self.customer_password,
             "customerStatus": self.customer_status,
@@ -608,17 +606,6 @@ class Customer:
             "customerSelCustomerCode": sel_Customer_Code,
             "customerAccFormalAccCode": acc_FormalAcc_Code
         }}
-        # informal_set_operator = {
-        #     "$set": {
-        #         "customerInformalPersons.$[customerSelCustomerCode]": sel_Customer_Code,
-        #         "customerInformalPersons.$[customerAccFormalAccCode]": acc_FormalAcc_Code
-        #     },
-        #     "arrayFilters": [
-        #         {
-        #             "informalNationalID": customer_national_id
-        #         }
-        #     ]
-        # }
         informal_set_operator = {
             "$set":
                 {

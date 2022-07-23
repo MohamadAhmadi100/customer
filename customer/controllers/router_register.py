@@ -11,18 +11,16 @@ class Request:
         self.customer_address = None
         self.customer_city_id = None
         self.customer_email = None
-        self.customer_province_id = None
+        self.customer_state_id = None
         self.customer_verify_password = None
         self.customer_password = None
         self.customer_national_id = None
         self.customer_postal_code = None
         self.customer_state_name = None
-        # self.customer_province = None
-        self.customer_city = None
+        self.customer_city_name = None
         self.customer_last_name = None
         self.customer_first_name = None
         self.customer_phone_number = None
-        self.customer_delivery_persons = None
         self.customer_document_status = None
         self.__dict__.update(kwargs)
 
@@ -51,12 +49,12 @@ def register(data: dict):
             customer_last_name=value.customer_last_name,
             customer_national_id=value.customer_national_id,
             customer_state_name=value.customer_state_name,
-            customer_city_name=value.customer_city,
+            customer_city_name=value.customer_city_name,
             customer_city_id=value.customer_city_id,
             customer_postal_code=value.customer_postal_code,
             customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
-            customer_state_id=value.customer_province_id,
+            customer_state_id=value.customer_state_id,
             customer_document_status=value.customer_document_status,
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )

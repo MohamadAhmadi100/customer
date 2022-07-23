@@ -48,7 +48,7 @@ def send_otp_code(customer_phone_number: str):
         return {"success": False, "status_code": 406, "error": message}
 
 
-def verify_otp_cod(customer_phone_number: str, customer_code: str):
+def verify_otp_code(customer_phone_number: str, customer_code: str):
     otp = OTP(customer_phone_number)
     if otp.get_otp() == customer_code:
         customer = Customer(phone_number=customer_phone_number)

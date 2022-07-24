@@ -11,7 +11,7 @@ class Profile:
         "customer_city_name",
         "customer_city_id",
         "customer_state_name",
-        "customer_state_id",
+        "customer_state_Id",
         "customer_region_code",
         "customer_ofogh_code",
         "customer_shop_name",
@@ -39,7 +39,7 @@ class Profile:
         self.customer_city_name: str = data.get("customer_city_name") or data.get("customerCityName")
         self.customer_city_id: str = data.get("customer_city_id") or data.get("customerCityId")
         self.customer_state_name: str = data.get("customer_state_name") or data.get("customerStateName")
-        self.customer_state_id: str = data.get("customer_state_id") or data.get("customerStateId")
+        self.customer_state_Id: str = data.get("customer_state_id") or data.get("customerStateId")
         self.customer_region_code: str = data.get("customer_region_code") or data.get("customerRegionCode")
         self.customer_ofogh_code: str = data.get("customer_ofogh_code") or data.get("customerOfoghCode")
         self.customer_shop_name: str = data.get("customer_shop_name") or data.get("customerShopName")

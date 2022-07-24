@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import logging
 import os
 import sys
@@ -14,7 +14,8 @@ class LogHandler(RotatingFileHandler):
     def doRollover(self):
         dates = []
         if os.path.isfile("app.log.8"):
-            dates.extend(os.path.getmtime(f"app.log.{i}") for i in range(1, 8))
+            for i in range(1, 8):
+                dates.append(os.path.getmtime(f"app.log.{i}"))
             should_remove = sorted(dates, reverse=True).pop(-1)
             os.remove(f"app.log.{should_remove}")
         super().doRollover()
@@ -23,6 +24,20 @@ class LogHandler(RotatingFileHandler):
     def log_folder_create():
         if not os.path.exists("log"):
             os.mkdir("log")
+
+    def emit(self, record):
+        if record.levelname == "ERROR":
+            stream = self.stream
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
+            message = [
+                record.exc_info[2].tb_frame.f_locals["error"].exceptions.__str__()
+                if record.exc_info else record.msg
+            ]
+            msg = str(date + " [" + record.levelname + "] " + message[0]).replace("\n", "")
+            stream.write(msg)
+            stream.write("\n")
+            self.flush()
+        super().emit(record)
 
 
 logging.basicConfig(
@@ -57,7 +72,7 @@ def action_log(message, app_name):
 
 def request_log(message, app_name):
     sys.stdout.write("\033[1;31m")
-    print(f"{datetime.datetime.now()}                  Request:  ", end="")
+    print(f"{datetime.now()}                  Request:  ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
     logging.info(f"Request: {message.get(app_name).get('body')}")
     print(message.get(app_name).get("body"))
@@ -65,7 +80,7 @@ def request_log(message, app_name):
 
 def response_log(message):
     sys.stdout.write("\033[1;31m")
-    print(f"{datetime.datetime.now()}                  Response: ", end="")
+    print(f"{datetime.now()}                  Response: ", end="")
     sys.stdout.write("\033[;1m\033[1;34m")
     logging.info(f"Response: {message}")
     print(message)

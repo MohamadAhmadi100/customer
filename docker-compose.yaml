@@ -34,7 +34,10 @@ services:
             resources:
                 limits:
                     cpus: '0.50'
-                    memory: 1024m
+                    memory: 200M
+                reservations:
+                    cpus: '0.50'
+                    memory: 200M
 
 volumes:
     mongodb-data-customer:

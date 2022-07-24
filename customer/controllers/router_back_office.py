@@ -154,3 +154,15 @@ def search_customers_by_name(phrase: str):
         return {"success": True, "message": result, "status_code": 200}
     elif result is None:
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
+
+
+def login_by_customer_phone_number(staff_user_id, customer_phone_number):
+    customer = Customer(customer_phone_number)
+    if result := customer.get_login_data():
+        user_info = customer.get_customer()
+        return {"success": True, "message": {"data": user_info, "message": "در حال انتقال به صفحه اصلی سایت"},
+                "status_code": 200}
+    elif result is False:
+        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 404}
+    else:
+        return {"success": False, "error": "خطایی رخ داد.لطفا مجددا تلاش کنید", "status_code": 417}

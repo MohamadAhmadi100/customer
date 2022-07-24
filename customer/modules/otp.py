@@ -29,6 +29,7 @@ class OTP:
     def generate_code(self, otp_code_length) -> str:
         for _ in range(otp_code_length):
             self.otp_code += str(random.randint(0, 9))  # type: str
+            print(self.otp_code)
         return self.otp_code
 
     def send(self) -> tuple:

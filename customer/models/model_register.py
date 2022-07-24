@@ -698,6 +698,22 @@ class Customer:
             ]))
         return result
 
+    def get_login_data(self):
+        """
+        get customer data for back-office
+        :return: a dict with user_id, customer_type, customer_mobile_number
+        """
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0, "customerPhoneNumber": 1, "customerID": 1, "customerType": 1}
+        with MongoConnection() as mongo:
+            try:
+                if customer := mongo.customer.find_one(query_operator, projection_operator):
+                    return customer
+                else:
+                    return False
+            except Exception as e:
+                return None
+
 # def pend_all():
 #     with MongoConnection() as mongo:
 #         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})

@@ -30,10 +30,11 @@ services:
             - /home/masood/logs/customer:/customer/log
         environment:
         - TZ=Asia/Tehran
-        resources:
-            limits:
-                cpus: '0.50'
-                memory: 1024m
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 1024m
 
 volumes:
     mongodb-data-customer:

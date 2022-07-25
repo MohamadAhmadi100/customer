@@ -26,7 +26,8 @@ class Profile:
         "customer_class",
         "customer_shop_postal_code",
         "customer_address",
-        "customer_document_status"
+        "customer_document_status",
+        "customer_image"
     ]
 
     def __init__(self, data):
@@ -51,6 +52,7 @@ class Profile:
         self.customer_education: str = data.get("customer_education") or data.get("customerEducation")
         self.customer_postal_code: str = data.get("customer_postal_code") or data.get("customerPostalCode")
         self.customer_class: str = data.get("customer_class") or data.get("customerClass")
+        self.customer_image: str = data.get("customer_image") or data.get("customerImage")
         self.customer_shop_postal_code: str = data.get("customer_shop_postal_code") or data.get(
             "customerShopPostalCode")
         # self.customer_address: list = data.get("customer_address") or data.get("customerAddress")
@@ -113,6 +115,7 @@ class Profile:
                     # "customerNationalID": self.customer_national_id or customer_data.get("customerNationalID"),
                     # "customerCityName": self.customer_city_name or customer_data.get("customerCityName"),
                     # "customerStateName": self.customer_state_name or customer_data.get("customerStateName"),
+                    "customerImage": self.customer_image or customer_data.get("customerImage"),
                     "customerOfoghCode": self.customer_ofogh_code or customer_data.get("customerOfoghCode"),
                     "customerShopName": self.customer_shop_name or customer_data.get("customerShopName"),
                     "customerAccountNumber": self.customer_account_number or customer_data.get(

@@ -9,8 +9,6 @@ services:
 #            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
         volumes:
             - /home/masood/customer/:/data/db
-        networks:
-            - mongodb_network_customer
         ports:
             - ${MONGO_PORT}:27017
         restart: unless-stopped
@@ -19,17 +17,15 @@ services:
         container_name: redis-db-customer
         volumes:
             - redis-data-customer:/data/redis-customer
-        networks:
-            - redis_network_customer
         ports:
             - ${REDIS_PORT}:6379
         restart: always
+    api:
+        build: .
+        volumes:
+            - /home/masood/logs/customer:/customer/log
+        environment:
+        - TZ=Asia/Tehran
 volumes:
     mongodb-data-customer:
     redis-data-customer:
-
-networks:
-    mongodb_network_customer:
-        driver: bridge
-    redis_network_customer:
-        driver: bridge

@@ -142,9 +142,12 @@ class Profile:
         try:
             if obj := self.create_obj_to_update_profile():
                 with MongoConnection() as mongo:
-                    mongo.customer.update_one({"customerPhoneNumber": self.customer_phone_number},
-                                              {"$set": obj})
-                return {"status_code": 202, "success": True, "message": {"message": "اطلاعات با موفقیت به روز شد"}}
+                    result = mongo.customer.update_one({"customerPhoneNumber": self.customer_phone_number},
+                                                       {"$set": obj})
+                    if bool(result.acknowledged):
+                        return {"status_code": 202, "success": True,
+                                "message": {"message": "اطلاعات با موفقیت به روز شد"}}
+                    return {"status_code": 417, "success": False, "error": "خطایی رخ داد. لطفا مجددا تلاش کنید"}
             else:
                 return {"status_code": 404, "success": False, "error": "کاربری با این اطلاعات وجود ندارد"}
         except TypeError:

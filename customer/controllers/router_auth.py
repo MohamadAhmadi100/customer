@@ -2,6 +2,7 @@ from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
 from customer.modules.otp import OTP
+from customer.modules.temporary_password import TempPassword
 
 auth_handler = AuthHandler()
 
@@ -42,7 +43,7 @@ def send_otp_code(customer_phone_number: str):
         otp.generate_code(otp_code_length=4)
         otp.save()
         otp.send()
-        return {"success": True, "status_code": 202, "message": {"message": "کد یک بار مصرف ارسال شد"}}
+        return {"success": True, "status_code": 202, "message": {"message": "کد یک بار مصرف با موفقیت ارسال شد"}}
     else:
         message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
         return {"success": False, "status_code": 406, "error": message}
@@ -61,7 +62,7 @@ def verify_otp_code(customer_phone_number: str, customer_code: str):
             }
             return {"success": True, "status_code": 202, "message": message}
         else:
-            message = "مشکلی رخ داده است لطفا بعدا امتحان کنید"
+            message = "مشکلی رخ داده است لطفا مجددا امتحان کنید"
             return {"success": False, "status_code": 417, "error": message}
     else:
         message = "کد وارد شده صحیح نمی‌باشد"
@@ -78,7 +79,9 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
             user_info = customer.get_customer()
             if not customer.is_mobile_confirm():
                 customer.mobile_confirm()
-            message = {"message": "شما به درستی وارد شدید", "data": user_info}
+            message = {
+                "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
+                "data": user_info}
             return {"success": True, "status_code": 202, "message": message}
         else:
             return {"success": False, "status_code": 401, "error": "کد وارد شده صحیح نمی‌باشد"}
@@ -94,12 +97,13 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
 def checking_login_password(customer_phone_number: str, customer_password: str):
     customer = Customer(phone_number=customer_phone_number)
     if user := customer.get_customer_password():
+        password = TempPassword(customer_phone_number)
         if auth_handler.verify_password(customer_password, user.get("customerPassword")):
             if user.get("customerIsMobileConfirm"):
                 log.save_login_log(customer_phone_number)
                 user_info = customer.get_customer()
                 message = {
-                    "message": "شما به درستی وارد شدید",
+                    "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
                     "data": user_info
                 }
                 return dict({"success": True, "status_code": 202}, **message)
@@ -108,11 +112,13 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
                     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
                     "customerIsConfirm": user.get("customerIsConfirm"),
                     "hasRegistered": True,
-                    "message": "شماره موبایل شما تایید نشده است",
+                    "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
                 }
                 return {"success": False, "status_code": 406, "error": message}
+        elif password.get_password() and password.get_password(customer_phone_number) == customer_password:
+            password.delete_password()
         else:
-            return {"success": False, "status_code": 401, "error": "پسورد اشتباه است"}
+            return {"success": False, "status_code": 401, "error": "رمز وارد شده نادرست است"}
     else:
         message = {
             "hasRegistered": False,
@@ -126,9 +132,9 @@ def save_logout(username: dict):
     customer_id = username.get("user_id")
     if result := log.save_logout_log(customer_id):
         # redirect to home page
-        return {"success": True, "status_code": 202, "message": {"message": "خروج انجام شد"}}
+        return {"success": True, "status_code": 202, "message": {"message": "خروج با موفقیت انجام شد"}}
     else:
-        return {"success": False, "status_code": 417, "error": "خطایی رخ داده است"}
+        return {"success": False, "status_code": 417, "error": "خطایی رخ داده است. لطفا مجددا تلاش کنید"}
 
 
 def forget_password(customer_phone_number: str, password: str):

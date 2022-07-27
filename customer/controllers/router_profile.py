@@ -8,7 +8,9 @@ from customer.modules.auth import AuthHandler
 def get_profile(customer_phone_number: dict):
     customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
+    print("222222222", profile)
     if result := profile.get_profile_data():
+        print("11111111", result)
         return {"success": True, "message": result, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
@@ -21,7 +23,8 @@ def edit_profile_data(customer_phone_number: dict, data: str):
             if value:
                 flag = True
     if not flag:
-        return {"success": False, "error": "تغییری در مقادیر داده نشد. لطفا اطلاعات را به درستی تغییر دهید", "status_code": 400}
+        return {"success": False, "error": "تغییری در مقادیر داده نشد. لطفا اطلاعات را به درستی تغییر دهید",
+                "status_code": 400}
     if customer_phone_number:
         print(data)
         data["customerPhoneNumber"] = customer_phone_number

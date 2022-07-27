@@ -2,7 +2,7 @@ from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
 from customer.modules.otp import OTP
-from customer.modules.temporary_password import TempPassword
+# from customer.modules.temporary_password import TempPassword
 
 auth_handler = AuthHandler()
 

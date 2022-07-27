@@ -24,13 +24,6 @@ services:
         ports:
             - ${REDIS_PORT}:6379
         restart: always
-    api:
-        build: .
-        volumes:
-            - /home/masood/logs/customer:/customer/log
-        environment:
-        - TZ=Asia/Tehran
-
 volumes:
     mongodb-data-customer:
     redis-data-customer:

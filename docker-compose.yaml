@@ -24,21 +24,6 @@ services:
         ports:
             - ${REDIS_PORT}:6379
         restart: always
-    api:
-        build: .
-        volumes:
-            - /home/masood/logs/customer:/customer/log
-        environment:
-        - TZ=Asia/Tehran
-        deploy:
-            resources:
-                limits:
-                    cpus: '0.50'
-                    memory: 200M
-                reservations:
-                    cpus: '0.50'
-                    memory: 200
-
 volumes:
     mongodb-data-customer:
     redis-data-customer:

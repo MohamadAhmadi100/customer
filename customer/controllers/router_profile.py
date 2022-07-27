@@ -10,15 +10,24 @@ def get_profile(customer_phone_number: dict):
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
         return {"success": True, "message": result, "status_code": 200}
-    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 401}
+    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
 
 def edit_profile_data(customer_phone_number: dict, data: str):
+    data = json.loads(data)
+    flag = False
+    if type(data) == dict:
+        for _key, value in data.items():
+            if value:
+                flag = True
+    if not flag:
+        return {"success": False, "error": "تغییری در مقادیر داده نشد. لطفا اطلاعات را به درستی تغییر دهید", "status_code": 400}
     if customer_phone_number:
-        data = json.loads(data)
+        print(data)
         data["customerPhoneNumber"] = customer_phone_number
         profile = Profile(data)
         return profile.update_profile()
+    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
 
 def change_customer_password(data: dict):

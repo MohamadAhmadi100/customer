@@ -62,7 +62,6 @@ class Profile:
         with MongoConnection() as mongo:
             pipeline_find = {"customerPhoneNumber": self.customer_phone_number}
             if customer := mongo.customer.find_one(pipeline_find, {'_id': 0}):
-                print("3333333", customer)
                 return self.set_data(customer)
             else:
                 return False

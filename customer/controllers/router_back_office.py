@@ -5,6 +5,7 @@ from customer.models.model_profile import Profile
 from customer.models.model_register import Customer
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
+from customer.modules.temporary_password import TempPassword
 
 
 def get_customers_grid_data(data: str = None):
@@ -157,12 +158,22 @@ def search_customers_by_name(phrase: str):
 
 
 def login_by_customer_phone_number(staff_user_id, customer_phone_number):
-    customer = Customer(customer_phone_number)
-    if result := customer.get_login_data():
-        user_info = customer.get_customer()
-        return {"success": True, "message": {"data": user_info, "message": "در حال انتقال به صفحه اصلی سایت"},
-                "status_code": 200}
-    elif result is False:
-        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 404}
+    password = TempPassword(customer_phone_number)
+    is_expire, expire_time = password.is_expire_password_time()
+    if is_expire:
+        password.generator()
+        password.save()
+        return {
+            "success": True,
+            "status_code": 202,
+            "message": {
+                "message":
+                    {
+                        "customerMobileNumber": customer_phone_number,
+                        "password": password.get_password()
+                    }
+            }
+        }
     else:
-        return {"success": False, "error": "خطایی رخ داد.لطفا مجددا تلاش کنید", "status_code": 417}
+        message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
+        return {"success": False, "status_code": 406, "error": message}

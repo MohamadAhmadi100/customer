@@ -5,7 +5,6 @@ import time
 from typing import Optional, Union, Tuple
 
 import redis
-import requests
 
 from config import config
 
@@ -26,11 +25,10 @@ class TempPassword:
 
     def generator(self) -> str:
         for _ in range(self.password_length):
-            self.password += random.choice(string.ascii_letters)
-            print(self.password)
+            self.password += random.choice(string.hexdigits)
         return self.password
 
-    def save(self, resend_time=120, expire_time=1800) -> None:
+    def save(self, resend_time=5, expire_time=1800) -> None:
         value_dict = {
             "password": self.password,
             "exp_time": time.time() + resend_time
@@ -40,13 +38,19 @@ class TempPassword:
             r.expire(self.phone_number, expire_time)
 
     def get_password(self, phone_number: Optional[str] = None) -> Union[dict, bool]:
-        phone_number: str = phone_number or self.phone_number
+        if phone_number:
+            phone_number: str = f"{phone_number}_password"
+        else:
+            phone_number: str = self.phone_number
         with self.client as r:
             value: bytes = r.get(phone_number)
         return json.loads(value).get("password") if value else False
 
     def is_verify_password(self, phone_number: Optional[str] = None):
-        phone_number: str = phone_number or self.phone_number
+        if phone_number:
+            phone_number: str = f"{phone_number}_password"
+        else:
+            phone_number: str = self.phone_number
         with self.client as r:
             value: bytes = r.get(phone_number)
         return bool(value and json.loads(value).get("verify"))

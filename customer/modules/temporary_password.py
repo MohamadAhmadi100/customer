@@ -28,7 +28,7 @@ class TempPassword:
             self.password += random.choice(string.hexdigits)
         return self.password
 
-    def save(self, resend_time=2, expire_time=1800) -> None:
+    def save(self, resend_time=120, expire_time=1800) -> None:
         value_dict = {
             "password": self.password,
             "exp_time": time.time() + resend_time

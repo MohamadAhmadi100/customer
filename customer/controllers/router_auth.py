@@ -125,7 +125,6 @@ def checking_login_password(customer_phone_number: str, customer_password: str):
                         "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
                         "data": user_info
                     }
-                    print("11111111111111")
                     return dict({"success": True, "status_code": 202}, **message)
                 else:
                     message = {

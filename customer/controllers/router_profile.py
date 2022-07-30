@@ -14,8 +14,9 @@ def get_profile(customer_phone_number: dict):
 
 
 def edit_profile_data(customer_phone_number: dict, data: str):
+    data = json.loads(data)
     if type(data) == dict:
-        data = json.loads(data).get("data")
+        data = data.get("data")
     flag = False
     if type(data) == dict:
         for _key, value in data.items():

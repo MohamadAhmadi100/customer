@@ -736,7 +736,7 @@ class Customer:
             "mobileNumber": customer.get("customerPhoneNumber"),
             "sel_customer_code": customer.get("customerSelCustomerCode"),
             "acc_formal_acc_code": customer.get("customerAccFormalAccCode"),
-            "customer_status": customer.get("customerFirstName"),
+            "customer_status": "Confirmed",
             "insert_time": [datetime.now()]
         }
         old_query_operator = {
@@ -752,6 +752,7 @@ class Customer:
                 return
             result: object = old_mongo.customers.insert_one(customer_data)
             return bool(result.acknowledged)
+
 # def pend_all():
 #     with MongoConnection() as mongo:
-#         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})
+#         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})time.astimezone(datetime.now()))

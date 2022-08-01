@@ -16,6 +16,11 @@ class Config:
     MONGO_HOST: str = os.getenv("MONGO_HOST")
     MONGO_PORT: int = int(os.getenv("MONGO_PORT"))
 
+    OLD_MONGO_USER: str = os.getenv("OLD_MONGO_USER")
+    OLD_MONGO_PASS: str = os.getenv("OLD_MONGO_PASS")
+    OLD_MONGO_HOST: str = os.getenv("OLD_MONGO_HOST")
+    OLD_MONGO_PORT: int = int(os.getenv("OLD_MONGO_PORT"))
+
     REDIS_HOST: str = os.getenv("REDIS_HOST")
     REDIS_PORT: int = int(os.getenv("REDIS_PORT"))
     REDIS_USER: str = os.getenv("REDIS_USER")

@@ -58,7 +58,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
             if data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
                 return {
                     "success": True,
-                    "message": "کاربر با موفقیت فعال شد",
+                    "message": "کاربر با موفقیت فعال شد.....",
                     "userData": customer.get_wallet_data() or {},
                     "status_code": 200,
                     # "kosarData": kosar_data,
@@ -66,7 +66,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 }
             return {
                 "success": True,
-                "message": "کاربر با موفقیت فعال شد",
+                "message": "کاربر با موفقیت فعال شد***",
                 "userData": customer.get_wallet_data() or {},
                 "kosarData": kosar_data,
                 "status_code": 200
@@ -103,6 +103,8 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
             customer_type=kosarData.get("customerType"),
             customer_national_id=kosarData.get("customerNationalID")
     ):
+        _old_db_result = customer.insert_main_db()
+        print(_old_db_result)
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
         return {"success": True, "message": "کاربر با موفقیت فعال شد", "status_code": 200}

@@ -5,6 +5,7 @@ from pymongo.errors import WriteError
 
 import config
 from customer.helper.connection import MongoConnection
+from customer.helper.connection import OldMongoConnection
 from customer.modules.auth import AuthHandler
 from customer.modules.date_convertor import jalali_datetime
 
@@ -518,12 +519,11 @@ class Customer:
             except Exception:
                 return
 
-    def kosar_getter(self, informal_flag: bool = False, national_id: str = ""):
+    def kosar_getter(self, informal_flag: bool = False, national_id: str = "", customer_type: list = None):
         """
         syncs needed data for kosar service
         :return: a dict contained user data
         """
-
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
@@ -532,7 +532,7 @@ class Customer:
                     return None
                 if not informal_flag:
                     return {
-                        "customerType": customer.get("customerType"),
+                        "customerType": customer_type or customer.get("customerType"),
                         "customerId": customer.get("customerID"),
                         "IsPerson": True,
                         "gnr_Person_Name": customer.get("customerFirstName") or False,
@@ -544,15 +544,15 @@ class Customer:
                             "0"),
                         "AddressDTOLst": [
                             {
-                                "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
-                                "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                                "gnr_Address_No": customer.get("customerAddress")[0].get("city_name"),
+                                "gnr_Address_Street": customer.get("customerAddress")[0].get("street"),
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ],
                         "PhoneDTOLst": [
                             {
                                 "gnr_Phone_Priority": 1,
-                                "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                                "gnr_Phone_No": customer.get("customerAddress")[0].get("tel"),
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ]
@@ -578,15 +578,15 @@ class Customer:
                         "0"),
                     "AddressDTOLst": [
                         {
-                            "gnr_Address_No": customer.get("customerAddress")[0].get("customerCityName"),
-                            "gnr_Address_Street": customer.get("customerAddress")[0].get("customerStreet"),
+                            "gnr_Address_No": customer.get("customerAddress")[0].get("city_name"),
+                            "gnr_Address_Street": customer.get("customerAddress")[0].get("street"),
                             "gnr_Land_PhoneCode": "021"
                         }
                     ],
                     "PhoneDTOLst": [
                         {
                             "gnr_Phone_Priority": 1,
-                            "gnr_Phone_No": customer.get("customerAddress")[0].get("customerTelephone"),
+                            "gnr_Phone_No": customer.get("customerAddress")[0].get("tel"),
                             "gnr_Land_PhoneCode": "021"
                         }
                     ]
@@ -626,6 +626,8 @@ class Customer:
                 return False
             except Exception:
                 return None
+
+    # def is_kosar_set(self):
 
     def get_wallet_data(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
@@ -698,6 +700,58 @@ class Customer:
             ]))
         return result
 
+    def convert_to_dealership(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerType": ["B2B2C"]}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def insert_main_db(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if not (customer := mongo.customer.find_one(query_operator, projection_operator)):
+                    return
+            except Exception:
+                return
+        customer_data: dict = {
+            "entity_id": customer.get("customerID"),
+            "firstName": customer.get("customerFirstName"),
+            "lastName": customer.get("customerLastName"),
+            "nId": customer.get("customerNationalID"),
+            "shopName": customer.get("customerShopName"),
+            "regionCode": customer.get("customerRegionCode"),
+            "email": customer.get("customerEmail"),
+            "city": customer.get("customerCityName"),
+            "state": customer.get("customerStateName"),
+            "mobileNumber": customer.get("customerPhoneNumber"),
+            "sel_customer_code": customer.get("customerSelCustomerCode"),
+            "acc_formal_acc_code": customer.get("customerAccFormalAccCode"),
+            "customer_status": customer.get("customerFirstName"),
+            "insert_time": [datetime.now()]
+        }
+        old_query_operator = {
+            "$or":
+                [
+                    {"mobileNumber": self.customer_phone_number},
+                    {"nId": self.customer_national_id}
+                ]
+        }
+        with OldMongoConnection() as old_mongo:
+            old_result = list(old_mongo.customers.find(old_query_operator))
+            if len(old_result):
+                return
+            result: object = old_mongo.customers.insert_one(customer_data)
+            return bool(result.acknowledged)
 # def pend_all():
 #     with MongoConnection() as mongo:
 #         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})

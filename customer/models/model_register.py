@@ -30,7 +30,8 @@ class Customer:
         "customer_document_status"
     ]
 
-    CUSTOMER_TYPE: tuple = ('B2B',)
+    DEFAULT_CUSTOMER_TYPE: tuple = ('B2B',)
+    CUSTOMER_TYPES: tuple = ('B2B',)
 
     def __init__(self, phone_number: str):
         self.customer_phone_number: str = phone_number
@@ -250,7 +251,8 @@ class Customer:
             "customerLastName": self.customer_last_name,
             "customerEmail": self.customer_email,
             "customerNationalID": self.customer_national_id,
-            "customerType": self.CUSTOMER_TYPE,
+            "customerType": self.DEFAULT_CUSTOMER_TYPE,
+            "customerTypes": self.CUSTOMER_TYPES,
             "customerPassword": self.customer_password,
             "customerStatus": self.customer_status,
             "customerCityName": self.customer_city_name,
@@ -702,7 +704,7 @@ class Customer:
 
     def convert_to_dealership(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerType": ["B2B2C"]}}
+        set_operator = {"$set": {"customerType": ["B2B2C"]}, "$addToSet": {"customerTypes": "B2B2C"}}
         projection_operator = {"_id": 0}
 
         with MongoConnection() as mongo:
@@ -749,6 +751,7 @@ class Customer:
         with OldMongoConnection() as old_mongo:
             old_result = list(old_mongo.customers.find(old_query_operator))
             if len(old_result):
+                print("repeated data")
                 return
             result: object = old_mongo.customers.insert_one(customer_data)
             return bool(result.acknowledged)

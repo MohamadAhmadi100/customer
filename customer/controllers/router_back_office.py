@@ -104,7 +104,6 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
             customer_national_id=kosarData.get("customerNationalID")
     ):
         _old_db_result = customer.insert_main_db()
-        print(_old_db_result)
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
         return {"success": True, "message": "کاربر با موفقیت فعال شد", "status_code": 200}

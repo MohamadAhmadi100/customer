@@ -85,7 +85,7 @@ def get_delivery_persons(data) -> dict:
         return {"success": True, "status_code": 200, "message": {"data": list(persons)}}
     return {"success": False, "status_code": 404, "error": "برای شما پیک ثبت نشده است"}
 
-
+/////
 def create_informal(data: dict) -> dict:
     try:
         mobile_number: str = data.get("customer_mobile_number")

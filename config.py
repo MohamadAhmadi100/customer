@@ -39,8 +39,8 @@ class Config:
     VALID_GRID_KEYS: list = os.getenv("VALID_GRID_KEYS")
 
 
-VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastName",
-                      "customerProvince", "customerCity", "customerPostalCode", "customerClass", "customerType",
+VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastName","customerRegionCode",
+                      "customerStateName", "customerCityName", "customerPostalCode", "customerClass", "customerType",
                       "customerJalaliCreateTime", "customerShopName", "customerNationalID", "customerJalaliConfirmDate",
                       "customerShopLocation", "customerEducation", "customerDocumentStatus", "customerShopPostalCode",
                       "customerEmail", "customerShopStatus", "customerAddress", "customerStatus", "customerID"]

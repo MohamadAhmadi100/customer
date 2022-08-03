@@ -674,8 +674,7 @@ class Customer:
         }
         with MongoConnection() as mongo:
             try:
-                result = mongo.customer.find_one(query_operator, projection_operator)
-                return result
+                return mongo.customer.find_one(query_operator, projection_operator)
             except Exception:
                 return []
 

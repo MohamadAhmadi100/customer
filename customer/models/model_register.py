@@ -566,7 +566,11 @@ class Customer:
                         informal = person
                 if not informal:
                     return None
-
+                try:
+                    sel_CustomerMainGroup_Code = config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
+                                                                               "0") or "0"
+                except Exception:
+                    sel_CustomerMainGroup_Code = "0"
                 return {
                     "customerType": ["informal"],
                     "customerId": informal.get("customerID"),
@@ -575,20 +579,18 @@ class Customer:
                     "gnr_Person_Family": informal.get("informalLastName") or False,
                     "gnr_Person_NationalCode": informal.get("informalNationalID") or False,
                     "mainFormalGroupingName": f'{informal.get("informalFirstName")} {informal.get("informalLastName")}',
-                    "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(
-                        customer.get("customerRegionCode"),
-                        "0"),
+                    "sel_CustomerMainGroup_Code": sel_CustomerMainGroup_Code,
                     "AddressDTOLst": [
                         {
-                            "gnr_Address_No": customer.get("customerAddress")[0].get("city_name"),
-                            "gnr_Address_Street": customer.get("customerAddress")[0].get("street"),
+                            "gnr_Address_No": customer.get("customerCityName"),
+                            "gnr_Address_Street": customer.get("customerAddress")[0].get("street") or "تهران",
                             "gnr_Land_PhoneCode": "021"
                         }
                     ],
                     "PhoneDTOLst": [
                         {
                             "gnr_Phone_Priority": 1,
-                            "gnr_Phone_No": customer.get("customerAddress")[0].get("tel"),
+                            "gnr_Phone_No": customer.get("customerAddress")[0].get("tel") or "88888888",
                             "gnr_Land_PhoneCode": "021"
                         }
                     ]

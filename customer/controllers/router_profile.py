@@ -99,6 +99,7 @@ def create_informal(data: dict) -> dict:
         if result := customer.add_informal(data):
             if kosar_data := customer.kosar_getter(informal_flag=True,
                                                    national_id=data.get('informalNationalID')):
+                print(kosar_data)
                 return {"success": True, "status_code": 200, "kosarData": kosar_data,
                         "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
             return {"success": True, "status_code": 200,

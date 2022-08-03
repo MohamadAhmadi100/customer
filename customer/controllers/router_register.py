@@ -22,6 +22,7 @@ class Request:
         self.customer_first_name = None
         self.customer_phone_number = None
         self.customer_document_status = None
+        self.customer_type = None
         self.__dict__.update(kwargs)
 
 

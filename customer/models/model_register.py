@@ -665,6 +665,21 @@ class Customer:
                 return []
 
     @staticmethod
+    def get_customers_by_id_league(customer_id):
+        query_operator = {"customerID": customer_id}
+        projection_operator = {
+            "first_name": "$customerFirstName",
+            "last_name": "$customerLastName",
+            "_id": 0
+        }
+        with MongoConnection() as mongo:
+            try:
+                result = mongo.customer.find_one(query_operator, projection_operator)
+                return result
+            except Exception:
+                return []
+
+    @staticmethod
     def find_customers(name: str):
         with MongoConnection() as mongo:
             result = list(mongo.customer.aggregate([

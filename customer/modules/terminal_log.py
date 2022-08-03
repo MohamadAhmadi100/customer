@@ -36,7 +36,7 @@ class LogHandler(RotatingFileHandler):
                 ]
             else:
                 message = [record.msg]
-            msg = str(date + " [" + record.levelname + "] " + message[0]).replace("\n", "")
+            msg = str(f"{date} [{record.levelname}] {message[0]}").replace("\n", "")
             stream.write(msg)
             stream.write("\n")
             self.flush()

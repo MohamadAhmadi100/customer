@@ -53,10 +53,11 @@ def register(data: dict):
             customer_city_name=value.customer_city_name,
             customer_city_id=value.customer_city_id,
             customer_postal_code=value.customer_postal_code,
-            customer_address=value.customer_address,
+            customer_address=[value.customer_address],
             customer_region_code=value.customer_region_code,
             customer_state_id=value.customer_state_id,
             customer_document_status=value.customer_document_status,
+            customer_type=value.customer_type or ["B2B"],
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():

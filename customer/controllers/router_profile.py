@@ -85,7 +85,7 @@ def get_delivery_persons(data) -> dict:
         return {"success": True, "status_code": 200, "message": {"data": list(persons)}}
     return {"success": False, "status_code": 404, "error": "برای شما پیک ثبت نشده است"}
 
-/////
+
 def create_informal(data: dict) -> dict:
     try:
         mobile_number: str = data.get("customer_mobile_number")
@@ -99,7 +99,6 @@ def create_informal(data: dict) -> dict:
         if result := customer.add_informal(data):
             if kosar_data := customer.kosar_getter(informal_flag=True,
                                                    national_id=data.get('informalNationalID')):
-                print(kosar_data)
                 return {"success": True, "status_code": 200, "kosarData": kosar_data,
                         "message": f"{data.get('informalFirstName')} {data.get('informalLastName')} با موفقیت ثبت شد "}
             return {"success": True, "status_code": 200,

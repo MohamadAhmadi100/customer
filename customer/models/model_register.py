@@ -27,7 +27,8 @@ class Customer:
         "customer_region_code",
         "customer_state_id",
         "customer_email",
-        "customer_document_status"
+        "customer_document_status",
+        "customer_type"
     ]
 
     DEFAULT_CUSTOMER_TYPE: tuple = ('B2B',)
@@ -50,6 +51,7 @@ class Customer:
         self.customer_state_id: str = ""
         self.customer_email: str = ""
         self.customer_document_status: str = ""
+        self.customer_type: list
 
     def set_activity(self) -> bool:
         """
@@ -221,6 +223,7 @@ class Customer:
             customer_state_name,
             customer_city_name,
             customer_city_id,
+            customer_type,
             customer_postal_code="",
             customer_address="",
             customer_region_code="",
@@ -241,6 +244,7 @@ class Customer:
         self.customer_region_code = customer_region_code
         self.customer_state_id = customer_state_id
         self.customer_document_status = customer_document_status
+        self.customer_type = customer_type
 
     @property
     def __dict__(self) -> dict:
@@ -251,8 +255,8 @@ class Customer:
             "customerLastName": self.customer_last_name,
             "customerEmail": self.customer_email,
             "customerNationalID": self.customer_national_id,
-            "customerType": self.DEFAULT_CUSTOMER_TYPE,
-            "customerTypes": self.CUSTOMER_TYPES,
+            "customerType": self.customer_type,
+            "customerTypes": self.customer_type,
             "customerPassword": self.customer_password,
             "customerStatus": self.customer_status,
             "customerCityName": self.customer_city_name,
@@ -532,6 +536,10 @@ class Customer:
             try:
                 if not (customer := mongo.customer.find_one(query_operator, projection_operator)):
                     return None
+                if type(customer.get("customerAddress")) == list:
+                    address = customer.get("customerAddress")[0]
+                else:
+                    address = customer.get("customerAddress")
                 if not informal_flag:
                     return {
                         "customerType": customer_type or customer.get("customerType"),
@@ -546,15 +554,15 @@ class Customer:
                             "0"),
                         "AddressDTOLst": [
                             {
-                                "gnr_Address_No": customer.get("customerAddress")[0].get("city_name"),
-                                "gnr_Address_Street": customer.get("customerAddress")[0].get("street"),
+                                "gnr_Address_No": address.get("city_name"),
+                                "gnr_Address_Street": address.get("street"),
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ],
                         "PhoneDTOLst": [
                             {
                                 "gnr_Phone_Priority": 1,
-                                "gnr_Phone_No": customer.get("customerAddress")[0].get("tel"),
+                                "gnr_Phone_No": address.get("tel"),
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ]
@@ -582,15 +590,15 @@ class Customer:
                     "sel_CustomerMainGroup_Code": sel_CustomerMainGroup_Code,
                     "AddressDTOLst": [
                         {
-                            "gnr_Address_No": customer.get("customerCityName"),
-                            "gnr_Address_Street": customer.get("customerAddress")[0].get("street") or "تهران",
+                            "gnr_Address_No": customer.get("customerCityName", "تهران"),
+                            "gnr_Address_Street": address.get("street") or "آسود",
                             "gnr_Land_PhoneCode": "021"
                         }
                     ],
                     "PhoneDTOLst": [
                         {
                             "gnr_Phone_Priority": 1,
-                            "gnr_Phone_No": customer.get("customerAddress")[0].get("tel") or "88888888",
+                            "gnr_Phone_No": address.get("tel") or "88888888",
                             "gnr_Land_PhoneCode": "021"
                         }
                     ]

@@ -137,8 +137,8 @@ def get_all_informal_persons(data: dict):
         return {"success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
 
 
-def get_customer_data_by_id_league(customer_id: int):
-    if result := Customer.get_customers_by_id_league(customer_id):
+def get_customer_data_by_id_league(customer_id_list: list):
+    if result := Customer.get_customers_by_id_league(customer_id_list):
         return {"success": True, "message": result, "status_code": 200}
     elif result is None:
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}

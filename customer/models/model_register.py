@@ -675,16 +675,19 @@ class Customer:
                 return []
 
     @staticmethod
-    def get_customers_by_id_league(customer_id):
-        query_operator = {"customerID": customer_id}
+    def get_customers_by_id_league(customer_id_list):
+        query_operator = {"customerID": {"$in": customer_id_list}}
         projection_operator = {
             "first_name": "$customerFirstName",
             "last_name": "$customerLastName",
+            "customer_id": "$customerID",
+            "customer_image": "$customerImage",
             "_id": 0
         }
         with MongoConnection() as mongo:
             try:
-                return mongo.customer.find_one(query_operator, projection_operator)
+                result = list(mongo.customer.find(query_operator, projection_operator))
+                return {customer["customer_id"]: customer for customer in result}
             except Exception:
                 return []
 

@@ -684,7 +684,7 @@ class Customer:
             "customer_image": {
                 "$cond": {
                     "if": {"$ne": ["$customerImage", None]},
-                    "then": " ",
+                    "then": "",
                     "else": "$customerImage"
                 }
             },

@@ -142,5 +142,3 @@ def get_customer_data_by_id_league(customer_id_list: list):
         return {"success": True, "message": result, "status_code": 200}
     elif result is None:
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
-
-get_customer_data_by_id_league([45])

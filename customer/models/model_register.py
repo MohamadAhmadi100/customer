@@ -682,10 +682,14 @@ class Customer:
             "last_name": "$customerLastName",
             "customer_id": "$customerID",
             "customer_image": {
-                "$cond": {
-                    "if": {"$ne": ["$customerImage", None]},
-                    "then": "",
-                    "else": "$customerImage"
+                "$switch": {
+                    "branches": [
+                        {"case": {"$ne": ["$customerImage", "null"]},
+                         "then": "https://devapi.aasood.com/gallery_files/default-pic/profile-league/150x150.jpg"},
+                        {"case": {"$ne": ["$customerImage", None]},
+                         "then": "https://devapi.aasood.com/gallery_files/default-pic/profile-league/150x150.jpg"}
+                    ],
+                    "default": "$customerImage"
                 }
             },
             "_id": 0

@@ -681,7 +681,13 @@ class Customer:
             "first_name": "$customerFirstName",
             "last_name": "$customerLastName",
             "customer_id": "$customerID",
-            "customer_image": "$customerImage",
+            "customer_image": {
+                "$cond": {
+                    "if": {"$ne": ["$customerImage", None]},
+                    "then": " ",
+                    "else": "$customerImage"
+                }
+            },
             "_id": 0
         }
         with MongoConnection() as mongo:

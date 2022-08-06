@@ -53,7 +53,7 @@ def register(data: dict):
             customer_city_name=value.customer_city_name,
             customer_city_id=value.customer_city_id,
             customer_postal_code=value.customer_postal_code,
-            customer_address=[value.customer_address],
+            customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
             customer_state_id=value.customer_state_id,
             customer_document_status=value.customer_document_status,

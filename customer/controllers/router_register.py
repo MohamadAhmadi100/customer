@@ -76,3 +76,5 @@ def register(data: dict):
         else:
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
             return {"success": False, "error": message, "status_code": 417}
+
+# print(auth_handler.generate_hash_password("123456789"))

@@ -538,6 +538,8 @@ class Customer:
                     return None
                 if type(customer.get("customerAddress")) == list:
                     address = customer.get("customerAddress")[0]
+                    if type(address) == list:
+                        address = address[0]
                 else:
                     address = customer.get("customerAddress")
                 if not informal_flag:

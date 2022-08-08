@@ -51,7 +51,7 @@ class Customer:
         self.customer_state_id: str = ""
         self.customer_email: str = ""
         self.customer_document_status: str = ""
-        self.customer_type: list
+        self.customer_type: list = []
 
     def set_activity(self) -> bool:
         """

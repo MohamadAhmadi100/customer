@@ -45,6 +45,7 @@ class OTP:
             return {"message": result}, True
 
     def save(self, resend_time=120, expire_time=600) -> None:
+        resend_time = 120
         value_dict = {
             "code": self.otp_code,
             "exp_time": time.time() + resend_time

@@ -9,6 +9,14 @@ def get_profile(customer_phone_number: dict):
     customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
+        if result.get("customerStatus") == "cancel":
+            result["profileStatus"] = "لغو شده"
+        if result.get("customerStatus") == "pend":
+            result["profileStatus"] = "در انتظار تایید"
+        if result.get("customerStatus") == "confirm" and result.get("customerIsActive"):
+            result["profileStatus"] = "تایید شده"
+        else:
+            result["profileStatus"] = "اعتبار سنجی شماره موبایل"
         return {"success": True, "message": result, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 

@@ -51,6 +51,12 @@ def get_customer_attributes():
 
 
 # print(get_customer_attributes())
+def get_raw_profile(customer_phone_number: dict):
+    customer_phone_number = customer_phone_number.get('phone_number')
+    profile = Profile({"customer_phone_number": customer_phone_number})
+    if result := profile.get_profile_data():
+        return {"success": True, "message": result, "status_code": 200}
+    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
 
 def get_profile(customer_phone_number: dict):
@@ -71,7 +77,6 @@ def get_profile(customer_phone_number: dict):
             attrs.append({"profileStatus": "تایید شده"})
         else:
             attrs.append({"profileStatus": "اعتبار سنجی شماره موبایل"})
-        print(attrs)
         return {"success": True, "message": attrs, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 

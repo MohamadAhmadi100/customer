@@ -51,8 +51,8 @@ def get_customer_attributes():
 
 
 # print(get_customer_attributes())
-def get_raw_profile(customer_phone_number: dict):
-    customer_phone_number = customer_phone_number.get('phone_number')
+def get_raw_profile(customer_phone_number: str):
+    # customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
         return {"success": True, "message": result, "status_code": 200}

@@ -1,23 +1,78 @@
 import json
+import re
 
+from customer.helper.connection import AttributeMongoConnection
 from customer.models.model_profile import Profile
 from customer.models.model_register import Customer
 from customer.modules.auth import AuthHandler
+
+
+def snake_to_camel(snake_str):
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
+
+
+def camel_to_snake(camel_str):
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_str).lower()
+
+
+def convert_case(dict_data, action):
+    function = camel_to_snake if action == 'snake' else snake_to_camel
+    new_dict = {}
+    if isinstance(dict_data, dict):
+        for key, value in dict_data.items():
+            if isinstance(value, dict):
+                new_value = convert_case(value, action)
+                new_key = function(key) if key not in ['B2B', 'B2C', 'B2G'] else key
+                new_dict[new_key] = new_value
+            elif isinstance(value, list):
+                new_list = []
+                for item in value:
+                    new_value = convert_case(item, action)
+                    new_list.append(new_value)
+                new_key = function(key)
+                new_dict[new_key] = new_list
+            else:
+                new_key = function(key)
+                new_dict[new_key] = value
+        return new_dict
+    if isinstance(dict_data, list):
+        new_list = []
+        for item in dict_data:
+            new_value = convert_case(item, action)
+            new_list.append(new_value)
+        return new_list
+    return dict_data
+
+
+def get_customer_attributes():
+    with AttributeMongoConnection() as mongo:
+        return list(mongo.customer_attributes.find({}, {"_id": 0}))
+
+
+# print(get_customer_attributes())
 
 
 def get_profile(customer_phone_number: dict):
     customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
+        attributes = get_customer_attributes()
+        attrs = convert_case(attributes, "camel")
+        for attr in attrs:
+            if result.get(attr.get("name")) is None or not None:
+                attr["value"] = result.get(attr.get("name"))
+                # result.append(attr)
         if result.get("customerStatus") == "cancel":
-            result["profileStatus"] = "لغو شده"
+            attrs.append({"profileStatus": "لغو شده"})
         if result.get("customerStatus") == "pend":
-            result["profileStatus"] = "در انتظار تایید"
+            attrs.append({"profileStatus": "در انتظار تایید"})
         if result.get("customerStatus") == "confirm" and result.get("customerIsActive"):
-            result["profileStatus"] = "تایید شده"
+            attrs.append({"profileStatus": "تایید شده"})
         else:
-            result["profileStatus"] = "اعتبار سنجی شماره موبایل"
-        return {"success": True, "message": result, "status_code": 200}
+            attrs.append({"profileStatus": "اعتبار سنجی شماره موبایل"})
+        print(attrs)
+        return {"success": True, "message": attrs, "status_code": 200}
     return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
 

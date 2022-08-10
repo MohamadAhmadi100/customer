@@ -70,3 +70,34 @@ class OldMongoConnection:
     @property
     def customers(self):
         return self.__db_name["customers"]
+
+
+class AttributeMongoConnection:
+    __slots__ = ["__client", "__db_name", "collection", "__instance"]
+
+    @classmethod
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, '__instance'):
+            cls.__instance = super(AttributeMongoConnection, cls).__new__(cls)
+        return cls.__instance
+
+    def __init__(self):
+        self.__client = pymongo.MongoClient(
+            config.ATTRIBUTE_MONGO_HOST,
+            config.ATTRIBUTE_MONGO_PORT,
+            username=config.ATTRIBUTE_MONGO_USER,
+            password=config.ATTRIBUTE_MONGO_PASS
+        )
+        self.__db_name = self.__client["db-attribute"]
+        # self.__db_name_log = self.__client["db-log"]
+        # self.__db_name_counter = self.__client["counter"]
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__client.close()
+
+    @property
+    def customer_attributes(self):
+        return self.__db_name["customer"]

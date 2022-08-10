@@ -1,13 +1,16 @@
 import time
+from datetime import datetime
 
 from customer.helper.connection import MongoConnection
+from customer.modules.date_convertor import jalali_datetime
 
 
 def save_login_log(customer_id: str) -> bool:
     pipe_line = {
         "customerID": customer_id,
-        "customerAction": "logout",
-        "customerActionTime": time.time()
+        "customerAction": "login",
+        "customerActionTime": time.time(),
+        "customerJalaliActionTime": jalali_datetime(datetime.now())
     }
     with MongoConnection() as mongo:
         result = mongo.log.insert_one(pipe_line)

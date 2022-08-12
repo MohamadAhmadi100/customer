@@ -428,15 +428,25 @@ class Customer:
 
     def cancel_status(self) -> bool or None:
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerStatus": "cancel"}}
-        set_active_operator = {"$set": {"customerIsActive": False}}
+        set_operator = {
+            "$set":
+                {
+                    "customerStatus": "cancel",
+                    "customerIsActive": False,
+                    "customerCancelDatetime": time.time(),
+                    "customerJalaliCancelDatetime": jalali_datetime(datetime.now())
+                }
+        }
+        # set_active_operator = {"$set": {"customerIsActive": False}}
+        # set_date_operator = {"$set": {"customerCancelDatetime": time.time()}}
+        # set_jalali_date_operator = {"$set": {"customerJalaliCancelDatetime": jalali_datetime(datetime.now())}}
         projection_operator = {"_id": 0}
         with MongoConnection() as mongo:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
-                    active_result = mongo.customer.update_one(query_operator, set_active_operator)
-                    return bool(result.acknowledged) and bool(active_result.acknowledged)
+                    # active_result = mongo.customer.update_one(query_operator, set_active_operator)
+                    return bool(result.acknowledged)  # and bool(active_result.acknowledged)
                 return False
             except Exception:
                 return

@@ -71,9 +71,9 @@ def get_profile(customer_phone_number: dict):
                 # result.append(attr)
         if result.get("customerStatus") == "cancel":
             attrs.append({"profileStatus": "لغو شده"})
-        if result.get("customerStatus") == "pend":
+        elif result.get("customerStatus") == "pend":
             attrs.append({"profileStatus": "در انتظار تایید"})
-        if result.get("customerStatus") == "confirm" and result.get("customerIsActive"):
+        elif result.get("customerStatus") == "confirm" and result.get("customerIsActive"):
             attrs.append({"profileStatus": "تایید شده"})
         else:
             attrs.append({"profileStatus": "اعتبار سنجی شماره موبایل"})

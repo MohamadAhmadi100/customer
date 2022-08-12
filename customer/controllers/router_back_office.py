@@ -21,12 +21,23 @@ def get_customers_grid_data(data: str = None):
         if search_phrase := data.get("search"):
             search_query = records.set_search_query(search_phrase)
         filters = dict(period_filters, **value_filters, **search_query)
+        if not data.get("sortType"):
+            sort_type = "asc"
+        else:
+            sort_type = "asc" if data.get("sortType") == "ascend" else "desc"
+        if data.get("sortName"):
+            if data.get("sortName") == "customerName":
+                sort_name = "customerLastName"
+            else:
+                sort_name = data.get("sortName")
+        else:
+            sort_name = "customerID"
         return GetData().executor(
             queries=filters,
             number_of_records=data.get("perPage") or "15",
             page=data.get("page") or "1",
-            sort_name=data.get("sortName") or "customerID",
-            sort_type=data.get("sortType") or "asc"
+            sort_name=sort_name or "customerID",
+            sort_type=sort_type or "asc"
         )
     except Exception as e:
         return {"success": False, "error": e, "status_code": 404}

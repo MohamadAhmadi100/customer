@@ -26,9 +26,6 @@ services:
           - /home/masood/logs/customer:/customer/log
         environment:
           - TZ=Asia/Tehran
-        deploy:
-          replicas: 3
-
 volumes:
     mongodb-data-customer:
     redis-data-customer:

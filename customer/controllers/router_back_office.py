@@ -6,6 +6,7 @@ from customer.models.model_register import Customer
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
 from customer.modules.temporary_password import TempPassword
+from customer.modules.sender import SmsSender
 
 
 def get_customers_grid_data(data: str = None):
@@ -63,25 +64,24 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 return {"success": False, "error": "اطلاعات کاربر تکمیل نشده است. کاربر فعال نشد", "status_code": 401}
         result = customer.confirm_status()
         mobile_confirm = customer.is_mobile_confirm()
-        if result and mobile_confirm:
+        data = customer.get_customer()
+        if result and mobile_confirm and data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
             customer.activate()
-            data = customer.get_customer()
-            if data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
-                return {
-                    "success": True,
-                    "message": "کاربر با موفقیت فعال شد.....",
-                    "userData": customer.get_wallet_data() or {},
-                    "status_code": 200,
-                    # "kosarData": kosar_data,
-
-                }
             return {
                 "success": True,
-                "message": "کاربر با موفقیت فعال شد***",
+                "message": "کاربر با موفقیت فعال شد.....",
                 "userData": customer.get_wallet_data() or {},
-                "kosarData": kosar_data,
-                "status_code": 200
-            }
+                "status_code": 200,
+                # "kosarData": kosar_data,
+
+                }
+            # return {
+            #     "success": True,
+            #     "message": "کاربر با موفقیت فعال شد***",
+            #     "userData": customer.get_wallet_data() or {},
+            #     "kosarData": kosar_data,
+            #     "status_code": 200
+            # }
         if result:
             return {
                 "success": True,
@@ -98,6 +98,8 @@ def set_confirm_status(mobileNumber: str) -> dict:
 def set_cancel_status(mobileNumber: str) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.cancel_status():
+        data = customer.get_status_sms_data()
+        SmsSender(mobileNumber).send_cancel_status(data.get("first_name"), data.get("last_name"))
         return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
     elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
@@ -107,6 +109,8 @@ def set_cancel_status(mobileNumber: str) -> dict:
 
 def set_kosar_data(mobileNumber, kosarData) -> dict:
     customer = Customer(mobileNumber)
+    if not kosarData.get("sel_Customer_Code") or not kosarData.get("acc_FormalAcc_Code"):
+        return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     if result := customer.kosar_setter(
             sel_Customer_Code=kosarData.get("sel_Customer_Code"),
             acc_FormalAcc_Code=kosarData.get("acc_FormalAcc_Code"),
@@ -116,6 +120,7 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
         _old_db_result = customer.insert_main_db()
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
+        customer.activate()
         return {"success": True, "message": "کاربر با موفقیت فعال شد", "status_code": 200}
     elif result is None:
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}

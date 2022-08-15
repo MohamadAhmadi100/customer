@@ -805,6 +805,15 @@ class Customer:
             result: object = old_mongo.customers.insert_one(customer_data)
             return bool(result.acknowledged)
 
-# def pend_all():
+    def get_status_sms_data(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        projection_operator = {"customerPhoneNumber": 1, "customerFirstName": 1, "customerLastName": 1}
+        with MongoConnection() as mongo:
+            try:
+                return mongo.customer.find_one(query_operator, projection_operator) or None
+            except Exception:
+                return False
+
+        # def pend_all():
 #     with MongoConnection() as mongo:
 #         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})time.astimezone(datetime.now()))

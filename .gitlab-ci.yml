@@ -117,7 +117,7 @@ push:
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
     - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker build -t customer:0.0.1 . -t nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
-    - docker push nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
+#    - docker push nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
 
 master_deploy:
   stage: deploy

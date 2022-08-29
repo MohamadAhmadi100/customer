@@ -1,6 +1,5 @@
 stages:
   - build
-  - test
   - push
   - deploy
 
@@ -8,7 +7,7 @@ stages:
 build:
   stage: build
   only:
-    - dev
+    - master
   tags:
     - api-gw
   script:
@@ -39,19 +38,11 @@ build:
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
     - docker login nexus.aasood.com -u registry -p $REGPASS 
     - docker build -t customer:0.0.1 .
-test:
-  stage: test
-  only:
-    - dev
-  tags:
-    - api-gw
-  script:
-    - echo "Testing"
-    
+
 dev_deploy:
   stage: deploy
   only:
-    - dev
+    - master
   tags:
     - api-gw
   script:
@@ -86,7 +77,7 @@ dev_deploy:
 push:
   stage: push
   only:
-    - master
+    - dev
   tags:
     - deploy
   script:
@@ -122,7 +113,7 @@ push:
 master_deploy:
   stage: deploy
   only:
-    - master
+    - dev
   tags:
     - deploy
   script:

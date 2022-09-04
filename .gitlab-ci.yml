@@ -72,7 +72,7 @@ dev_deploy:
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
-    - docker-compose -f docker-compose.yaml up -d --build
+    - docker-compose -f docker-compose.yaml up -d --build --scale api=3
 
 push:
   stage: push

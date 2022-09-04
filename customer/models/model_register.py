@@ -814,6 +814,25 @@ class Customer:
             except Exception:
                 return False
 
+    @staticmethod
+    def get_bi_customer_data(from_date, to_date):
+        with MongoConnection() as mongo:
+            try:
+                return list(mongo.customer.aggregate(
+                    [{'$match': {'customerJalaliCreateTime': {'$gte': from_date, '$lte': to_date}}}, {
+                        '$project': {'_id': 0, 'customerID': '$customerID', 'customerFirstName': '$customerFirstName',
+                                     'customerLastName': '$customerLastName',
+                                     'customerPhoneNumber': '$customerPhoneNumber',
+                                     'customerIsActive': '$customerIsActive', 'customerStatus': '$customerStatus',
+                                     'customerJalaliCreateTime': '$customerJalaliCreateTime',
+                                     'customerOfoghCode': '$customerOfoghCode', 'customerShopName': '$customerShopName',
+                                     'customerCityName': '$customerCityName', 'customerStateName': '$customerStateName',
+                                     'customerCityId': '$customerCityId', 'customerStateId': '$customerStateId',
+                                     'customerRegionCode': '$customerRegionCode',
+                                     'customerNationalID': '$customerNationalID'}}]))
+
+            except Exception:
+                return []
         # def pend_all():
 #     with MongoConnection() as mongo:
 #         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})time.astimezone(datetime.now()))

@@ -6,6 +6,8 @@ from customer.models.model_register import Customer
 from customer.modules.getter import GetData
 from customer.modules.setter import Filter
 from customer.modules.temporary_password import TempPassword
+
+
 # from customer.modules.sender import SmsSender
 
 
@@ -74,7 +76,7 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 "status_code": 200,
                 # "kosarData": kosar_data,
 
-                }
+            }
             # return {
             #     "success": True,
             #     "message": "کاربر با موفقیت فعال شد***",
@@ -193,3 +195,12 @@ def login_by_customer_phone_number(staff_user_id, customer_phone_number):
     else:
         message = f"  لطفا بعد از {expire_time} ثانیه تلاش کنید "
         return {"success": False, "status_code": 406, "error": message}
+
+
+def get_customers_bi(from_date, to_date):
+    if result := Customer("").get_bi_customer_data(from_date, to_date):
+        return {"success": True, "message": result, "status_code": 200}
+    else:
+        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
+
+

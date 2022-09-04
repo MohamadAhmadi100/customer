@@ -49,7 +49,7 @@ VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastN
                       "customerJalaliCreateTime", "customerShopName", "customerNationalID", "customerJalaliConfirmDate",
                       "customerShopLocation", "customerEducation", "customerDocumentStatus", "customerShopPostalCode",
                       "customerEmail", "customerShopStatus", "customerAddress", "customerStatus", "customerID",
-                      "customerOfoghCode","customerAccFormalAccCode", "customerSelCustomerCode"]
+                      "customerOfoghCode", "customerAccFormalAccCode", "customerSelCustomerCode"]
 VALID_GRID_KEYS = ["customerID", "customerFirstName", "customerLastName", "customerMobileNumber",
                    "customerJalaliCreateTime", "customerStatus", "customerNationalID"]
 KOSAR_REGION_CODES = {"R1": "1", "TE": "9", "TO": "8", "TC": "4", "TWN": "7", "TN": "10", "R4": "5", "R5": "6",

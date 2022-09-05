@@ -33,7 +33,6 @@ class SmsSender:
         url += f"template={self.SMS_ACTIVATE_TEMPLATE}"
         try:
             result = requests.post(url)
-            print(result.json())
         except Exception as e:
             return {"error": e}, False
         else:
@@ -47,7 +46,6 @@ class SmsSender:
         url += f"template={self.SMS_REGISTER_TEMPLATE}"
         try:
             result = requests.post(url)
-            print("****************")
         except Exception as e:
             return {"error": e}, False
         else:

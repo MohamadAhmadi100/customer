@@ -36,7 +36,6 @@ class OTP:
         url = f"https://api.kavenegar.com/v1/{self.SMS_API_TOKEN}/verify/lookup.json?"
         url += f"receptor={self.phone_number}&"
         url += f"token={self.otp_code}&"
-        url += f"template={self.SMS_CANCEL_STATUS_TEMPLATE}"
         try:
             result = requests.post(url)
         except Exception as e:

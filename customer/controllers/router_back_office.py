@@ -103,7 +103,6 @@ def set_cancel_status(mobileNumber: str) -> dict:
     customer = Customer(mobileNumber)
     if result := customer.cancel_status():
         data = customer.get_status_sms_data()
-        print(data)
         SmsSender(mobileNumber).cancel_status(data.get("customerFirstName"), data.get("customerLastName"))
         return {"success": True, "message": "وضعیت کاربر با موفقیت به روز شد", "status_code": 200}
     elif result is None:
@@ -121,7 +120,7 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
             acc_FormalAcc_Code=kosarData.get("acc_FormalAcc_Code"),
             customer_type=kosarData.get("customerType"),
             customer_national_id=kosarData.get("customerNationalID")
-    ):////
+    ):
         _old_db_result = customer.insert_main_db()
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}

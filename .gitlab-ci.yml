@@ -36,9 +36,9 @@ build:
     - echo RABBIT_PORT=$RABBIT_PORT >> .env
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
-    - echo SMS_CANCEL_STATUS_TEMPLATE=SMS_CANCEL_STATUS_TEMPLATE >> .env
-    - echo SMS_ACTIVATE_TEMPLATE=SMS_ACTIVATE_TEMPLATE >> .env
-    - echo SMS_REGISTER_TEMPLATE=SMS_REGISTER_TEMPLATE >> .env
+    - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
+    - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
+    - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS 
     - docker build -t customer:0.0.1 .
 
@@ -74,9 +74,9 @@ dev_deploy:
     - echo RABBIT_PORT=$RABBIT_PORT >> .env
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
-    - echo SMS_CANCEL_STATUS_TEMPLATE=SMS_CANCEL_STATUS_TEMPLATE >> .env
-    - echo SMS_ACTIVATE_TEMPLATE=SMS_ACTIVATE_TEMPLATE >> .env
-    - echo SMS_REGISTER_TEMPLATE=SMS_REGISTER_TEMPLATE >> .env
+    - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
+    - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
+    - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker-compose -f docker-compose.yaml up -d --build
 
@@ -112,9 +112,9 @@ push:
     - echo RABBIT_PORT=$RABBIT_PORT >> .env
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
-    - echo SMS_CANCEL_STATUS_TEMPLATE=SMS_CANCEL_STATUS_TEMPLATE >> .env
-    - echo SMS_ACTIVATE_TEMPLATE=SMS_ACTIVATE_TEMPLATE >> .env
-    - echo SMS_REGISTER_TEMPLATE=SMS_REGISTER_TEMPLATE >> .env
+    - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
+    - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
+    - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker build -t customer:0.0.1 . #-t nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
 #    - docker push nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
@@ -151,8 +151,8 @@ master_deploy:
     - echo RABBIT_PORT=$RABBIT_PORT >> .env
     - echo RABBIT_USER=$RABBIT_USER >> .env
     - echo RABBIT_PASS=$RABBIT_PASS >> .env
-    - echo SMS_CANCEL_STATUS_TEMPLATE=SMS_CANCEL_STATUS_TEMPLATE >> .env
-    - echo SMS_ACTIVATE_TEMPLATE=SMS_ACTIVATE_TEMPLATE >> .env
-    - echo SMS_REGISTER_TEMPLATE=SMS_REGISTER_TEMPLATE >> .env
+    - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
+    - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
+    - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker-compose -f docker-compose.yaml up -d --build

@@ -107,7 +107,7 @@ class Customer:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"customerIsMobileConfirm": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
-            return bool(result.get("customerIsMobileConfirm"))
+            return result.get("customerIsMobileConfirm")
 
     def is_customer_confirm(self) -> bool:
         """

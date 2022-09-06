@@ -28,7 +28,8 @@ class Customer:
         "customer_state_id",
         "customer_email",
         "customer_document_status",
-        "customer_type"
+        "customer_type",
+        "customer_ofogh_code"
     ]
 
     DEFAULT_CUSTOMER_TYPE: tuple = ('B2B',)
@@ -52,6 +53,7 @@ class Customer:
         self.customer_email: str = ""
         self.customer_document_status: str = ""
         self.customer_type: list = []
+        self.customer_ofogh_code: str = ""
 
     def set_activity(self) -> bool:
         """
@@ -107,7 +109,7 @@ class Customer:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"customerIsMobileConfirm": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
-            return bool(result.get("customerIsMobileConfirm"))
+            return result.get("customerIsMobileConfirm")
 
     def is_customer_confirm(self) -> bool:
         """
@@ -224,6 +226,7 @@ class Customer:
             customer_city_name,
             customer_city_id,
             customer_type,
+            customer_ofogh_code="",
             customer_postal_code="",
             customer_address="",
             customer_region_code="",
@@ -245,6 +248,7 @@ class Customer:
         self.customer_state_id = customer_state_id
         self.customer_document_status = customer_document_status
         self.customer_type = customer_type
+        self.customer_ofogh_code = customer_ofogh_code
 
     @property
     def __dict__(self) -> dict:
@@ -265,7 +269,8 @@ class Customer:
             "customerStateId": self.customer_state_id,
             "customerRegionCode": self.customer_region_code,
             "customerAddress": self.customer_address,
-            "customerDocumentStatus": self.customer_document_status
+            "customerDocumentStatus": self.customer_document_status,
+            "customerOfoghCode": self.customer_ofogh_code
         }
 
     def get_customer_password(self):

@@ -3,6 +3,7 @@ from customer.modules import log
 from customer.modules.auth import AuthHandler
 from customer.modules.otp import OTP
 from customer.modules.temporary_password import TempPassword
+from customer.modules.sender import SmsSender
 
 auth_handler = AuthHandler()
 
@@ -78,6 +79,9 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
             log.save_login_log(customer_phone_number)
             user_info = customer.get_customer()
             if not customer.is_mobile_confirm():
+                # print(customer_phone_number, user_info.get('customerFirstName'), user_info.get('customerLastName'))
+                SmsSender(customer_phone_number).register(user_info.get('customerFirstName'),
+                                                          user_info.get('customerLastName'))
                 customer.mobile_confirm()
             message = {
                 "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",

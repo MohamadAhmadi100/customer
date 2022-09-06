@@ -10,6 +10,9 @@ class Config:
     SMS_SENDER_NUMBER: str = os.getenv('SMS_SENDER_NUMBER')
     SMS_API_TOKEN: str = os.getenv('SMS_API_TOKEN')
     SMS_TEMPLATE: str = os.getenv('SMS_TEMPLATE')
+    SMS_CANCEL_STATUS_TEMPLATE: str = os.getenv('SMS_CANCEL_STATUS_TEMPLATE')
+    SMS_ACTIVATE_TEMPLATE: str = os.getenv('SMS_ACTIVATE_TEMPLATE')
+    SMS_REGISTER_TEMPLATE: str = os.getenv('SMS_REGISTER_TEMPLATE')
 
     MONGO_USER: str = os.getenv('MONGO_USER')
     MONGO_PASS: str = os.getenv("MONGO_PASS")

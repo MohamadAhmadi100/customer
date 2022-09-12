@@ -55,7 +55,7 @@ class Request:
 def register_dealership(customer_phone_number: str, data: dict):
     dealership = Customer(phone_number=customer_phone_number)
     result = dealership.get_customer()
-    if type(result.get("customerType")) != list or "B2B2C" not in result.get("customerType"):
+    if type(result.get("customerType")) != list or ("B2B2C" not in result.get("customerType")):
         return {
             "success": False,
             "error": "دسترسی شما محدود شده است. لطفا با پشتیبانی آسود تماس بگیرید",
@@ -94,13 +94,15 @@ def register_dealership(customer_phone_number: str, data: dict):
         )
         if customer.save():
             customer.set_dealership_activity()
-            customer_id = customer.get_customer().get("customerID")
+            customer_result = customer.get_customer()
+            customer_id = customer_result.get("customerID")
             kosar_data = customer.kosar_getter()
             message = {
                 "message": "اطلاعات خرید مشتری با موفقیت ثبت شد",
                 "data": {
                     "customerID": customer_id,
-                    "customerStatus": customer.customer_status,
+                    "customerPhoneNumber": value.customer_phone_number,
+                    "customerStatus": customer_result.get("customerStatus"),
                     "customerIsActive": True
                 }
             }

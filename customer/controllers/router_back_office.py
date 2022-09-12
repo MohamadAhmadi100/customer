@@ -70,7 +70,8 @@ def set_confirm_status(mobileNumber: str) -> dict:
         data = customer.get_customer()
         if result and mobile_confirm and data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
             customer.activate()
-            SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))
+            if "B2C" not in data.get("customerType"):
+                SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))
             return {
                 "success": True,
                 "message": "کاربر با موفقیت فعال شد.....",
@@ -79,13 +80,13 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 # "kosarData": kosar_data,
 
             }
-            # return {
-            #     "success": True,
-            #     "message": "کاربر با موفقیت فعال شد***",
-            #     "userData": customer.get_wallet_data() or {},
-            #     "kosarData": kosar_data,
-            #     "status_code": 200
-            # }
+                    # return {
+                    #     "success": True,
+                    #     "message": "کاربر با موفقیت فعال شد***",
+                    #     "userData": customer.get_wallet_data() or {},
+                    #     "kosarData": kosar_data,
+                    #     "status_code": 200
+                    # }
         elif result:
             return {
                 "success": True,

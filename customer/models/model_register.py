@@ -68,6 +68,14 @@ class Customer:
             status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
         return bool(result.acknowledged) and bool(status_result.acknowledged)
 
+    def set_dealership_activity(self) -> bool:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_status_operator = {"$set": {"customerIsActive": True, "customerStatus": "confirm",
+                                            "customerIsMobileConfirm": True}}
+            status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
+        return bool(status_result.acknowledged)
+
     def activate(self):
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
@@ -221,11 +229,11 @@ class Customer:
             customer_first_name,
             customer_last_name,
             customer_national_id,
-            customer_password,
             customer_state_name,
             customer_city_name,
             customer_city_id,
             customer_type,
+            customer_password=None,
             customer_ofogh_code="",
             customer_postal_code="",
             customer_address="",
@@ -769,6 +777,21 @@ class Customer:
                 return False
             except Exception:
                 return
+
+    def add_dealership_customer(self, customer_id, customer_phone_number, customer_national_id):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        push_operator = {
+            "$push": {
+                "customerDealershipPersons": {
+                    "customerID": customer_id,
+                    "customerPhoneNumber": customer_phone_number,
+                    "customerNationalID": customer_national_id
+                }
+            }}
+        with MongoConnection() as mongo:
+            result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
+            return bool(result.acknowledged)
+
 
     def insert_main_db(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}

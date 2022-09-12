@@ -2,8 +2,8 @@ from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
 from customer.modules.otp import OTP
-from customer.modules.temporary_password import TempPassword
 from customer.modules.sender import SmsSender
+from customer.modules.temporary_password import TempPassword
 
 auth_handler = AuthHandler()
 
@@ -55,16 +55,16 @@ def verify_otp_code(customer_phone_number: str, customer_code: str):
     if otp.get_otp() == customer_code:
         customer = Customer(phone_number=customer_phone_number)
         user = customer.get_customer()
-        if customer.mobile_confirm():
-            otp.delete_otp()
-            message = {
-                "message": "کد وارد شده صحیح است",
-                "data": user
-            }
-            return {"success": True, "status_code": 202, "message": message}
-        else:
-            message = "مشکلی رخ داده است لطفا مجددا امتحان کنید"
-            return {"success": False, "status_code": 417, "error": message}
+        if not customer.is_mobile_confirm():
+            customer.mobile_confirm()
+            SmsSender(customer_phone_number).register(user.get('customerFirstName'),
+                                                      user.get('customerLastName'))
+        otp.delete_otp()
+        message = {
+            "message": "کد وارد شده صحیح است",
+            "data": user
+        }
+        return {"success": True, "status_code": 202, "message": message}
     else:
         message = "کد وارد شده صحیح نمی‌باشد"
         return {"success": False, "status_code": 401, "error": message}

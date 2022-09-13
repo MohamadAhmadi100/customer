@@ -18,5 +18,5 @@ def exception_handler():
     message = f'<b>{config.APP_NAME} | {now}</b>\n\n<pre language="python">' \
               f'Failed with exception:\n{traceback.format_exc()}</pre>\n{config.TELEGRAM_ID} 🤬'
     logging.error(message)
-    if config.DEBUG_MODE:
+    if not config.DEBUG_MODE:
         send_telegram_message(message)

@@ -214,7 +214,7 @@ class Customer:
         customer_data: dict = self.__dict__
         customer_data["customerID"] = self.customer_id
         customer_data["customerCreateTime"] = time.time()
-        # customer_data["customerDateTimeCreateTime"] = datetime.now()
+        customer_data["customerDateTimeCreateTime"] = str(datetime.now()).split(".")[0]
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
         customer_data["customerIsActive"] = False
@@ -847,7 +847,7 @@ class Customer:
         with MongoConnection() as mongo:
             try:
                 return list(mongo.customer.aggregate(
-                    [{'$match': {'customerJalaliCreateTime': {'$gte': from_date, '$lte': to_date}}}, {
+                    [{'$match': {'customerDateTimeCreateTime': {'$gte': from_date, '$lte': to_date}}}, {
                         '$project': {'_id': 0, 'customerID': '$customerID', 'customerFirstName': '$customerFirstName',
                                      'customerLastName': '$customerLastName',
                                      'customerPhoneNumber': '$customerPhoneNumber',

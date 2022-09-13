@@ -98,55 +98,55 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str):
         return {"success": False, "status_code": 308, "error": message}
 
 
-def checking_login_password(customer_phone_number: str, customer_password: str):
-    customer = Customer(phone_number=customer_phone_number)
-    if user := customer.get_customer_password():
-        if auth_handler.verify_password(customer_password, user.get("customerPassword")):
-            if user.get("customerIsMobileConfirm"):
-                log.save_login_log(customer_phone_number)
-                user_info = customer.get_customer()
-                message = {
-                    "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
-                    "data": user_info
-                }
-                return dict({"success": True, "status_code": 202}, **message)
-            else:
-                message = {
-                    "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
-                    "customerIsConfirm": user.get("customerIsConfirm"),
-                    "hasRegistered": True,
-                    "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
-                }
-                return {"success": False, "status_code": 406, "error": message}
-        else:
-            password = TempPassword(customer_phone_number)
-            if password.get_password() and password.get_password(customer_phone_number) == customer_password:
-                password.delete_password()
-                if user.get("customerIsMobileConfirm"):
-                    log.save_login_log(customer_phone_number)
-                    user_info = customer.get_customer()
-                    message = {
-                        "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
-                        "data": user_info
-                    }
-                    return dict({"success": True, "status_code": 202}, **message)
-                else:
-                    message = {
-                        "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
-                        "customerIsConfirm": user.get("customerIsConfirm"),
-                        "hasRegistered": True,
-                        "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
-                    }
-                    return {"success": False, "status_code": 406, "error": message}
-            return {"success": False, "status_code": 401, "error": "رمز وارد شده نادرست است"}
-    else:
-        message = {
-            "hasRegistered": False,
-            "error": "شما قبلا ثبت نام نکرده اید",
-            "redirect": "register"
-        }
-        return {"success": False, "status_code": 401, "error": message}
-
+# def checking_login_password(customer_phone_number: str, customer_password: str):
+#     customer = Customer(phone_number=customer_phone_number)
+#     if user := customer.get_customer_password():
+#         if auth_handler.verify_password(customer_password, user.get("customerPassword")):
+#             if user.get("customerIsMobileConfirm"):
+#                 log.save_login_log(customer_phone_number)
+#                 user_info = customer.get_customer()
+#                 message = {
+#                     "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
+#                     "data": user_info
+#                 }
+#                 return dict({"success": True, "status_code": 202}, **message)
+#             else:
+#                 message = {
+#                     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
+#                     "customerIsConfirm": user.get("customerIsConfirm"),
+#                     "hasRegistered": True,
+#                     "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
+#                 }
+#                 return {"success": False, "status_code": 406, "error": message}
+#         else:
+#             password = TempPassword(customer_phone_number)
+#             if password.get_password() and password.get_password(customer_phone_number) == customer_password:
+#                 password.delete_password()
+#                 if user.get("customerIsMobileConfirm"):
+#                     log.save_login_log(customer_phone_number)
+#                     user_info = customer.get_customer()
+#                     message = {
+#                         "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
+#                         "data": user_info
+#                     }
+#                     return dict({"success": True, "status_code": 202}, **message)
+#                 else:
+#                     message = {
+#                         "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
+#                         "customerIsConfirm": user.get("customerIsConfirm"),
+#                         "hasRegistered": True,
+#                         "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
+#                     }
+#                     return {"success": False, "status_code": 406, "error": message}
+#             return {"success": False, "status_code": 401, "error": "رمز وارد شده نادرست است"}
+#     else:
+#         message = {
+#             "hasRegistered": False,
+#             "error": "شما قبلا ثبت نام نکرده اید",
+#             "redirect": "register"
+#         }
+#         return {"success": False, "status_code": 401, "error": message}
+#
 
 def save_logout(username: dict):
     customer_id = username.get("user_id")

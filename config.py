@@ -46,6 +46,9 @@ class Config:
 
     VALID_GRID_KEYS: list = os.getenv("VALID_GRID_KEYS")
 
+    TELEGRAM_ID: str = os.getenv("TELEGRAM_ID")
+    TELEGRAM_REQUEST_URL: str = os.getenv("TELEGRAM_REQUEST_URL")
+    DEBUG_MODE: bool = os.getenv("DEBUG_MODE")
 
 VALID_PROFILE_KEYS = ["customerPhoneNumber", "customerFirstName", "customerLastName", "customerRegionCode",
                       "customerStateName", "customerCityName", "customerPostalCode", "customerClass", "customerType",

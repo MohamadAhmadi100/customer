@@ -214,6 +214,7 @@ class Customer:
         customer_data: dict = self.__dict__
         customer_data["customerID"] = self.customer_id
         customer_data["customerCreateTime"] = time.time()
+        customer_data["customerDateTimeCreateTime"] = datetime.now()
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
         customer_data["customerIsActive"] = False
@@ -791,7 +792,6 @@ class Customer:
         with MongoConnection() as mongo:
             result = mongo.customer.update_one(query_operator, push_operator, upsert=True)
             return bool(result.acknowledged)
-
 
     def insert_main_db(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}

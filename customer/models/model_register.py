@@ -10,9 +10,6 @@ from customer.modules.auth import AuthHandler
 from customer.modules.date_convertor import jalali_datetime
 
 
-
-# print(datetime.fromtimestamp(a))
-# print(time.time())
 class Customer:
     __slots__ = [
         "customer_phone_number",
@@ -217,7 +214,7 @@ class Customer:
         customer_data: dict = self.__dict__
         customer_data["customerID"] = self.customer_id
         customer_data["customerCreateTime"] = time.time()
-        # customer_data["customerDateTimeCreateTime"] = datetime.now()
+        customer_data["customerDateTimeCreateTime"] = str(datetime.now()).split(".")[0]
         customer_data["customerJalaliCreateTime"] = jalali_datetime(datetime.now())
         customer_data["customerStatus"] = "pend"
         customer_data["customerIsActive"] = False

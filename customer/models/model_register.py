@@ -10,9 +10,6 @@ from customer.modules.auth import AuthHandler
 from customer.modules.date_convertor import jalali_datetime
 
 
-
-# print(datetime.fromtimestamp(a))
-# print(time.time())
 class Customer:
     __slots__ = [
         "customer_phone_number",
@@ -850,7 +847,7 @@ class Customer:
         with MongoConnection() as mongo:
             try:
                 return list(mongo.customer.aggregate(
-                    [{'$match': {'customerDateTimeCreateTime': {'$gte': from_date, '$lte': to_date}}}, {
+                    [{'$match': {'customerJalaliCreateTime': {'$gte': from_date, '$lte': to_date}}}, {
                         '$project': {'_id': 0, 'customerID': '$customerID', 'customerFirstName': '$customerFirstName',
                                      'customerLastName': '$customerLastName',
                                      'customerPhoneNumber': '$customerPhoneNumber',

@@ -39,6 +39,9 @@ build:
     - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
     - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
+    - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
+    - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
+    - echo DEBUG_MODE=$DEBUG_MODE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS 
     - docker build -t customer:0.0.1 .
 
@@ -77,6 +80,9 @@ dev_deploy:
     - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
     - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
+    - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
+    - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
+    - echo DEBUG_MODE=$DEBUG_MODE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker-compose -f docker-compose.yaml up -d --build --scale api=3
 
@@ -115,6 +121,9 @@ push:
     - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
     - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
+    - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
+    - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
+    - echo DEBUG_MODE=$DEBUG_MODE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker build -t customer:0.0.1 . #-t nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
 #    - docker push nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
@@ -154,5 +163,8 @@ master_deploy:
     - echo SMS_CANCEL_STATUS_TEMPLATE=$SMS_CANCEL_STATUS_TEMPLATE >> .env
     - echo SMS_ACTIVATE_TEMPLATE=$SMS_ACTIVATE_TEMPLATE >> .env
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
+    - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
+    - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
+    - echo DEBUG_MODE=$DEBUG_MODE >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker-compose -f docker-compose.yaml up -d --build

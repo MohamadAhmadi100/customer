@@ -1,6 +1,7 @@
 from customer.modules import terminal_log
 from config import config
 import customer.controllers as controller
+from customer.helper.telegram_message import exception_handler
 
 app_name = config.APP_NAME
 
@@ -15,6 +16,7 @@ def callback(message: dict) -> dict:
             func = getattr(controller, action)
             return {str(app_name): func(**body)}
         except Exception as e:
+            exception_handler()
             return {f"{app_name}": {"success": False, "status_code": 503, "error": f"{app_name}: {e}"}}
 
     else:

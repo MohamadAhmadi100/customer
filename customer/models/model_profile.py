@@ -100,7 +100,9 @@ class Profile:
             "customerAccFormalAccCode": data.get("customerAccFormalAccCode"),
             "customerSelCustomerCode": data.get("customerSelCustomerCode"),
             "customerDocumentStatus": data.get("customerDocumentStatus"),
-            "customerImage": data.get("customerImage")
+            "customerImage": data.get("customerImage"),
+            "customerActiveCredit": data.get("customerActiveCredit"),
+            "customerCreditAmount": data.get("customerCreditAmount")
         }
 
     def create_obj_to_update_profile(self):

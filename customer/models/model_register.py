@@ -560,7 +560,7 @@ class Customer:
             try:
                 if not (customer := mongo.customer.find_one(query_operator, projection_operator)):
                     return None
-                if type(customer.get("customerAddress")) == list:
+                if type(customer.get("customerAddress")) == list and len(customer.get("customerAddress")):
                     address = customer.get("customerAddress")[0]
                     if type(address) == list:
                         address = address[0]

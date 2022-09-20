@@ -861,6 +861,47 @@ class Customer:
 
             except Exception:
                 return []
-        # def pend_all():
-#     with MongoConnection() as mongo:
-#         mongo.customer.update_many({}, {"$set": {"customerIsActive": False, "customerStatus": "pend"}})time.astimezone(datetime.now()))
+
+    def active_credit(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerActiveCredit": True}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def inactive_credit(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerActiveCredit": False}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def set_credit_amount(self, credit_amount: int):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerCreditAmount": credit_amount}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if res := mongo.customer.find_one(query_operator, projection_operator):
+                    if res.get("customerActiveCredit"):
+                        result = mongo.customer.update_one(query_operator, set_operator)
+                        return bool(result.acknowledged)
+                    return
+                return False
+            except Exception:
+                return False

@@ -123,7 +123,7 @@ push:
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
     - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
     - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
-    - echo DEBUG_MODE=$DEBUG_MODE >> .env
+    - echo DEBUG_MODE=1 >> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker build -t customer:0.0.1 . #-t nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
 #    - docker push nexus.aasood.com/backend/customer:$CI_COMMIT_SHORT_SHA
@@ -165,6 +165,6 @@ master_deploy:
     - echo SMS_REGISTER_TEMPLATE=$SMS_REGISTER_TEMPLATE >> .env
     - echo TELEGRAM_ID=$TELEGRAM_ID >> .env
     - echo TELEGRAM_REQUEST_URL=$TELEGRAM_REQUEST_URL >> .env
-    - echo DEBUG_MODE=$DEBUG_MODE >> .env
+    - echo DEBUG_MODE=1>> .env
 #    - docker login nexus.aasood.com -u registry -p $REGPASS
     - docker-compose -f docker-compose.yaml up -d --build

@@ -72,7 +72,7 @@ def register_dealership(customer_phone_number: str, data: dict):
 
         message = {
             "hasRegistered": True,
-            "message": "شما قبلا ثبت نام کرده اید.",
+            "error": "شما قبلا ثبت نام کرده اید.",
             "redirect": "login"
         }
         return {"success": False, "error": message, "status_code": 308}

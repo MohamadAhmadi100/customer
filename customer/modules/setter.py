@@ -1,6 +1,6 @@
-VALID_PERIOD_FILTERS = ["customerJalaliCreateTime"]
+VALID_PERIOD_FILTERS = ["customerJalaliCreateTime", "customerJalaliConfirmDate"]
 VALID_VALUE_FILTERS = ["customerStatus", "customerStateName", "customerCityName", "customerRegionCode", "customerType",
-                       "customerTypes"]
+                       "customerTypes", "customerIsActive"]
 VALID_SEARCH_FIELDS = ["customerFirstName", "customerLastName", "customerPhoneNumber", "customerNationalID"]
 
 
@@ -28,7 +28,7 @@ class Filter:
     def set_value_filters(self, values: dict) -> dict:
         self.value_filters = {}
         for filter_, value in values.items():
-            if filter_ in self.valid_value_filters and value:
+            if filter_ in self.valid_value_filters and (value or value is False or value == 0):
                 # todo: return comment!
                 # self.value_filters[filter_] = value
                 if type(value) == list:
@@ -39,6 +39,8 @@ class Filter:
                     self.value_filters["customerAddress.customerCityName"] = value
                 elif filter_ == "customerRegionCode":
                     self.value_filters["customerAddress.customerRegionCode"] = value
+                else:
+                    self.value_filters[filter_] = value
         return self.value_filters
 
     def set_search_query(self, search_phrase):

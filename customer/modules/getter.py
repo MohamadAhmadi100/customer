@@ -29,8 +29,10 @@ class GetData:
                 result = []
                 for customer in customers:
                     if api_type == "accounting":
-                        VALID_GRID_KEYS = ACCOUNTING_VALID_GRID_KEYS
-                    record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
+                        record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in
+                                  ACCOUNTING_VALID_GRID_KEYS}
+                    else:
+                        record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
                     record["customerMobileNumber"] = customer.get("customerPhoneNumber")
 
                     record["customerStateName"] = customer.get("customerStateName")

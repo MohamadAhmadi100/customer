@@ -1,6 +1,9 @@
 from customer.helper.connection import MongoConnection
 from config import VALID_GRID_KEYS
 
+ACCOUNTING_VALID_GRID_KEYS = ["customerFirstName", "customerLastName", "customerJalaliConfirmDate",
+                              "customerSelCustomerCode", "customerType", "customerStatus", "customerIsActive"]
+
 
 class GetData:
     def __int__(self):
@@ -11,7 +14,7 @@ class GetData:
         return -1 if sort_type == "desc" else 1
 
     def executor(self, queries: dict, number_of_records: str = "15", page: str = "1", sort_name: str = "customerID",
-                 sort_type: str = "asc", search_query=None):
+                 sort_type: str = "asc", search_query=None, api_type="main"):
         if search_query is None:
             search_query = {}
         sort_type = self.handle_sort(sort_type)
@@ -25,6 +28,8 @@ class GetData:
                 total_count = mongo.customer.count_documents(queries)
                 result = []
                 for customer in customers:
+                    if api_type == "accounting":
+                        VALID_GRID_KEYS = ACCOUNTING_VALID_GRID_KEYS
                     record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
                     record["customerMobileNumber"] = customer.get("customerPhoneNumber")
 
@@ -32,7 +37,8 @@ class GetData:
                     record["customerCityName"] = customer.get("customerCityName")
                     record["customerRegionCode"] = customer.get("customerRegionCode")
 
-                    if customer.get("customerAddress") and type(customer.get("customerAddress")) == list and type(customer.get("customerAddress")[0]) == dict:
+                    if customer.get("customerAddress") and type(customer.get("customerAddress")) == list and type(
+                            customer.get("customerAddress")[0]) == dict:
                         if not record["customerStateName"]:
                             record["customerStateName"] = customer.get("customerAddress")[0].get("customerStateName")
                         if not record["customerCityName"]:

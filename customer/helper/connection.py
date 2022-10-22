@@ -40,6 +40,10 @@ class MongoConnection:
     def counter(self):
         return self.__db_name["customer"].counter
 
+    @property
+    def shahkar(self):
+        return self.__db_name['shahkar']
+
 
 class OldMongoConnection:
     __slots__ = ["__client", "__db_name", "collection", "__instance"]

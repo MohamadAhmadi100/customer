@@ -1,6 +1,7 @@
 from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
+from customer.modules.shahkar import nid_phone_verify
 
 auth_handler = AuthHandler()
 
@@ -22,8 +23,6 @@ class Request:
         self.customer_first_name = None
         self.customer_phone_number = None
         self.customer_document_status = None
-        self.customer_type = None
-        self.customer_ofogh_code = None
         self.__dict__.update(kwargs)
 
 
@@ -45,6 +44,11 @@ def register(data: dict):
     else:
         if value.customer_password != value.customer_verify_password:
             return {"success": False, "error": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
+        verify_phone = nid_phone_verify(value.customer_phone_number, value.customer_national_id)
+        if not verify_phone:
+            if verify_phone is not None:
+                return {"success": False, "error": "کدملی و شماره تلفن از طرف سامانه شاهکار رد شد.", "status_code": 422}
+            return {"success": False, "error": "دسترسی به سامانه شاهکار با خطا مواجه شد.", "status_code": 422}
         customer.set_data(
             customer_phone_number=value.customer_phone_number,
             customer_first_name=value.customer_first_name,
@@ -57,9 +61,7 @@ def register(data: dict):
             customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
             customer_state_id=value.customer_state_id,
-            customer_ofogh_code= value.customer_ofogh_code,
             customer_document_status=value.customer_document_status,
-            customer_type=value.customer_type or ["B2B"],
             customer_password=auth_handler.generate_hash_password(value.customer_password)
         )
         if customer.save():
@@ -78,4 +80,3 @@ def register(data: dict):
         else:
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
             return {"success": False, "error": message, "status_code": 417}
-

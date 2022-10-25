@@ -1,7 +1,8 @@
 import datetime
-from customer.helper.connection import MongoConnection
 
 import requests
+
+from customer.helper.connection import MongoConnection
 
 
 def nid_phone_verify(phone_number, nid):
@@ -28,7 +29,7 @@ def shahkar_verify(phone_number, nid):
 
         access_token = get_token_response.json().get("access_token")
 
-        data_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        data_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")[:-2]
 
         shahkar_response = requests.request(
             "POST",
@@ -43,7 +44,7 @@ def shahkar_verify(phone_number, nid):
                 "serviceType": "2",
                 "identificationType": "0",
                 "identificationNo": nid,
-                "requestId": f"1076{data_time}000101",
+                "requestId": f"1076{data_time}01",
                 "serviceNumber": phone_number
             })
         return True if shahkar_response.json().get("result", {}).get("data", {}).get("result", {}).get("data", {}).get(
@@ -51,19 +52,26 @@ def shahkar_verify(phone_number, nid):
     except:
         return None
 
+
 # script for all customers
 # with MongoConnection() as mongo:
-#     all_customers = list(mongo.customer.find({}, {"_id": 0, "customerID": 1, "customerNationalID": 1,
-#                                                   "customerPhoneNumber": 1}))
-#     verified = list()
-#     rejected = list()
-#     unknown = list()
+#     all_customers = list(
+#         mongo.customer.find({}, {"_id": 0, "customerID": 1, "customerNationalID": 1,
+#                                  "customerPhoneNumber": 1}))
 #
-#     for customer in all_customers:
-#         shahkar_result = nid_phone_verify(customer.get("customerPhoneNumber"), customer.get("customerNationalID"))
-#         if shahkar_result:
-#             verified.append(customer)
-#         elif shahkar_result is None:
-#             unknown.append(customer)
-#         else:
-#             rejected.append(customer)
+# verified = list()
+# rejected = list()
+# unknown = list()
+#
+# for customer in all_customers:
+#     shahkar_result = nid_phone_verify(customer.get("customerPhoneNumber"), customer.get("customerNationalID"))
+#     if shahkar_result:
+#         verified.append(customer)
+#     elif shahkar_result is None:
+#         unknown.append(customer)
+#     else:
+#         rejected.append(customer)
+#
+# print("verified: ", verified)
+# print("rejected: ", rejected)
+# print("unknown: ", unknown)

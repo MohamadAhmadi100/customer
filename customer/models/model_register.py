@@ -905,3 +905,17 @@ class Customer:
                 return False
             except Exception:
                 return False
+
+    def set_customer_types(self, customer_type: str):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerType": [customer_type]}, "$addToSet": {"customerTypes": customer_type}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return

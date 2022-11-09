@@ -83,7 +83,6 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str, cust
                 customer.set_customer_types(customer_type[0])
             user_info = customer.get_customer()
             if not customer.is_mobile_confirm():
-                # print(customer_phone_number, user_info.get('customerFirstName'), user_info.get('customerLastName'))
                 SmsSender(customer_phone_number).register(user_info.get('customerFirstName'),
                                                           user_info.get('customerLastName'))
                 customer.mobile_confirm()

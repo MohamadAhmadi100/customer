@@ -46,11 +46,11 @@ def register(data: dict):
     else:
         if value.customer_password != value.customer_verify_password:
             return {"success": False, "error": "رمز عبور و تکرار آن با هم برابر نیستند.", "status_code": 422}
-        verify_phone = nid_phone_verify(value.customer_phone_number, value.customer_national_id)
-        if not verify_phone:
-            if verify_phone is not None:
-                return {"success": False, "error": "کدملی و شماره تلفن از طرف سامانه شاهکار رد شد.", "status_code": 422}
-            return {"success": False, "error": "دسترسی به سامانه شاهکار با خطا مواجه شد.", "status_code": 422}
+        # verify_phone = nid_phone_verify(value.customer_phone_number, value.customer_national_id)
+        # if not verify_phone:
+        #     if verify_phone is not None:
+        #         return {"success": False, "error": "کدملی و شماره تلفن از طرف سامانه شاهکار رد شد.", "status_code": 422}
+        #     return {"success": False, "error": "دسترسی به سامانه شاهکار با خطا مواجه شد.", "status_code": 422}
         customer.set_data(
             customer_phone_number=value.customer_phone_number,
             customer_first_name=value.customer_first_name,

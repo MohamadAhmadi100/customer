@@ -38,7 +38,11 @@ def check_is_registered(customer_phone_number: str):
 
 
 def send_otp_code(customer_phone_number: str):
-    otp = OTP(customer_phone_number)
+    customer = Customer(phone_number=customer_phone_number)
+    customer_type = "B2B"
+    if customer.get_customer().get("customerType") == ["B2C"]:
+        customer_type = "B2C"
+    otp = OTP(customer_phone_number, customer_type)
     is_expire, expire_time = otp.is_expire_otp_time()
     if is_expire:
         otp.generate_code(otp_code_length=4)
@@ -56,11 +60,14 @@ def verify_otp_code(customer_phone_number: str, customer_code: str, customer_typ
         customer = Customer(phone_number=customer_phone_number)
         if type(customer_type) == list:
             customer.set_customer_types(customer_type[0])
+            customer_type = customer_type[0]
+        else:
+            customer_type = "B2B"
         user = customer.get_customer()
         if not customer.is_mobile_confirm():
             customer.mobile_confirm()
-            SmsSender(customer_phone_number).register(user.get('customerFirstName'),
-                                                      user.get('customerLastName'))
+            SmsSender(customer_phone_number, customer_type).register(user.get('customerFirstName'),
+                                                                     user.get('customerLastName'))
         otp.delete_otp()
         message = {
             "message": "کد وارد شده صحیح است",
@@ -81,10 +88,13 @@ def checking_login_otp_code(customer_phone_number: str, customer_code: str, cust
             log.save_login_log(customer_phone_number)
             if type(customer_type) == list:
                 customer.set_customer_types(customer_type[0])
+                customer_type = customer_type[0]
+            else:
+                customer_type = "B2B"
             user_info = customer.get_customer()
             if not customer.is_mobile_confirm():
-                SmsSender(customer_phone_number).register(user_info.get('customerFirstName'),
-                                                          user_info.get('customerLastName'))
+                SmsSender(customer_phone_number, customer_type).register(user_info.get('customerFirstName'),
+                                                                         user_info.get('customerLastName'))
                 customer.mobile_confirm()
             message = {
                 "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",

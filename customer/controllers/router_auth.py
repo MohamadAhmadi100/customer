@@ -130,9 +130,10 @@ def checking_login_password(customer_phone_number: str, customer_password: str, 
                     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
                     "customerIsConfirm": user.get("customerIsConfirm"),
                     "hasRegistered": True,
-                    "message": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
+                    "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
                 }
-                return {"success": False, "status_code": 406, "error": message}
+                return {"success": False, "status_code": 406,
+                        "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید"}
         else:
             password = TempPassword(customer_phone_number)
             if password.get_password() and password.get_password(customer_phone_number) == customer_password:

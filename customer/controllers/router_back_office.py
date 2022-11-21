@@ -114,7 +114,6 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 "userData": customer.get_wallet_data() or {},
                 "status_code": 200,
                 # "kosarData": kosar_data,
-
             }
             # return {
             #     "success": True,

@@ -20,11 +20,13 @@ class OTP:
     SMS_SENDER_NUMBER: config.SMS_SENDER_NUMBER
     SMS_API_TOKEN: str = config.SMS_API_TOKEN
     SMS_TEMPLATE: str = config.SMS_TEMPLATE
+    RAKIANO_SMS_TEMPLATE: str = config.RAKIANO_SMS_TEMPLATE
 
-    def __init__(self, phone_number: Optional[str] = None):
+    def __init__(self, phone_number: Optional[str] = None, customer_type="B2B"):
         self.phone_number: str = phone_number
         self.otp_code: str = ""
         self.otp_code_length: int = 4
+        self.customer_type = customer_type
 
     def generate_code(self, otp_code_length) -> str:
         for _ in range(otp_code_length):
@@ -36,7 +38,10 @@ class OTP:
         url = f"https://api.kavenegar.com/v1/{self.SMS_API_TOKEN}/verify/lookup.json?"
         url += f"receptor={self.phone_number}&"
         url += f"token={self.otp_code}&"
-        url += f"template={self.SMS_TEMPLATE}"
+        if self.customer_type == "B2B":
+            url += f"template={self.SMS_TEMPLATE}"
+        else:
+            url += f"template={self.RAKIANO_SMS_TEMPLATE}"
         try:
             result = requests.post(url)
         except Exception as e:

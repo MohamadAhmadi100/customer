@@ -67,11 +67,20 @@ def register_dealership(customer_phone_number: str, data: dict):
 
     if is_exists_phone_number or is_exists_national_id or not customer.is_unique_national_id(
             value.customer_national_id):
-
+        customer.set_dealership_activity()
+        customer_result = customer.get_customer()
+        customer_id = customer_result.get("customerID")
+        kosar_data = customer.kosar_getter()
         message = {
             "hasRegistered": True,
-            "error": "شما قبلا ثبت نام کرده اید.",
-            "redirect": "login"
+            "message": "شما قبلا ثبت نام کرده اید.",
+            "data": {
+                "customerID": customer_id,
+                "customerPhoneNumber": value.customer_phone_number,
+                "customerStatus": customer_result.get("customerStatus"),
+                "customerIsActive": True
+            },
+            "kosarData": kosar_data
         }
         return {"success": False, "error": message, "status_code": 308}
     else:

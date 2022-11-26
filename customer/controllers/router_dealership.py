@@ -82,7 +82,7 @@ def register_dealership(customer_phone_number: str, data: dict):
             },
             "kosarData": kosar_data
         }
-        return {"success": False, "error": message, "status_code": 308}
+        return {"success": True, "message": message, "status_code": 200}
     else:
         customer.set_data(
             customer_phone_number=value.customer_phone_number,

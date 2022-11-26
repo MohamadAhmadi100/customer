@@ -53,7 +53,7 @@ class Request:
 def register_dealership(customer_phone_number: str, data: dict):
     dealership = Customer(phone_number=customer_phone_number)
     result = dealership.get_customer()
-    if type(result.get("customerType")) != list or ("B2B2C" not in result.get("customerTypes")):
+    if type(result.get("customerTypes")) != list or ("B2B2C" not in result.get("customerTypes")):
         return {
             "success": False,
             "error": "دسترسی شما محدود شده است. لطفا با پشتیبانی آسود تماس بگیرید",
@@ -79,10 +79,9 @@ def register_dealership(customer_phone_number: str, data: dict):
                 "customerPhoneNumber": value.customer_phone_number,
                 "customerStatus": customer_result.get("customerStatus"),
                 "customerIsActive": True
-            },
-            "kosarData": kosar_data
+            }
         }
-        return {"success": True, "message": message, "status_code": 200}
+        return {"success": True, "message": message,"kosarData": kosar_data, "status_code": 200}
     else:
         customer.set_data(
             customer_phone_number=value.customer_phone_number,

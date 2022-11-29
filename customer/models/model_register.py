@@ -767,9 +767,8 @@ class Customer:
 
     def convert_to_dealership(self):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerType": ["B2B2C"]}, "$addToSet": {"customerTypes": "B2B2C"}}
+        set_operator = {"$addToSet": {"customerType": "B2B2C", "customerTypes": "B2B2C"}}
         projection_operator = {"_id": 0}
-
         with MongoConnection() as mongo:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):

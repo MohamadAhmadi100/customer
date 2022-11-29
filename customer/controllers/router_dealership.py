@@ -25,9 +25,9 @@ def set_dealership(staff_user_id, customer_phone_number):
             "error": "اطلاعات کاربر تکمیل نشده است. برای ایجاد نماینده اطلاعات کامل کاربر مورد نیاز است",
             "status_code": 401
         }
-    if not customer.convert_to_dealership():
-        return {"success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
-    return {"success": True, "status_code": 200, "message": "وضعیت کاربر با موفقیت به نماینده آسود تغییر کرد"}
+    return {"success": True, "status_code": 200,
+            "message": "وضعیت کاربر با موفقیت به نماینده آسود تغییر کرد"} if customer.convert_to_dealership() else {
+        "success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
 
 
 class Request:
@@ -55,7 +55,7 @@ class Request:
 def register_dealership(customer_phone_number: str, data: dict):
     dealership = Customer(phone_number=customer_phone_number)
     result = dealership.get_customer()
-    if type(result.get("customerType")) != list or ("B2B2C" not in result.get("customerType")):
+    if type(result.get("customerTypes")) != list or ("B2B2C" not in result.get("customerTypes")):
         return {
             "success": False,
             "error": "دسترسی شما محدود شده است. لطفا با پشتیبانی آسود تماس بگیرید",
@@ -69,13 +69,21 @@ def register_dealership(customer_phone_number: str, data: dict):
 
     if is_exists_phone_number or is_exists_national_id or not customer.is_unique_national_id(
             value.customer_national_id):
-
+        customer.set_dealership_activity()
+        customer_result = customer.get_customer()
+        customer_id = customer_result.get("customerID")
+        kosar_data = customer.kosar_getter()
         message = {
             "hasRegistered": True,
-            "error": "شما قبلا ثبت نام کرده اید.",
-            "redirect": "login"
+            "message": "شما قبلا ثبت نام کرده اید.",
+            "data": {
+                "customerID": customer_id,
+                "customerPhoneNumber": value.customer_phone_number,
+                "customerStatus": customer_result.get("customerStatus"),
+                "customerIsActive": True
+            }
         }
-        return {"success": False, "error": message, "status_code": 308}
+        return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 200}
     else:
         customer.set_data(
             customer_phone_number=value.customer_phone_number,

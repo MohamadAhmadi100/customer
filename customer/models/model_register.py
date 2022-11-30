@@ -206,7 +206,16 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0, "customerPassword": 0}
-            return mongo.customer.find_one(query_operator, projection_operator) or {}
+            result = mongo.customer.find_one(query_operator, projection_operator)
+            if not result:
+                return {}
+            if "B2B2C" in result.get("customerType"):
+                result["customerType"] = ["B2B2C"]
+            elif type(result.get("customerType")) == list:
+                result["customerType"] = [result.get("customerType")[-1]]
+            else:
+                result["customerType"] = ["B2B"]
+            return result
 
     def save(self) -> bool:
         if not self.get_next_sequence_customer_id():

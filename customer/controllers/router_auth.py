@@ -126,12 +126,12 @@ def checking_login_password(customer_phone_number: str, customer_password: str, 
                 }
                 return dict({"success": True, "status_code": 202}, **message)
             else:
-                message = {
-                    "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
-                    "customerIsConfirm": user.get("customerIsConfirm"),
-                    "hasRegistered": True,
-                    "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
-                }
+                # message = {
+                #     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
+                #     "customerIsConfirm": user.get("customerIsConfirm"),
+                #     "hasRegistered": True,
+                #     "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
+                # }
                 return {"success": False, "status_code": 406,
                         "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید"}
         else:

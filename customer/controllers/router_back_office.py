@@ -161,7 +161,7 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
         customer.activate()
-        if "B2B2C" not in kosarData.get("customerType"):
+        if "B2C" not in kosarData.get("customerType"):
             data = customer.get_status_sms_data()
             SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))
         return {"success": True, "message": "کاربر با موفقیت فعال شد", "status_code": 200}

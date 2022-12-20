@@ -57,95 +57,84 @@ def send_otp_code(customer_phone_number: str):
 def verify_otp_code(customer_phone_number: str, customer_code: str, customer_type: list):
     otp = OTP(customer_phone_number)
     if otp.get_otp() == customer_code:
-        customer = Customer(phone_number=customer_phone_number)
-        if type(customer_type) == list:
-            customer.set_customer_types(customer_type[0])
-            customer_type = customer_type[0]
-        else:
-            customer_type = "B2B"
-        user = customer.get_customer()
-        if not customer.is_mobile_confirm():
-            customer.mobile_confirm()
-            SmsSender(customer_phone_number, customer_type).register(user.get('customerFirstName'),
-                                                                     user.get('customerLastName'))
-        otp.delete_otp()
-        message = {
-            "message": "کد وارد شده صحیح است",
-            "data": user
-        }
-        return {"success": True, "status_code": 202, "message": message}
+        return set_customer_data(customer_phone_number, customer_type, otp)
+    message = "کد وارد شده صحیح نمی‌باشد"
+    return {"success": False, "status_code": 401, "error": message}
+
+
+def set_customer_data(customer_phone_number, customer_type, otp):
+    customer = Customer(phone_number=customer_phone_number)
+    if type(customer_type) == list:
+        customer.set_customer_types(customer_type[0])
+        customer_type = customer_type[0]
     else:
-        message = "کد وارد شده صحیح نمی‌باشد"
-        return {"success": False, "status_code": 401, "error": message}
+        customer_type = "B2B"
+    user = customer.get_customer()
+    if not customer.is_mobile_confirm():
+        customer.mobile_confirm()
+        SmsSender(customer_phone_number, customer_type).register(user.get('customerFirstName'),
+                                                                 user.get('customerLastName'))
+    otp.delete_otp()
+    message = {
+        "message": "کد وارد شده صحیح است",
+        "data": user
+    }
+    return {"success": True, "status_code": 202, "message": message}
 
 
 def checking_login_otp_code(customer_phone_number: str, customer_code: str, customer_type: list):
     customer = Customer(phone_number=customer_phone_number)
     otp = OTP(customer_phone_number)
     if customer.is_exists_phone_number():
-        if otp.get_otp() and otp.get_otp(customer_phone_number) == customer_code:
-            otp.delete_otp()
-            log.save_login_log(customer_phone_number)
-            if type(customer_type) == list:
-                customer.set_customer_types(customer_type[0])
-                customer_type = customer_type[0]
-            else:
-                customer_type = "B2B"
-            user_info = customer.get_customer()
-            if not customer.is_mobile_confirm():
-                SmsSender(customer_phone_number, customer_type).register(user_info.get('customerFirstName'),
-                                                                         user_info.get('customerLastName'))
-                customer.mobile_confirm()
-            message = {
-                "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
-                "data": user_info}
-            return {"success": True, "status_code": 202, "message": message}
-        else:
-            return {"success": False, "status_code": 401, "error": "کد وارد شده صحیح نمی‌باشد"}
+        return _otp_customize(otp, customer_phone_number, customer_type, customer) if otp.get_otp() and otp.get_otp(
+            customer_phone_number) == customer_code else {"success": False, "status_code": 401,
+                                                          "error": "کد وارد شده صحیح نمی‌باشد"}
+
+    message = {
+        "hasRegistered": False,
+        "message": "شما قبلا ثبت نام نکرده اید",
+        "redirect": "register"
+    }
+    return {"success": False, "status_code": 308, "error": message}
+
+
+def _otp_customize(otp, customer_phone_number, customer_type, customer):
+    otp.delete_otp()
+    log.save_login_log(customer_phone_number)
+    if type(customer_type) == list:
+        customer.set_customer_types(customer_type[0])
+        customer_type = customer_type[0]
     else:
-        message = {
-            "hasRegistered": False,
-            "message": "شما قبلا ثبت نام نکرده اید",
-            "redirect": "register"
-        }
-        return {"success": False, "status_code": 308, "error": message}
+        customer_type = "B2B"
+    user_info = customer.get_customer()
+    if not customer.is_mobile_confirm():
+        SmsSender(customer_phone_number, customer_type).register(user_info.get('customerFirstName'),
+                                                                 user_info.get('customerLastName'))
+        customer.mobile_confirm()
+    message = {
+        "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
+        "data": user_info}
+    return {"success": True, "status_code": 202, "message": message}
 
 
 def checking_login_password(customer_phone_number: str, customer_password: str, customer_type: list):
     customer = Customer(phone_number=customer_phone_number)
     if user := customer.get_customer_password():
         if auth_handler.verify_password(customer_password, user.get("customerPassword")):
-            if user.get("customerIsMobileConfirm"):
-                log.save_login_log(customer_phone_number)
-                if type(customer_type) == list:
-                    customer.set_customer_types(customer_type[0])
-                user_info = customer.get_customer()
-                message = {
-                    "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
-                    "data": user_info
-                }
-                return dict({"success": True, "status_code": 202}, **message)
-            else:
-                # message = {
-                #     "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
-                #     "customerIsConfirm": user.get("customerIsConfirm"),
-                #     "hasRegistered": True,
-                #     "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید",
-                # }
+            if not user.get("customerIsMobileConfirm"):
                 return {"success": False, "status_code": 406,
                         "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید"}
+            log.save_login_log(customer_phone_number)
+            if type(customer_type) == list:
+                customer.set_customer_types(customer_type[0])
+            return set_output_return(customer)
         else:
             password = TempPassword(customer_phone_number)
             if password.get_password() and password.get_password(customer_phone_number) == customer_password:
                 password.delete_password()
                 if user.get("customerIsMobileConfirm"):
                     log.save_login_log(customer_phone_number)
-                    user_info = customer.get_customer()
-                    message = {
-                        "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
-                        "data": user_info
-                    }
-                    return dict({"success": True, "status_code": 202}, **message)
+                    return set_output_return(customer)
                 else:
                     message = {
                         "customerIsMobileConfirm": user.get("customerIsMobileConfirm"),
@@ -164,9 +153,18 @@ def checking_login_password(customer_phone_number: str, customer_password: str, 
         return {"success": False, "status_code": 401, "error": message}
 
 
+def set_output_return(customer):
+    user_info = customer.get_customer()
+    message = {
+        "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
+        "data": user_info
+    }
+    return dict({"success": True, "status_code": 202}, **message)
+
+
 def save_logout(username: dict):
     customer_id = username.get("user_id")
-    if result := log.save_logout_log(customer_id):
+    if log.save_logout_log(customer_id):
         # redirect to home page
         return {"success": True, "status_code": 202, "message": {"message": "خروج با موفقیت انجام شد"}}
     else:

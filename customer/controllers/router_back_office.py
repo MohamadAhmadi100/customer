@@ -4,12 +4,9 @@ from config import VALID_PROFILE_KEYS
 from customer.models.model_profile import Profile
 from customer.models.model_register import Customer
 from customer.modules.getter import GetData
+from customer.modules.sender import SmsSender
 from customer.modules.setter import Filter
 from customer.modules.temporary_password import TempPassword
-from customer.modules.sender import SmsSender
-
-
-# from customer.modules.sender import SmsSender
 
 
 def get_customers_grid_data(data: str = None):
@@ -97,32 +94,21 @@ def set_confirm_status(mobileNumber: str) -> dict:
     if not customer.is_exists_phone_number():
         return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
     try:
-        kosar_data = customer.kosar_getter(informal_flag=False) or {}
-        for key, value in kosar_data.items():
-            if not value:
-                return {"success": False, "error": "اطلاعات کاربر تکمیل نشده است. کاربر فعال نشد", "status_code": 401}
-        result = customer.confirm_status()
-        mobile_confirm = customer.is_mobile_confirm()
-        data = customer.get_customer()
-        if result and mobile_confirm and data.get("customerSelCustomerCode") and data.get("customerAccFormalAccCode"):
-            customer.activate()
-            if "B2C" not in data.get("customerType"):
-                SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))
-            return {
-                "success": True,
-                "message": "کاربر با موفقیت فعال شد.....",
-                "userData": customer.get_wallet_data() or {},
-                "status_code": 200,
-                # "kosarData": kosar_data,
-            }
-            # return {
-            #     "success": True,
-            #     "message": "کاربر با موفقیت فعال شد***",
-            #     "userData": customer.get_wallet_data() or {},
-            #     "kosarData": kosar_data,
-            #     "status_code": 200
-            # }
-        elif result:
+        return _kosar_complete(customer, mobileNumber)
+    except Exception:
+        return {"success": False, "error": "مشکلی به وجود آمد. لطفا مجددا تلاش کنید", "status_code": 404}
+
+
+def _kosar_complete(customer, mobileNumber):
+    kosar_data = customer.kosar_getter(informal_flag=False) or {}
+    for key, value in kosar_data.items():
+        if not value:
+            return {"success": False, "error": "اطلاعات کاربر تکمیل نشده است. کاربر فعال نشد", "status_code": 401}
+    result = customer.confirm_status()
+    mobile_confirm = customer.is_mobile_confirm()
+    data = customer.get_customer()
+    if result:
+        if not mobile_confirm or not data.get("customerSelCustomerCode") or not data.get("customerAccFormalAccCode"):
             return {
                 "success": True,
                 "message": "برای انجام خرید کاربر نیاز به تایید شماره موبایل با رمز یک بار مصرف دارد",
@@ -130,9 +116,17 @@ def set_confirm_status(mobileNumber: str) -> dict:
                 "kosarData": kosar_data,
                 "status_code": 200
             }
-        return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
-    except Exception:
-        return {"success": False, "error": "مشکلی به وجود آمد. لطفا مجددا تلاش کنید", "status_code": 404}
+        customer.activate()
+        if "B2C" not in data.get("customerType"):
+            SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))
+        return {
+            "success": True,
+            "message": "کاربر با موفقیت فعال شد.....",
+            "userData": customer.get_wallet_data() or {},
+            "status_code": 200,
+            # "kosarData": kosar_data,
+        }
+    return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
 
 
 def set_cancel_status(mobileNumber: str) -> dict:

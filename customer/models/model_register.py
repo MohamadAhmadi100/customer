@@ -181,24 +181,6 @@ class Customer:
             except Exception:
                 return False
 
-    # def get_next_sequence_customer_id(self) -> bool:
-    #     """
-    #     auto increment id generator for self object
-    #     :return: True if customer is the first obj or correct id has been generated
-    #     """
-    #     with MongoConnection() as mongo:
-    #         if not mongo.customer.find_one():
-    #             self.customer_id = 0
-    #             return True
-    #         else:
-    #             result = mongo.customer.find({}, {'customerID': 1}).limit(1).sort("customerCreateTime", -1)
-    #             try:
-    #                 self.customer_id = result[0].get("customerID") + 1
-    #             except IndexError:
-    #                 return False
-    #             else:
-    #                 return True
-
     def get_customer(self) -> dict:
         """
         :return: customer data as a dict
@@ -331,9 +313,7 @@ class Customer:
                     upsert=True
                 )
                 mongo.customer.update_one(query_operator, set_default_operator, upsert=True)
-                if result.acknowledged and result.matched_count:
-                    return True
-                return False
+                return bool(result.acknowledged and result.matched_count)
             except WriteError:
                 return False
 

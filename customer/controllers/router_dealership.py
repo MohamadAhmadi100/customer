@@ -1,11 +1,4 @@
-import json
-
-from config import VALID_PROFILE_KEYS
-from customer.models.model_profile import Profile
 from customer.models.model_register import Customer
-from customer.modules.getter import GetData
-from customer.modules.setter import Filter
-from customer.modules.temporary_password import TempPassword
 
 
 def set_dealership(staff_user_id, customer_phone_number):
@@ -68,13 +61,29 @@ def register_dealership(customer_phone_number: str, data: dict):
     is_exists_national_id = customer_data.get("customerNationalID")
     if is_exists_phone_number or is_exists_national_id or not customer.is_unique_national_id(
             value.customer_national_id):
+        return _register_output(customer, value)
+    customer.set_data(
+        customer_phone_number=value.customer_phone_number,
+        customer_first_name=value.customer_first_name,
+        customer_last_name=value.customer_last_name,
+        customer_national_id=value.customer_national_id,
+        customer_state_name=value.customer_state_name,
+        customer_city_name=value.customer_city_name,
+        customer_city_id=value.customer_city_id,
+        customer_postal_code=value.customer_postal_code,
+        customer_address=value.customer_address,
+        customer_region_code=value.customer_region_code,
+        customer_state_id=value.customer_state_id,
+        customer_ofogh_code=value.customer_ofogh_code,
+        customer_type=["B2C"]
+    )
+    if customer.save():
         customer.set_dealership_activity()
         customer_result = customer.get_customer()
         customer_id = customer_result.get("customerID")
         kosar_data = customer.kosar_getter()
         message = {
-            "hasRegistered": True,
-            "message": "اطلاعات کاربر با موفقیت ثبت شد",
+            "message": "اطلاعات خرید مشتری با موفقیت ثبت شد",
             "data": {
                 "customerID": customer_id,
                 "customerPhoneNumber": value.customer_phone_number,
@@ -82,41 +91,28 @@ def register_dealership(customer_phone_number: str, data: dict):
                 "customerIsActive": True
             }
         }
-        return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 200}
+        dealership.add_dealership_customer(customer_id=customer_data.get("customerID"),
+                                           customer_phone_number=data.get("customerPhoneNumber"),
+                                           customer_national_id=data.get("customerNationalID"))
+        return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 201}
     else:
-        customer.set_data(
-            customer_phone_number=value.customer_phone_number,
-            customer_first_name=value.customer_first_name,
-            customer_last_name=value.customer_last_name,
-            customer_national_id=value.customer_national_id,
-            customer_state_name=value.customer_state_name,
-            customer_city_name=value.customer_city_name,
-            customer_city_id=value.customer_city_id,
-            customer_postal_code=value.customer_postal_code,
-            customer_address=value.customer_address,
-            customer_region_code=value.customer_region_code,
-            customer_state_id=value.customer_state_id,
-            customer_ofogh_code=value.customer_ofogh_code,
-            customer_type=["B2C"]
-        )
-        if customer.save():
-            customer.set_dealership_activity()
-            customer_result = customer.get_customer()
-            customer_id = customer_result.get("customerID")
-            kosar_data = customer.kosar_getter()
-            message = {
-                "message": "اطلاعات خرید مشتری با موفقیت ثبت شد",
-                "data": {
-                    "customerID": customer_id,
-                    "customerPhoneNumber": value.customer_phone_number,
-                    "customerStatus": customer_result.get("customerStatus"),
-                    "customerIsActive": True
-                }
-            }
-            dealership.add_dealership_customer(customer_id=customer_data.get("customerID"),
-                                               customer_phone_number=data.get("customerPhoneNumber"),
-                                               customer_national_id=data.get("customerNationalID"))
-            return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 201}
-        else:
-            message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
-            return {"success": False, "error": message, "status_code": 417}
+        message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}
+        return {"success": False, "error": message, "status_code": 417}
+
+
+def _register_output(customer, value):
+    customer.set_dealership_activity()
+    customer_result = customer.get_customer()
+    customer_id = customer_result.get("customerID")
+    kosar_data = customer.kosar_getter()
+    message = {
+        "hasRegistered": True,
+        "message": "اطلاعات کاربر با موفقیت ثبت شد",
+        "data": {
+            "customerID": customer_id,
+            "customerPhoneNumber": value.customer_phone_number,
+            "customerStatus": customer_result.get("customerStatus"),
+            "customerIsActive": True
+        }
+    }
+    return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 200}

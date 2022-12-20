@@ -30,7 +30,6 @@ class Filter:
         for filter_, value in values.items():
             if filter_ in self.valid_value_filters and (value or value is False or value == 0):
                 # todo: return comment!
-                # self.value_filters[filter_] = value
                 if type(value) == list:
                     self.value_filters[filter_] = {"$in": value}
                 elif filter_ == "customerStateName":

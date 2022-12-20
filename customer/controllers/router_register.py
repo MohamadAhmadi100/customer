@@ -1,7 +1,6 @@
 from customer.models.model_register import Customer
 from customer.modules import log
 from customer.modules.auth import AuthHandler
-from customer.modules.shahkar import nid_phone_verify
 
 auth_handler = AuthHandler()
 
@@ -63,7 +62,7 @@ def register(data: dict):
             customer_address=value.customer_address,
             customer_region_code=value.customer_region_code,
             customer_state_id=value.customer_state_id,
-            customer_ofogh_code= value.customer_ofogh_code,
+            customer_ofogh_code=value.customer_ofogh_code,
             customer_document_status=value.customer_document_status,
             customer_type=value.customer_type or ["B2B"],
             customer_password=auth_handler.generate_hash_password(value.customer_password)

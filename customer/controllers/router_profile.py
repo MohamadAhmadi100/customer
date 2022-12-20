@@ -50,9 +50,7 @@ def get_customer_attributes():
         return list(mongo.customer_attributes.find({}, {"_id": 0}))
 
 
-# print(get_customer_attributes())
 def get_raw_profile(customer_phone_number: str):
-    # customer_phone_number = customer_phone_number.get('phone_number')
     profile = Profile({"customer_phone_number": customer_phone_number})
     if result := profile.get_profile_data():
         return {"success": True, "message": result, "status_code": 200}
@@ -116,7 +114,6 @@ def change_customer_password(data: dict):
 
 
 def add_delivery_person(data: dict = None) -> dict:
-    # sourcery skip: merge-nested-ifs
     try:
         customer_phone_number = data.get("customer_phone_number")
         customer = Customer(customer_phone_number)
@@ -131,9 +128,9 @@ def add_delivery_person(data: dict = None) -> dict:
                 if data.get("deliveryMobileNumber") == delivery.get("deliveryMobileNumber"):
                     exists = True
             if exists:
-                if customer.change_default_delivery(data):
-                    return {"success": True, "status_code": 200,
-                            "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
+                customer.change_default_delivery(data)
+                return {"success": True, "status_code": 200,
+                        "message": {"message": "پیک اصلی با موفقیت تغییر کرد", "data": data}}
             if customer.add_delivery(data):
                 return {"success": True, "status_code": 201,
                         "message": {"message": "پیک با موفقیت ثبت شد", "data": data}}

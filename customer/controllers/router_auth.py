@@ -37,11 +37,7 @@ def check_is_registered(customer_phone_number: str):
     return {"success": True, "status_code": 200, "message": message}
 
 
-def send_otp_code(customer_phone_number: str):
-    customer = Customer(phone_number=customer_phone_number)
-    customer_type = "B2B"
-    if customer.get_customer().get("customerType") == ["B2C"]:
-        customer_type = "B2C"
+def send_otp_code(customer_phone_number: str, customer_type: list):
     otp = OTP(customer_phone_number, customer_type)
     is_expire, expire_time = otp.is_expire_otp_time()
     if is_expire:

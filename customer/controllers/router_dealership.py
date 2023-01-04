@@ -23,25 +23,34 @@ def set_dealership(staff_user_id, customer_phone_number):
         "success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
 
 
+def remove_dealership(staff_user_id, customer_phone_number):
+    customer = Customer(customer_phone_number)
+    if not customer.get_customer():
+        return {"success": False, "error": "اطلاعاتی برای کاربر وجود ندارد", "status_code": 404}
+    return {"success": True, "status_code": 200,
+            "message": "وضعیت کاربر با موفقیت از نماینده آسود به مشتری عادی تغییر کرد"} if customer.remove_dealership() else {
+        "success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
+
+
 class Request:
     def __init__(self, **kwargs):
-        self.customer_region_code = None
-        self.customer_address = None
-        self.customer_city_id = None
+        # self.customer_region_code = None
+        # self.customer_address = None
+        # self.customer_city_id = None
         self.customer_email = None
-        self.customer_state_id = None
-        self.customer_verify_password = None
-        self.customer_password = None
+        # self.customer_state_id = None
+        # self.customer_verify_password = None
+        # self.customer_password = None
         self.customer_national_id = None
-        self.customer_postal_code = None
-        self.customer_state_name = None
-        self.customer_city_name = None
+        # self.customer_postal_code = None
+        # self.customer_state_name = None
+        # self.customer_city_name = None
         self.customer_last_name = None
         self.customer_first_name = None
         self.customer_phone_number = None
-        self.customer_document_status = None
+        # self.customer_document_status = None
         self.customer_type = None
-        self.customer_ofogh_code = None
+        # self.customer_ofogh_code = None
         self.__dict__.update(kwargs)
 
 
@@ -67,14 +76,14 @@ def register_dealership(customer_phone_number: str, data: dict):
         customer_first_name=value.customer_first_name,
         customer_last_name=value.customer_last_name,
         customer_national_id=value.customer_national_id,
-        customer_state_name=value.customer_state_name,
-        customer_city_name=value.customer_city_name,
-        customer_city_id=value.customer_city_id,
-        customer_postal_code=value.customer_postal_code,
-        customer_address=value.customer_address,
-        customer_region_code=value.customer_region_code,
-        customer_state_id=value.customer_state_id,
-        customer_ofogh_code=value.customer_ofogh_code,
+        # customer_state_name=value.customer_state_name,
+        # customer_city_name=value.customer_city_name,
+        # customer_city_id=value.customer_city_id,
+        # customer_postal_code=value.customer_postal_code,
+        # customer_address=value.customer_address,
+        # customer_region_code=value.customer_region_code,
+        # customer_state_id=value.customer_state_id,
+        # customer_ofogh_code=value.customer_ofogh_code,
         customer_type=["B2C"]
     )
     if customer.save():

@@ -87,9 +87,12 @@ class Customer:
         """
         :return: a flag showing repeated customer mobile number
         """
-        with MongoConnection() as mongo:
-            query_operator = {"customerPhoneNumber": self.customer_phone_number}
-            return bool(mongo.customer.find_one(query_operator))
+        try:
+            with MongoConnection() as mongo:
+                query_operator = {"customerPhoneNumber": self.customer_phone_number}
+                return bool(mongo.customer.find_one(query_operator))
+        except Exception:
+            return False
 
     def is_exists_national_id(self) -> bool:
         """
@@ -188,7 +191,10 @@ class Customer:
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
             projection_operator = {"_id": 0, "customerPassword": 0}
-            result = mongo.customer.find_one(query_operator, projection_operator)
+            try:
+                result = mongo.customer.find_one(query_operator, projection_operator)
+            except Exception:
+                return {}
             if not result:
                 return {}
             if "B2B2C" in result.get("customerType"):
@@ -221,10 +227,10 @@ class Customer:
             customer_first_name,
             customer_last_name,
             customer_national_id,
-            customer_state_name,
-            customer_city_name,
-            customer_city_id,
             customer_type,
+            customer_state_name="",
+            customer_city_name="",
+            customer_city_id="",
             customer_password=None,
             customer_ofogh_code="",
             customer_postal_code="",
@@ -565,19 +571,18 @@ class Customer:
                         "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
                         "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(
-                            customer.get("customerRegionCode"),
-                            "0"),
+                            customer.get("customerRegionCode"), "0"),
                         "AddressDTOLst": [
                             {
-                                "gnr_Address_No": address.get("city_name"),
-                                "gnr_Address_Street": address.get("street"),
+                                "gnr_Address_No": address.get("city_name") or "",
+                                "gnr_Address_Street": address.get("street") or "",
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ],
                         "PhoneDTOLst": [
                             {
                                 "gnr_Phone_Priority": 1,
-                                "gnr_Phone_No": address.get("tel"),
+                                "gnr_Phone_No": address.get("tel") or "",
                                 "gnr_Land_PhoneCode": "021"
                             }
                         ]
@@ -762,6 +767,20 @@ class Customer:
             try:
                 if mongo.customer.find_one(query_operator, projection_operator):
                     result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return
+
+    def remove_dealership(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        pull_operator = {"$pull": {"customerType": "B2B2C", "customerTypes": "B2B2C"}}
+        projection_operator = {"_id": 0}
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, pull_operator)
+                    print(result)
                     return bool(result.acknowledged)
                 return False
             except Exception:

@@ -610,8 +610,8 @@ class Customer:
                     "sel_CustomerMainGroup_Code": sel_CustomerMainGroup_Code,
                     "AddressDTOLst": [
                         {
-                            "gnr_Address_No": customer.get("customerCityName", "تهران"),
-                            "gnr_Address_Street": address.get("street") or "آسود",
+                            "gnr_Address_No": customer.get("customerCityName", ""),
+                            "gnr_Address_Street": address.get("street") or "",
                             "gnr_Land_PhoneCode": "021"
                         }
                     ],

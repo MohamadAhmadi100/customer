@@ -151,10 +151,12 @@ def set_kosar_data(mobileNumber, kosarData) -> dict:
             customer_type=kosarData.get("customerType"),
             customer_national_id=kosarData.get("customerNationalID")
     ):
-        _old_db_result = customer.insert_main_db()
+        # _old_db_result = customer.insert_main_db()
         if kosarData.get("customerType") == ["informal"]:
             return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
         customer.activate()
+        if kosarData.get("customerType") == ["B2C"]:
+            return {"success": True, "message": "مشخصات کوثر با موفقیت ثبت شد", "status_code": 200}
         if "B2C" not in kosarData.get("customerType"):
             data = customer.get_status_sms_data()
             SmsSender(mobileNumber).activate_status(data.get("customerFirstName"), data.get("customerLastName"))

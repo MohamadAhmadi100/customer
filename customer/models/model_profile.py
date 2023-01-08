@@ -81,6 +81,7 @@ class Profile:
             "customerRegionCode": data.get("customerRegionCode"),
             # "customerAddress": data.get("customerAddress"),
             "customerType": data.get("customerType"),
+            "customerTypes": data.get("customerTypes"),
             "customerShopName": data.get("customerShopName"),
             "customerAccountNumber": data.get("customerAccountNumber"),
             "customerOfoghCode": data.get("customerOfoghCode"),

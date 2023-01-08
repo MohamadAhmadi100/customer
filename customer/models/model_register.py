@@ -926,3 +926,17 @@ class Customer:
                 return False
             except Exception:
                 return
+
+    def set_final_cutomers_activity(self):
+        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        set_operator = {"$set": {"customerIsActive": True, "customerStatus": "confirm"}}
+        projection_operator = {"_id": 0}
+
+        with MongoConnection() as mongo:
+            try:
+                if mongo.customer.find_one(query_operator, projection_operator):
+                    result = mongo.customer.update_one(query_operator, set_operator)
+                    return bool(result.acknowledged)
+                return False
+            except Exception:
+                return

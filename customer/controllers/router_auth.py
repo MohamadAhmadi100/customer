@@ -72,6 +72,8 @@ def set_customer_data(customer_phone_number, customer_type, otp):
         SmsSender(customer_phone_number, customer_type).register(user.get('customerFirstName'),
                                                                  user.get('customerLastName'))
     otp.delete_otp()
+    if customer_type == "B2C":
+        customer.set_final_cutomers_activity()
     message = {
         "message": "کد وارد شده صحیح است",
         "data": user
@@ -108,6 +110,8 @@ def _otp_customize(otp, customer_phone_number, customer_type, customer):
         SmsSender(customer_phone_number, customer_type).register(user_info.get('customerFirstName'),
                                                                  user_info.get('customerLastName'))
         customer.mobile_confirm()
+    if customer_type == "B2C":
+        customer.set_final_cutomers_activity()
     message = {
         "message": f"{user_info.get('customerFirstName')} {user_info.get('customerLastName')} عزیز به آسود خوش آمدید",
         "data": user_info}

@@ -561,32 +561,28 @@ class Customer:
                         address = address[0]
                 else:
                     address = customer.get("customerAddress")
-                if not informal_flag:
-                    return {
-                        "customerType": customer_type or customer.get("customerType"),
-                        "customerId": customer.get("customerID"),
-                        "IsPerson": True,
+                data = {"customerType": customer_type or customer.get("customerType"),
+                        "customerId": customer.get("customerID"), "IsPerson": True,
                         "gnr_Person_Name": customer.get("customerFirstName") or False,
                         "gnr_Person_Family": customer.get("customerLastName") or False,
                         "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
                         "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
-                        "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(
-                            customer.get("customerRegionCode"), "0"),
-                        "AddressDTOLst": [
-                            {
-                                "gnr_Address_No": address.get("city_name") or "",
-                                "gnr_Address_Street": address.get("street") or "",
-                                "gnr_Land_PhoneCode": "021"
-                            }
-                        ],
-                        "PhoneDTOLst": [
-                            {
-                                "gnr_Phone_Priority": 1,
-                                "gnr_Phone_No": address.get("tel") or "",
-                                "gnr_Land_PhoneCode": "021"
-                            }
-                        ]
-                    }
+                        "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
+                                                                                    "0"), "AddressDTOLst": [
+                        {"gnr_Address_No": address.get("city_name") or "",
+                         "gnr_Address_Street": address.get("street") or "", "gnr_Land_PhoneCode": "021"}],
+                        "PhoneDTOLst": [{"gnr_Phone_Priority": 1, "gnr_Phone_No": address.get("tel") or "",
+                                         "gnr_Land_PhoneCode": "021"}]} if address else {
+                    "customerType": customer_type or customer.get("customerType"),
+                    "customerId": customer.get("customerID"), "IsPerson": True,
+                    "gnr_Person_Name": customer.get("customerFirstName") or False,
+                    "gnr_Person_Family": customer.get("customerLastName") or False,
+                    "gnr_Person_NationalCode": customer.get("customerNationalID") or False,
+                    "mainFormalGroupingName": f'{customer.get("customerFirstName")} {customer.get("customerLastName")}',
+                    "sel_CustomerMainGroup_Code": config.KOSAR_REGION_CODES.get(customer.get("customerRegionCode"),
+                                                                                "0"), }
+                if not informal_flag:
+                    return data
                 informal_persons: list = customer.get("customerInformalPersons")
                 informal = {}
                 for person in informal_persons:

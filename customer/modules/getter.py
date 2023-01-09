@@ -34,7 +34,16 @@ class GetData:
                     else:
                         record = {grid_attribute: customer.get(grid_attribute) for grid_attribute in VALID_GRID_KEYS}
                     record["customerMobileNumber"] = customer.get("customerPhoneNumber")
-
+                    if type(customer.get("customerTypes")) == list and len(customer.get("customerTypes")):
+                        new_type = []
+                        for t in customer.get("customerTypes"):
+                            if t == "B2B":
+                                new_type.append("آسود")
+                            elif t == "B2B2C":
+                                new_type.append("نماینده")
+                            elif t == "B2C":
+                                new_type.append("راکیانو")
+                        record["customerTypes"] = new_type
                     record["customerStateName"] = customer.get("customerStateName")
                     record["customerCityName"] = customer.get("customerCityName")
                     record["customerRegionCode"] = customer.get("customerRegionCode")

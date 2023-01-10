@@ -19,7 +19,7 @@ def set_dealership(staff_user_id, customer_phone_number):
             "error": "اطلاعات کاربر تکمیل نشده است. برای ایجاد نماینده اطلاعات کامل کاربر مورد نیاز است",
             "status_code": 401
         }
-    return {"success": True, "status_code": 200, "customer_id": data.get("customerId"),
+    return {"success": True, "status_code": 200, "customer_id": data.get("customerID"),
             "message": "وضعیت کاربر با موفقیت به نماینده آسود تغییر کرد"} if customer.convert_to_dealership() else {
         "success": False, "status_code": 417, "error": "مشکلی رخ داده است. لطفا مجددا امتحان کنید"}
 

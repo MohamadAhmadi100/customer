@@ -911,12 +911,13 @@ class Customer:
 
     def set_customer_types(self, customer_type: str):
         query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerType": [customer_type]}, "$addToSet": {"customerTypes": customer_type}}
+        set_operator = {"$set": {"customerType": [customer_type]}}
         projection_operator = {"_id": 0}
 
         with MongoConnection() as mongo:
             try:
-                if mongo.customer.find_one(query_operator, projection_operator):
+                if (cus := mongo.customer.find_one(query_operator, projection_operator)) and customer_type in cus.get(
+                        "customerTypes"):
                     result = mongo.customer.update_one(query_operator, set_operator)
                     return bool(result.acknowledged)
                 return False

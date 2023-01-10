@@ -62,7 +62,9 @@ def verify_otp_code(customer_phone_number: str, customer_code: str, customer_typ
 def set_customer_data(customer_phone_number, customer_type, otp):
     customer = Customer(phone_number=customer_phone_number)
     if type(customer_type) == list:
-        customer.set_customer_types(customer_type[0])
+        if not customer.set_customer_types(customer_type[0]):
+            return {"success": False, "status_code": 401,
+                    "error": "دسترسی شما برای ورود محدود شده است. لطفا مجددا ثبت نام کنید"}
         customer_type = customer_type[0]
     else:
         customer_type = "B2B"
@@ -101,7 +103,9 @@ def _otp_customize(otp, customer_phone_number, customer_type, customer):
     otp.delete_otp()
     log.save_login_log(customer_phone_number)
     if type(customer_type) == list:
-        customer.set_customer_types(customer_type[0])
+        if not customer.set_customer_types(customer_type[0]):
+            return {"success": False, "status_code": 401,
+                    "error": "دسترسی شما برای ورود محدود شده است. لطفا مجددا ثبت نام کنید"}
         customer_type = customer_type[0]
     else:
         customer_type = "B2B"
@@ -126,8 +130,9 @@ def checking_login_password(customer_phone_number: str, customer_password: str, 
                 return {"success": False, "status_code": 406,
                         "error": "برای ورود نیاز به تایید شماره موبایل دارید. لطفا از طریق کد یک بار مصرف وارد شوید"}
             log.save_login_log(customer_phone_number)
-            if type(customer_type) == list:
-                customer.set_customer_types(customer_type[0])
+            if type(customer_type) == list and not customer.set_customer_types(customer_type[0]):
+                return {"success": False, "status_code": 401,
+                        "error": "دسترسی شما برای ورود محدود شده است. لطفا مجددا ثبت نام کنید"}
             return set_output_return(customer)
         else:
             password = TempPassword(customer_phone_number)

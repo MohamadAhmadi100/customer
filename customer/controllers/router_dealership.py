@@ -1,4 +1,5 @@
 from customer.models.model_register import Customer
+from customer.modules.auth import AuthHandler
 
 
 def set_dealership(staff_user_id, customer_phone_number):
@@ -150,6 +151,9 @@ class RequestDealership:
         self.__dict__.update(kwargs)
 
 
+auth_handler = AuthHandler()
+
+
 def register_dealership(customer_phone_number: str, data: dict):
     value = RequestDealership(**data)
     customer = Customer(phone_number=value.customer_phone_number)
@@ -183,6 +187,7 @@ def register_dealership(customer_phone_number: str, data: dict):
         customer_ofogh_code=value.customer_ofogh_code,
         customer_document_status=value.customer_document_status,
         customer_type=["B2B2C"],
+        customer_password=auth_handler.generate_hash_password(value.customer_password)
     )
     if customer.save():
         return success_result(customer, value)

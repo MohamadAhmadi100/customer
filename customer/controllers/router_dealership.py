@@ -114,7 +114,10 @@ def _register_output(customer, value):
     customer.set_dealership_activity()
     customer_result = customer.get_customer()
     customer_id = customer_result.get("customerID")
-    kosar_data = customer.kosar_getter(customer_type=["B2C"])
+    if not customer_result.get("customerSelCustomerCode") or not customer_result.get("customerAccFormalAccCode"):
+        kosar_data = customer.kosar_getter(customer_type=["B2C"])
+    else:
+        kosar_data = None
     message = {
         "hasRegistered": True,
         "message": "اطلاعات کاربر با موفقیت ثبت شد",

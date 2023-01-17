@@ -544,7 +544,8 @@ class Customer:
             except Exception:
                 return
 
-    def kosar_getter(self, informal_flag: bool = False, national_id: str = "", customer_type: list = None):
+    def kosar_getter(self, informal_flag: bool = False, national_id: str = "", customer_type: list = None,
+                     address=None):
         """
         syncs needed data for kosar service
         :return: a dict contained user data
@@ -555,7 +556,9 @@ class Customer:
             try:
                 if not (customer := mongo.customer.find_one(query_operator, projection_operator)):
                     return None
-                if type(customer.get("customerAddress")) == list and len(customer.get("customerAddress")):
+                if address and type(address) == list:
+                    address = address[0]
+                elif type(customer.get("customerAddress")) == list and len(customer.get("customerAddress")):
                     address = customer.get("customerAddress")[0]
                     if type(address) == list:
                         address = address[0]
@@ -865,9 +868,9 @@ class Customer:
             except Exception:
                 return []
 
-    def active_credit(self):
-        query_operator = {"customerPhoneNumber": self.customer_phone_number}
-        set_operator = {"$set": {"customerActiveCredit": True}}
+    def active_credit(self, expire_date):
+        query_operator = {"customerID": self.customer_id}
+        set_operator = {"$set": {"customerActiveCredit": True, "customerJalaliCreditExpireDate": expire_date}}
         projection_operator = {"_id": 0}
 
         with MongoConnection() as mongo:
@@ -880,7 +883,7 @@ class Customer:
                 return
 
     def inactive_credit(self):
-        query_operator = {"customerPhoneNumber": self.customer_phone_number}
+        query_operator = {"customerPhoneNumber": self.customer_id}
         set_operator = {"$set": {"customerActiveCredit": False}}
         projection_operator = {"_id": 0}
 

@@ -241,9 +241,9 @@ def get_customers_bi(from_date, to_date):
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
 
 
-def customer_active_credit(staff_user_id, customer_mobile_number):
-    customer = Customer(customer_mobile_number)
-    if result := customer.active_credit():
+def customer_active_credit(staff_user_id, user_id, expire_date):
+    customer = Customer(user_id)
+    if result := customer.active_credit(expire_date):
         return {"success": True, "message": "خرید اعتباری برای کاربر فعال شد. لطفا مقدار اعتبار را مشخص کنید",
                 "status_code": 200}
     elif result is None:
@@ -252,8 +252,8 @@ def customer_active_credit(staff_user_id, customer_mobile_number):
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
 
 
-def customer_inactive_credit(staff_user_id, customer_mobile_number):
-    customer = Customer(customer_mobile_number)
+def customer_inactive_credit(staff_user_id, user_id):
+    customer = Customer(user_id)
     if result := customer.inactive_credit():
         return {"success": True, "message": "خرید اعتباری برای کاربر غیرفعال شد.",
                 "status_code": 200}
@@ -263,12 +263,12 @@ def customer_inactive_credit(staff_user_id, customer_mobile_number):
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
 
 
-def set_customer_credit_amount(staff_user_id, customer_mobile_number, credit_amount):
-    customer = Customer(customer_mobile_number)
-    if result := customer.set_credit_amount(credit_amount):
-        return {"success": True, "message": "مقدار اعتبار برای کاربر قرار داده شد",
-                "status_code": 200}
-    elif result is None:
-        return {"success": False, "error": "خربد اعتباری برای کاربر فعال نیست", "status_code": 422}
-    else:
-        return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
+# def set_customer_credit_amount(staff_user_id, customer_mobile_number, credit_amount):
+#     customer = Customer(customer_mobile_number)
+#     if result := customer.set_credit_amount(credit_amount):
+#         return {"success": True, "message": "مقدار اعتبار برای کاربر قرار داده شد",
+#                 "status_code": 200}
+#     elif result is None:
+#         return {"success": False, "error": "خربد اعتباری برای کاربر فعال نیست", "status_code": 422}
+#     else:
+#         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}

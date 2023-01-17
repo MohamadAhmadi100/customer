@@ -91,7 +91,7 @@ def register_dealership_final_customer(customer_phone_number: str, data: dict):
         customer.set_dealership_activity()
         customer_result = customer.get_customer()
         customer_id = customer_result.get("customerID")
-        kosar_data = customer.kosar_getter()
+        kosar_data = customer.kosar_getter(address=result.get("customerAddress"))
         message = {
             "message": "اطلاعات خرید مشتری با موفقیت ثبت شد",
             "data": {

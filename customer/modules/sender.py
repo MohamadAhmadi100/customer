@@ -17,7 +17,8 @@ class SmsSender:
         self.customer_type = customer_type
 
     def cancel_status(self, first_name, last_name) -> tuple:
-        url = f"https://api.kavenegar.com/v1/{self.SMS_API_TOKEN}/verify/lookup.json?"
+        base_url = "https://api.kavenegar.com/v1"
+        url = f"{base_url}/{self.SMS_API_TOKEN}/verify/lookup.json?"
         url += f"receptor={self.phone_number}&"
         url += f"token={first_name}&"
         url += f"token2={last_name}&"

@@ -1,6 +1,6 @@
 VALID_PERIOD_FILTERS = ["customerJalaliCreateTime", "customerJalaliConfirmDate"]
 VALID_VALUE_FILTERS = ["customerStatus", "customerStateName", "customerCityName", "customerRegionCode", "customerType",
-                       "customerTypes", "customerIsActive"]
+                       "customerTypes", "customerIsActive", "customerActiveCredit"]
 VALID_SEARCH_FIELDS = ["customerFirstName", "customerLastName", "customerPhoneNumber", "customerNationalID"]
 
 

@@ -71,7 +71,8 @@ def register(data: dict):
         if customer.save():
             log.save_login_log(value.customer_phone_number)
             customer.set_activity()
-            customer_id = customer.get_customer().get("customerID")
+            customer_result = customer.get_customer()
+            customer_id = customer_result.get("customerID")
             message = {
                 "message": "ثبت نام شما با موفقیت انجام شد",
                 "data": {
@@ -80,6 +81,19 @@ def register(data: dict):
                     "customerIsActive": False
                 }
             }
+            if value.customer_type == ["B2C"]:
+                kosar_data = customer.kosar_getter(customer_type=value.customer_type)
+                customer.set_rakiano_activity()
+                message = {
+                    "message": "اطلاعات شما با موفقیت ثبت شد",
+                    "data": {
+                        "customerID": customer_id,
+                        "customerPhoneNumber": value.customer_phone_number,
+                        "customerStatus": customer_result.get("customerStatus"),
+                        "customerIsActive": True
+                    }
+                }
+                return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 201}
             return {"success": True, "message": message, "status_code": 201}
         else:
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}

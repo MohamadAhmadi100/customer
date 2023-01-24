@@ -76,6 +76,13 @@ class Customer:
             status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
         return bool(status_result.acknowledged)
 
+    def set_rakiano_activity(self) -> bool:
+        with MongoConnection() as mongo:
+            query_operator = {"customerPhoneNumber": self.customer_phone_number}
+            set_status_operator = {"$set": {"customerIsActive": True, "customerStatus": "confirm"}}
+            status_result: object = mongo.customer.update_one(query_operator, set_status_operator)
+        return bool(status_result.acknowledged)
+
     def activate(self):
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}

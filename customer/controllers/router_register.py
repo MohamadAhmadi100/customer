@@ -90,10 +90,11 @@ def register(data: dict):
                         "customerID": customer_id,
                         "customerPhoneNumber": value.customer_phone_number,
                         "customerStatus": customer_result.get("customerStatus"),
-                        "customerIsActive": True
+                        "customerIsActive": True,
                     }
                 }
-                return {"success": True, "message": message, "kosarData": kosar_data, "status_code": 201}
+                return {"success": True, "message": message, "kosarData": kosar_data,
+                        "userData": customer.get_wallet_data() or {}, "status_code": 201}
             return {"success": True, "message": message, "status_code": 201}
         else:
             message = {"error": "خطایی در روند ثبت نام رخ داده است لطفا دوباره امتحان کنید"}

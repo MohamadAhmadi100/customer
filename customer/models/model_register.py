@@ -701,6 +701,30 @@ class Customer:
                 return []
 
     @staticmethod
+    def get_customer_by_id(customer_id):
+        query_operator = {"customerID": customer_id}
+        with MongoConnection() as mongo:
+            return list(mongo.customer.aggregate([
+                {
+                    "$project": {
+                        "customerFullName":
+                            {
+                                "$concat":
+                                    [
+                                        "$customerFirstName", " ", "$customerLastName"
+                                    ]
+                            },
+                        "customerID": 1,
+                        "customerPhoneNumber": 1,
+                        "_id": 0
+                    }
+                },
+                {
+                    "$match": query_operator
+                }
+            ]))[0]
+
+    @staticmethod
     def get_customers_by_id_league(customer_id_list):
         query_operator = {"customerID": {"$in": customer_id_list}}
         projection_operator = {

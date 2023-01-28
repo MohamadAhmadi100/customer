@@ -204,6 +204,13 @@ def get_customer_data_by_id(id_list: list):
         return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
 
 
+def get_customer_by_id(customer_id: int):
+    if result := Customer.get_customer_by_id(customer_id):
+        return {"success": True, "message": result, "status_code": 200}
+    elif result is None:
+        return {"success": False, "error": "کاربری با مشخصات فوق پیدا نشد", "status_code": 417}
+
+
 def search_customers_by_name(phrase: str):
     result = Customer.find_customers(phrase)
     if result := [res["customerID"] for res in result]:
@@ -261,7 +268,6 @@ def customer_inactive_credit(staff_user_id, user_id):
         return {"success": False, "error": "لطفا مجددا تلاش کنید", "status_code": 417}
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
-
 
 # def set_customer_credit_amount(staff_user_id, customer_mobile_number, credit_amount):
 #     customer = Customer(customer_mobile_number)

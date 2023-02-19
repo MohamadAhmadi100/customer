@@ -50,13 +50,15 @@ def get_customers_grid_data_accounting(data: str = None):
         records = Filter()
         period_filters: dict = {}
         value_filters: dict = {}
+        null_filters: dict = {}
         search_query: dict = {}
         if filters := data.get("filters"):
             period_filters: dict = records.set_period_filters(filters) or {}
             value_filters: dict = records.set_value_filters(filters) or {}
+            null_filters: dict = records.set_null_filters(filters) or {}
         if search_phrase := data.get("search"):
             search_query = records.set_search_query(search_phrase)
-        filters = dict(period_filters, **value_filters, **search_query)
+        filters = dict(period_filters, **value_filters, **null_filters, **search_query)
         if not data.get("sortType"):
             sort_type = "asc"
         else:

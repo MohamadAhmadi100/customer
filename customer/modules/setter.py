@@ -2,6 +2,7 @@ VALID_PERIOD_FILTERS = ["customerJalaliCreateTime", "customerJalaliConfirmDate"]
 VALID_VALUE_FILTERS = ["customerStatus", "customerStateName", "customerCityName", "customerRegionCode", "customerType",
                        "customerTypes", "customerIsActive", "customerActiveCredit"]
 VALID_SEARCH_FIELDS = ["customerFirstName", "customerLastName", "customerPhoneNumber", "customerNationalID"]
+VALID_NULL_FIELDS = ["customerSelCustomerCode"]
 
 
 class Filter:
@@ -9,8 +10,10 @@ class Filter:
         self.valid_period_filters: list = VALID_PERIOD_FILTERS or []
         self.valid_value_filters: list = VALID_VALUE_FILTERS or []
         self.valid_search_fields: list = VALID_SEARCH_FIELDS or []
+        self.valid_null_filters: list = VALID_NULL_FIELDS or []
         self.period_filters: dict = {}
         self.value_filters: dict = {}
+        self.null_filters: dict = {}
 
     def set_period_filters(self, periods: dict) -> dict:
         self.period_filters = {filter_: value for filter_, value in periods.items() if
@@ -41,6 +44,15 @@ class Filter:
                 else:
                     self.value_filters[filter_] = value
         return self.value_filters
+
+    def set_null_filters(self, values: dict) -> dict:
+        self.null_filters = {}
+        for filter_, value in values.items():
+            if filter_ in self.valid_null_filters and value:
+                self.null_filters[filter_] = {"$ne": None}
+            if filter_ in self.valid_null_filters and value is False:
+                self.null_filters[filter_] = None
+        return self.null_filters
 
     def set_search_query(self, search_phrase):
         search_list = [{search_field: {"$regex": search_phrase}} for search_field in self.valid_search_fields]

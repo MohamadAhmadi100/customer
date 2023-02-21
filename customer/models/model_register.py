@@ -148,7 +148,11 @@ class Customer:
             projection_operator = {"customerIsActive": 1, "customerOfoghCode": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
             ofogh = bool(result.get("customerOfoghCode"))
-            return bool(result.get("customerIsActive") and result.get("customerOfoghCode")), ofogh
+            active = bool(result.get("customerIsActive") and result.get("customerOfoghCode"))
+            if "B2C" in result.get("customerType"):
+                ofogh = True
+                active = bool(result.get("customerIsActive"))
+            return active, ofogh
 
     def mobile_confirm(self) -> bool:
         """

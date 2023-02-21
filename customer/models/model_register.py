@@ -139,15 +139,16 @@ class Customer:
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
             return bool(result.get("customerIsConfirm"))
 
-    def is_customer_active(self) -> bool:
+    def is_customer_active(self):
         """
         :return: a bool showing customer active flag
         """
         with MongoConnection() as mongo:
             query_operator = {"customerPhoneNumber": self.customer_phone_number}
-            projection_operator = {"customerIsActive": 1}
+            projection_operator = {"customerIsActive": 1, "customerOfoghCode": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
-            return bool(result.get("customerIsActive"))
+            ofogh = bool(result.get("customerOfoghCode"))
+            return bool(result.get("customerIsActive") and result.get("customerOfoghCode")), ofogh
 
     def mobile_confirm(self) -> bool:
         """

@@ -149,7 +149,10 @@ class Customer:
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
             ofogh = bool(result.get("customerOfoghCode"))
             active = bool(result.get("customerIsActive") and result.get("customerOfoghCode"))
-            if "B2C" in result.get("customerType"):
+            customer_type = type(result.get("customerType"))
+            if type(result.get("customerType")) != list:
+                customer_type = (result.get("customerTypes")) if type(result.get("customerTypes")) == list else "B2B"
+            if "B2C" in customer_type:
                 ofogh = True
                 active = bool(result.get("customerIsActive"))
             return active, ofogh

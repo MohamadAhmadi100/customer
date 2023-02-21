@@ -20,10 +20,16 @@ def check_is_registered(customer_phone_number: str):
     if customer.is_exists_phone_number():
         redirect = "login" if customer.is_mobile_confirm() else "loginOtp"
         active, ofogh = customer.is_customer_active()
+        if not active:
+            msg = "حساب کاربری شما تایید نشده است"
+        elif not ofogh:
+            msg = "اطلاعات افق شما کامل نیست"
+        else:
+            msg = "وضعیت شما تایید شده است"
         message = {
             "customerIsMobileConfirm": customer.is_mobile_confirm(),
             "hasRegistered": True,
-            "message": "حساب کاربری شما تایید نشده است" if ofogh and not active else "اطلاعات افق شما کامل نیست",
+            "message": msg,
             "redirect": redirect,
             "customerStatus": status,
             "customerIsActive": active

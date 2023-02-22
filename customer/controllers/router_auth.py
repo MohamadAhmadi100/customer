@@ -32,7 +32,8 @@ def check_is_registered(customer_phone_number: str):
             "message": msg,
             "redirect": redirect,
             "customerStatus": status,
-            "customerIsActive": active
+            "customerIsActive": active,
+            'customerOfogh': ofogh
         }
     else:
         message = {

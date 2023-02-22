@@ -148,7 +148,7 @@ class Customer:
             projection_operator = {"customerIsActive": 1, "customerOfoghCode": 1, "customerType": 1, "customerTypes": 1}
             result: dict = mongo.customer.find_one(query_operator, projection_operator)
             ofogh = bool(result.get("customerOfoghCode"))
-            active = bool(result.get("customerIsActive") and result.get("customerOfoghCode"))
+            active = bool(result.get("customerIsActive"))
             customer_type = result.get("customerType")
             if type(result.get("customerType")) != list:
                 customer_type = (result.get("customerTypes")) if type(result.get("customerTypes")) == list else "B2B"

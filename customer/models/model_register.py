@@ -979,3 +979,20 @@ class Customer:
                 return False
             except Exception:
                 return
+
+    @staticmethod
+    def get_customer_coupon_data(customer_id_list: list):
+        query_operator = {"customerID": {"$in": customer_id_list}}
+        projection_operator = {
+            "$customerFirstName": "$customerFirstName",
+            "$customerLastName": "$customerLastName",
+            "customerID": "$customerID",
+            "customerPhoneNumber": "customerPhoneNumber",
+            "_id": 0
+        }
+        with MongoConnection() as mongo:
+            try:
+                result = list(mongo.customer.find(query_operator, projection_operator))
+                return {customer["customer_id"]: customer for customer in result}
+            except Exception:
+                return []

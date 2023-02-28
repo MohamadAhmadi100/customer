@@ -271,6 +271,13 @@ def customer_inactive_credit(staff_user_id, user_id):
     else:
         return {"success": False, "error": "شماره موبایل وجود ندارد", "status_code": 404}
 
+
+def get_customer_coupon_data(customer_id_list):
+    if type(customer_id_list) == list and len(customer_id_list):
+        int_customer_id_list = [int(customer_id) for customer_id in customer_id_list]
+        return {"success": True, "data": Customer.get_customer_coupon_data(int_customer_id_list),
+                "status_code": 200}
+
 # def set_customer_credit_amount(staff_user_id, customer_mobile_number, credit_amount):
 #     customer = Customer(customer_mobile_number)
 #     if result := customer.set_credit_amount(credit_amount):

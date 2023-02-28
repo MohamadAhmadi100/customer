@@ -6,12 +6,12 @@ from customer.helper.connection import MongoConnection
 
 
 def nid_phone_verify(phone_number, nid):
-    with MongoConnection() as mongo:
-        db_result = mongo.shahkar.find_one({"phone_number": phone_number, "nid": nid}, {"_id": 0})
-        if db_result:
-            return db_result.get("result")
+    # with MongoConnection() as mongo:
+    #     db_result = mongo.shahkar.find_one({"phone_number": phone_number, "nid": nid}, {"_id": 0})
+    #     if db_result:
+    #         return db_result.get("result")
         shahkar_result = shahkar_verify(phone_number, nid)
-        mongo.shahkar.insert_one({"phone_number": phone_number, "nid": nid, "result": shahkar_result})
+        # mongo.shahkar.insert_one({"phone_number": phone_number, "nid": nid, "result": shahkar_result})
         return shahkar_result
 
 
@@ -26,6 +26,8 @@ def shahkar_verify(phone_number, nid):
             },
             data='grant_type=password&username=zarrinco&password=ByZr6f5q6Q'
         )
+        print(get_token_response)
+
 
         access_token = get_token_response.json().get("access_token")
 
@@ -47,6 +49,7 @@ def shahkar_verify(phone_number, nid):
                 "requestId": f"1076{data_time}01",
                 "serviceNumber": phone_number
             })
+        print(shahkar_response)
         return True if shahkar_response.json().get("result", {}).get("data", {}).get("result", {}).get("data", {}).get(
             "result") == "OK." else False
     except:
@@ -58,20 +61,20 @@ def shahkar_verify(phone_number, nid):
 #     all_customers = list(
 #         mongo.customer.find({}, {"_id": 0, "customerID": 1, "customerNationalID": 1,
 #                                  "customerPhoneNumber": 1}))
-#
-# verified = list()
-# rejected = list()
-# unknown = list()
-#
+
+# verified = []
+# rejected = []
+# unknown = []
+
 # for customer in all_customers:
-#     shahkar_result = nid_phone_verify(customer.get("customerPhoneNumber"), customer.get("customerNationalID"))
-#     if shahkar_result:
-#         verified.append(customer)
-#     elif shahkar_result is None:
-#         unknown.append(customer)
-#     else:
-#         rejected.append(customer)
-#
+# shahkar_result = nid_phone_verify("09358270867", "4610298899")
+# if shahkar_result:
+#     verified.append(customer)
+# elif shahkar_result is None:
+#     unknown.append(customer)
+# else:
+#     rejected.append(customer)
+
 # print("verified: ", verified)
 # print("rejected: ", rejected)
 # print("unknown: ", unknown)
